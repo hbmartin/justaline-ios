@@ -69,7 +69,7 @@ class StateManager: UIViewController {
     @IBOutlet weak var animationHeightConstraint: NSLayoutConstraint!
     
     /// Lottie animation view
-    var animationView: LOTAnimationView?
+    var animationView: AnimationView?
     
     /// Primary message for pairing
     @IBOutlet weak var centerMessageLabel: UILabel!
@@ -358,7 +358,7 @@ class StateManager: UIViewController {
                     self.progressTimer = nil
                 }
             })
-            RunLoop.main.add(progressTimer!, forMode: RunLoopMode.defaultRunLoopMode)
+            RunLoop.main.add(progressTimer!, forMode: RunLoop.Mode.default)
         }
         
         if completeProgress {
@@ -373,18 +373,18 @@ class StateManager: UIViewController {
             }
         }
 
-        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, centerMessageLabel)
+        UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: centerMessageLabel)
 
     }
     
     func configureAnimation(name: String) {
-        var loopAnimation = false
+        var loopAnimation = LottieLoopMode.playOnce
         animationWidthConstraint.constant = 82
         animationHeightConstraint.constant = 97
         
         switch name {
         case "looking_partner":
-            loopAnimation = true
+            loopAnimation = .loop
             
         case "stay_put":
             animationWidthConstraint.constant = 197
@@ -394,11 +394,10 @@ class StateManager: UIViewController {
             break
         }
         
-        animationView = LOTAnimationView(name: name)
+        animationView = AnimationView(name: name)
         animationView?.frame = CGRect(origin: .zero, size: CGSize(width: animationWidthConstraint.constant, height: animationHeightConstraint.constant))
+        animationView?.loopMode = loopAnimation
         animationView?.contentMode = .scaleAspectFit
-        animationView?.loopAnimation = loopAnimation
-        animationView?.autoReverseAnimation = false
         animationContainer.addSubview(animationView!)
         
         if name == "stay_put" {
@@ -412,8 +411,8 @@ class StateManager: UIViewController {
         }
     }
     
-    func loopFromFrame(_ frameNumber: NSNumber) {
-        self.animationView?.setProgressWithFrame(frameNumber)
+    func loopFromFrame(_ frameNumber: AnimationFrameTime) {
+        self.animationView?.currentFrame = frameNumber
         self.animationView?.play(completion: { (completed) in
             if completed {
                 self.loopFromFrame(frameNumber)

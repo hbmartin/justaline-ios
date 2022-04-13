@@ -361,7 +361,7 @@ extension PairingManager : RoomManagerDelegate {
         }
         
         do {
-            try self.garAnchor = self.gSession?.resolveCloudAnchor(withIdentifier: id)
+            try self.garAnchor = self.gSession?.resolveCloudAnchor(id)
         } catch let error as NSError{
             print("PairingManager:anchorIdCreated: Resolve Cloud Anchor Failed with Error: \(error)")
             pairingFailed()
@@ -491,7 +491,7 @@ extension PairingManager: GARSessionDelegate {
         self.anchorResolved()
     }
     
-    func session(_ session: GARSession, didHostAnchor anchor: GARAnchor) {
+    func session(_ session: GARSession, didHost anchor: GARAnchor) {
         print("GARSession did host anchor")
         delegate?.cloudAnchorResolved(anchor)
         
@@ -523,7 +523,7 @@ extension PairingManager: GARSessionDelegate {
         Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
     }
     
-    func session(_ session: GARSession, didFailToHostAnchor anchor: GARAnchor) {
+    func session(_ session: GARSession, didFailToHost anchor: GARAnchor) {
         failHostAnchor(anchor)
     }
     

@@ -65,7 +65,7 @@ class AboutViewController: UIViewController, UITextViewDelegate {
     
     func formatButton(_ button: UIButton, stringKey: String) {
         let attributedString = NSAttributedString(string: NSLocalizedString(stringKey, comment: ""),
-                                                  attributes: [.underlineStyle: NSUnderlineStyle.styleSingle.rawValue,
+                                                  attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue,
 //                                                               .font: UIFont(name: "CoolSans-Medium", size: 11)!,
                                                                .font: UIFont.systemFont(ofSize: 11),
                                                                .foregroundColor: UIColor.white,
@@ -79,11 +79,11 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         paragraphStyle.lineSpacing = 6
         
         let learnMoreString = NSMutableAttributedString(string: NSLocalizedString("about_text", comment: "Just a Line is an AR Experiment..."), attributes: [.paragraphStyle: paragraphStyle, .foregroundColor: UIColor.white])
-        learnMoreTextView.linkTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: UIColor.white]
+        learnMoreTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         let linkRange = (learnMoreString.string as NSString).range(of:NSLocalizedString("about_text_link", comment: "g.co/justaline"))
         
         learnMoreString.addAttribute(.underlineStyle,
-                                     value: NSUnderlineStyle.styleSingle.rawValue,
+                                     value: NSUnderlineStyle.single.rawValue,
                                      range: linkRange)
         
         learnMoreString.addAttribute(.link,

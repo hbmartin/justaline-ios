@@ -26,8 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var pairingState: State?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // url: "https://justaline-ios-5d8bf-default-rtdb.firebaseio.com/
+        
         FirebaseApp.configure()
         UIApplication.shared.isIdleTimerDisabled = true
         

@@ -155,8 +155,8 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         mediumBrushButton.accessibilityLabel = NSLocalizedString("content_description_medium_brush", comment: "Medium Brush")
         smallBrushButton.accessibilityLabel = NSLocalizedString("content_description_small_brush", comment: "Small Brush")
         
-        let key = NSAttributedStringKey(
-            rawValue: UIAccessibilitySpeechAttributeIPANotation
+        let key = NSAttributedString.Key(
+            rawValue: NSAttributedString.Key.accessibilitySpeechIPANotation.rawValue
         )
         let attributedString = NSAttributedString(
             string: NSLocalizedString("content_description_record", comment: "Record"), attributes: [key: "rəˈkɔrd"]
@@ -165,13 +165,13 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         recordButton.accessibilityAttributedLabel = attributedString
         recordButton.accessibilityHint = NSLocalizedString("content_description_record_accessible", comment: "Tap to record a video for ten seconds.")
         
-        NotificationCenter.default.addObserver(self, selector: #selector(voiceOverStatusChanged), name: NSNotification.Name.UIAccessibilityVoiceOverStatusDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(voiceOverStatusChanged), name: NSNotification.Name.STATE_CHANGED, object: nil)
         
         voiceOverStatusChanged()
     }
 
     @objc func voiceOverStatusChanged() {
-        sizeButtonStackView.alpha = (UIAccessibilityIsVoiceOverRunning()) ? 1 : 0
+        sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
     }
     
     /*
@@ -236,7 +236,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     
     func selectSize(_ size: Radius) {
         UIView.animate(withDuration: 0.25, animations: {
-            self.sizeButtonStackView.alpha = (UIAccessibilityIsVoiceOverRunning()) ? 1 : 0
+            self.sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
             if (self.sizeButtonStackView.alpha == 0) {
                 self.sizeStackViewBottomConstraint.constant = 10
             }

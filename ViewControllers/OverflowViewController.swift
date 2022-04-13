@@ -46,7 +46,7 @@ class OverflowViewController: UIViewController {
         UIView.animate(withDuration: 0.25, animations: {
             self.buttonContainer.transform = .identity
         }) { (success) in
-            UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.shareButton)
+            UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: self.shareButton)
         }
     }
     

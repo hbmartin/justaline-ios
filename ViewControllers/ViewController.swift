@@ -82,7 +82,7 @@ class ViewController: UIViewController {
                 uiViewController?.messagesContainerView?.isHidden = true
                 stateManager?.fullBackground.isHidden = true
                 setStrokeVisibility(isHidden: false)
-                UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, uiViewController?.touchView)
+                UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: uiViewController?.touchView)
 
                 #if DEBUG
                 sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
@@ -98,7 +98,7 @@ class ViewController: UIViewController {
                 uiViewController?.messagesContainerView?.isHidden = false
                 stateManager?.fullBackground.isHidden = false
                 setStrokeVisibility(isHidden: false)
-                UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, stateManager?.centerMessageLabel)
+                UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: stateManager?.centerMessageLabel)
 
 
                 #if DEBUG
@@ -115,7 +115,7 @@ class ViewController: UIViewController {
                 stateManager?.fullBackground.isHidden = true
                 setStrokeVisibility(isHidden: true)
                 uiViewController?.touchView.isHidden = true
-                UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, uiViewController?.trackingPromptLabel)
+                UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: uiViewController?.trackingPromptLabel)
             }
             
             // if we're tracking and the mode changes, update our previous mode state
@@ -187,7 +187,7 @@ class ViewController: UIViewController {
         screenRecorder = RPScreenRecorder.shared()
         screenRecorder?.isMicrophoneEnabled = true
         
-        NotificationCenter.default.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: nil) { (notification) in
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { (notification) in
             self.touchPoint = .zero
         }
         
@@ -555,15 +555,15 @@ extension ViewController : StateManagerDelegate {
 extension ViewController : RPPreviewViewControllerDelegate {
     
     func previewController(_ previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
-        if activityTypes.contains(UIActivityType.saveToCameraRoll.rawValue) {
+        if activityTypes.contains(UIActivity.ActivityType.saveToCameraRoll.rawValue) {
             Analytics.logEvent(AnalyticsKey.val(.tapped_save), parameters: nil)
-        } else if activityTypes.contains(UIActivityType.postToVimeo.rawValue)
-            || activityTypes.contains(UIActivityType.postToFlickr.rawValue)
-            || activityTypes.contains(UIActivityType.postToWeibo.rawValue)
-            || activityTypes.contains(UIActivityType.postToTwitter.rawValue)
-            || activityTypes.contains(UIActivityType.postToFacebook.rawValue)
-            || activityTypes.contains(UIActivityType.mail.rawValue)
-            || activityTypes.contains(UIActivityType.message.rawValue) {
+        } else if activityTypes.contains(UIActivity.ActivityType.postToVimeo.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.postToFlickr.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.postToWeibo.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.postToTwitter.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.postToFacebook.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.mail.rawValue)
+                    || activityTypes.contains(UIActivity.ActivityType.message.rawValue) {
             
             Analytics.logEvent(AnalyticsKey.val(.tapped_share_recording), parameters: nil)
         }

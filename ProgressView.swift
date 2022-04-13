@@ -69,7 +69,7 @@ class ProgressView: UIView {
         animation.fromValue = 0
         animation.toValue = 1.0
         animation.duration = duration
-        animation.fillMode = kCAFillModeForwards
+        animation.fillMode = CAMediaTimingFillMode.forwards
         animation.isRemovedOnCompletion = false
         progressCircle.add(animation, forKey: "ani")
     }

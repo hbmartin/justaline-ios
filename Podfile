@@ -2,6 +2,8 @@ project 'JustALine.xcodeproj'
 
 # Uncomment the next line to define a global platform for your project
 platform :ios, '11.3'
+pod 'ARCore/CloudAnchors'
+pod 'NearbyMessages'
 
 def pods_all_targets
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
@@ -18,7 +20,7 @@ def pods_all_targets
   pod 'NearbyMessages'
 
   # Pods for GoogleAR frameworks
-  pod 'ARCore', '~> 1.2.0'
+  pod 'ARCore'
   pod 'GTMSessionFetcher/Core', '~> 1.1'
   pod 'GoogleToolboxForMac/Logger', '~> 2.1'
   pod 'GoogleToolboxForMac/NSData+zlib', '~> 2.1'

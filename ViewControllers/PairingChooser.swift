@@ -45,7 +45,7 @@ class PairingChooser: UIViewController {
         UIView.animate(withDuration: 0.25, animations: {
             self.buttonContainer.transform = .identity
         }) { (success) in
-            UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, self.pairButton)
+            UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: self.pairButton)
         }
     }
     

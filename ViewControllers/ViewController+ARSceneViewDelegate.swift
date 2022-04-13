@@ -50,7 +50,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         if let stroke = getStroke(for: node) {
             
             if (strokes.contains(stroke)) {
-                if let index = strokes.index(of: stroke) {
+                if let index = strokes.firstIndex(of: stroke) {
                     strokes.remove(at: index)
                 }
             } else {
@@ -69,7 +69,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                 self.uiViewController?.undoButton.isHidden = self.shouldHideUndoButton()
                 self.uiViewController?.clearAllButton.isHidden = self.shouldHideTrashButton()
                 if (self.mode == .DRAW && self.strokes.count == 0) { self.uiViewController?.showDrawingPrompt() }
-                UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil)
+                UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
             }
         }
     }
@@ -117,7 +117,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                                 self.configureARSession(runOptions: [ARSession.RunOptions.resetTracking])
                             }
                         })
-                        RunLoop.main.add(resumeFromInterruptionTimer!, forMode: RunLoopMode.defaultRunLoopMode)
+                        RunLoop.main.add(resumeFromInterruptionTimer!, forMode: RunLoop.Mode.default)
                     } else { // if strokes.count == 0 {
                         // only do the timer if user has drawn strokes
                         self.configureARSession(runOptions: [.resetTracking, .removeExistingAnchors])
@@ -162,7 +162,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                 self.trackingMessageTimer?.invalidate()
                 self.trackingMessageTimer = nil
             })
-            RunLoop.main.add(trackingMessageTimer!, forMode: RunLoopMode.defaultRunLoopMode)
+            RunLoop.main.add(trackingMessageTimer!, forMode: RunLoop.Mode.default)
         }
         
         if mode != .TRACKING {

@@ -68,7 +68,7 @@ extension ViewController: InterfaceViewControllerDelegate {
         strokes.last?.resetMemory()
         
         // for some reason putting this in the touchesBegan does not trigger
-        UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, nil)
+        UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
         
     }
     

@@ -54,26 +54,26 @@ extension Array where Iterator.Element == Float {
 	}
 }
 
-extension Array where Iterator.Element == float3 {
-	var average: float3? {
+extension Array where Iterator.Element == SIMD3<Float> {
+	var average: SIMD3<Float>? {
 		guard !self.isEmpty else {
 			return nil
 		}
   
-        let sum = self.reduce(float3(0)) { current, next in
+        let sum = self.reduce(SIMD3<Float>(repeating: 0)) { current, next in
             return current + next
         }
 		return sum / Float(self.count)
 	}
 }
 
-extension Array where Iterator.Element == float4 {
-    var average: float4? {
+extension Array where Iterator.Element == SIMD4<Float> {
+    var average: SIMD4<Float>? {
         guard !self.isEmpty else {
             return nil
         }
         
-        let sum = self.reduce(float4(0)) { current, next in
+        let sum = self.reduce(SIMD4<Float>(0)) { current, next in
             return current + next
         }
         return sum / Float(self.count)
@@ -93,7 +93,7 @@ extension RangeReplaceableCollection {
 extension SCNNode {
 	
 	func setUniformScale(_ scale: Float) {
-		self.simdScale = float3(scale, scale, scale)
+		self.simdScale = SIMD3<Float>(scale, scale, scale)
 	}
 	
 	func renderOnTop(_ enable: Bool) {
@@ -114,9 +114,9 @@ extension SCNNode {
 extension float4x4 {
     /// Treats matrix as a (right-hand column-major convention) transform matrix
     /// and factors out the translation component of the transform.
-    var translation: float3 {
+    var translation: SIMD3<Float> {
         let translation = self.columns.3
-        return float3(translation.x, translation.y, translation.z)
+        return SIMD3<Float>(translation.x, translation.y, translation.z)
     }
 }
 
