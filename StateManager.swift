@@ -69,7 +69,7 @@ class StateManager: UIViewController {
     @IBOutlet weak var animationHeightConstraint: NSLayoutConstraint!
     
     /// Lottie animation view
-    var animationView: AnimationView?
+    var animationView: LottieAnimationView?
     
     /// Primary message for pairing
     @IBOutlet weak var centerMessageLabel: UILabel!
@@ -394,7 +394,7 @@ class StateManager: UIViewController {
             break
         }
         
-        animationView = AnimationView(name: name)
+        animationView = LottieAnimationView(name: name)
         animationView?.frame = CGRect(origin: .zero, size: CGSize(width: animationWidthConstraint.constant, height: animationHeightConstraint.constant))
         animationView?.loopMode = loopAnimation
         animationView?.contentMode = .scaleAspectFit

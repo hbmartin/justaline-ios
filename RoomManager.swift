@@ -642,7 +642,7 @@ class RoomManager: StrokeUploaderDelegate {
         }
         
         let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
-        localStrokeUids[strokeRef.key] = stroke
+        localStrokeUids[strokeRef.key!] = stroke
         stroke.creatorUid = uid
         stroke.fbReference = strokeRef
     }

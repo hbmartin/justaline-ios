@@ -20,21 +20,22 @@ class RoomData {
 
     var timestamp: Int64 = 0
 
-    var message: GNSMessage!
+    private var messageData: Data!
 
     convenience init(code: String, timestamp: Int64) {
         let messageString = String("\(code),\(timestamp)")
-        self.init(GNSMessage(content: messageString.data(using: .utf8)))
+        self.init(messageString.data(using: .utf8) ?? Data())
 
         self.code = code
         self.timestamp = timestamp
     }
 
-    convenience init(_ message: GNSMessage) {
+    // Updated initializer for Nearby Connections (Data instead of GNSMessage)
+    convenience init(_ data: Data) {
         self.init()
-        self.message = message
+        self.messageData = data
 
-        if let messageString = String(data: message.content, encoding: .utf8) {
+        if let messageString = String(data: data, encoding: .utf8) {
             let parts = messageString.split(separator: ",")
 
             // Missing error state handling which got complicated
@@ -45,9 +46,16 @@ class RoomData {
         }
     }
 
-    func getMessage()->GNSMessage {
-        return message
+
+    // Updated method to return Data instead of GNSMessage
+    func getMessageData() -> Data {
+        if messageData == nil {
+            let messageString = String("\(code),\(timestamp)")
+            messageData = messageString.data(using: .utf8) ?? Data()
+        }
+        return messageData
     }
+    
 }
 
 enum MalformedDataError: Error {

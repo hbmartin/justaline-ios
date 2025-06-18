@@ -28,6 +28,12 @@
 	<string>Just a Line uses the camera to let you draw in the world around you.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This will let you record sound with your videos and help your phone pair with nearby devices.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Just a Line uses local network access to connect with nearby devices for pairing and collaborative drawing.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_justaline._tcp</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

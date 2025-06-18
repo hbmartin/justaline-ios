@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "Bash(rg:*)",
+      "Bash(pod install:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:developers.google.com)"
+    ],
+    "deny": []
+  }
+}

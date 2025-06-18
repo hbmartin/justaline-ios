@@ -3,13 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0C2C6A708DC18465C4FB9342 /* Pods_JustALineTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A914AC368B0747240860AAA7 /* Pods_JustALineTests.framework */; };
 		2176323A2806838F00DD4A19 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 217632392806838F00DD4A19 /* GoogleService-Info.plist */; };
 		2176323B2806838F00DD4A19 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 217632392806838F00DD4A19 /* GoogleService-Info.plist */; };
+		2436457D2E03423F006D999F /* NearbyConnections in Frameworks */ = {isa = PBXBuildFile; productRef = 2436457C2E03423F006D999F /* NearbyConnections */; };
+		2436457F2E034247006D999F /* NearbyConnections in Frameworks */ = {isa = PBXBuildFile; productRef = 2436457E2E034247006D999F /* NearbyConnections */; };
+		24505FA92E0347D300265EB5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 24505FA82E0347D300265EB5 /* Reachability.m */; };
+		24505FAA2E0347D300265EB5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 24505FA82E0347D300265EB5 /* Reachability.m */; };
+		24505FAC2E03480800265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
+		24505FAD2E03481100265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
 		5D2E4A9B207D337E0060B725 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9A207D337E0060B725 /* Shaders.metal */; };
 		5D2E4A9D207D8C4F0060B725 /* OverflowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9C207D8C4F0060B725 /* OverflowViewController.swift */; };
 		5D2E4AA520813EB40060B725 /* InterfaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D51F798206330C800DEC8D4 /* InterfaceViewController.swift */; };
@@ -33,7 +39,6 @@
 		5D2E4ABB20813EB40060B725 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7782063304D00DEC8D4 /* LaunchScreen.storyboard */; };
 		5D2E4ABD20813EB40060B725 /* UI.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F799206330C800DEC8D4 /* UI.storyboard */; };
 		5D2E4ABE20813EB40060B725 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DEB648D207AE053009DCEE7 /* Localizable.strings */; };
-		5D2E4ABF20813EB40060B725 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7762063304D00DEC8D4 /* Assets.xcassets */; };
 		5D2E4AC020813EB40060B725 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7732063304D00DEC8D4 /* Main.storyboard */; };
 		5D3E41332075537800E63743 /* RoomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3E41322075537800E63743 /* RoomManager.swift */; };
 		5D3E41352075538200E63743 /* FBAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3E41342075538200E63743 /* FBAnchor.swift */; };
@@ -101,6 +106,9 @@
 		0CFA9D02E9D8E85DCB064179 /* Pods-JustALineTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JustALineTests.debug.xcconfig"; path = "Target Support Files/Pods-JustALineTests/Pods-JustALineTests.debug.xcconfig"; sourceTree = "<group>"; };
 		217632392806838F00DD4A19 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		24263CE23A7A17CB03EF8F73 /* Pods-JustALine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JustALine.debug.xcconfig"; path = "Target Support Files/Pods-JustALine/Pods-JustALine.debug.xcconfig"; sourceTree = "<group>"; };
+		24505FA72E0347D300265EB5 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		24505FA82E0347D300265EB5 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		24505FAB2E03480800265EB5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		48BC9F5CA376BD5ABEFFF4AE /* Pods_JustALine_Global.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine_Global.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		566B75E0E566A9EFCF78CDD1 /* Pods-JustALine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JustALine.release.xcconfig"; path = "Target Support Files/Pods-JustALine/Pods-JustALine.release.xcconfig"; sourceTree = "<group>"; };
 		56E46A082CA40C915F6D586E /* Pods_JustALine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,7 +167,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24505FAC2E03480800265EB5 /* SystemConfiguration.framework in Frameworks */,
 				B975AB3A146AC80F51B4C980 /* Pods_JustALine_Global.framework in Frameworks */,
+				2436457F2E034247006D999F /* NearbyConnections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,7 +177,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				24505FAD2E03481100265EB5 /* SystemConfiguration.framework in Frameworks */,
 				CC3F5A08E34EF27694D1487C /* Pods_JustALine.framework in Frameworks */,
+				2436457D2E03423F006D999F /* NearbyConnections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +274,8 @@
 		5DEE5C3E20867A9C00034BEF /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				24505FA72E0347D300265EB5 /* Reachability.h */,
+				24505FA82E0347D300265EB5 /* Reachability.m */,
 				5DEB6488207ADACE009DCEE7 /* StateManager.swift */,
 				C51E3B1BCC4ACC1745697AE4 /* PairingManager.swift */,
 				5D3E41322075537800E63743 /* RoomManager.swift */,
@@ -302,6 +316,7 @@
 		6967A3C3FEF8151DE4CF5AD0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				24505FAB2E03480800265EB5 /* SystemConfiguration.framework */,
 				56E46A082CA40C915F6D586E /* Pods_JustALine.framework */,
 				48BC9F5CA376BD5ABEFFF4AE /* Pods_JustALine_Global.framework */,
 				A914AC368B0747240860AAA7 /* Pods_JustALineTests.framework */,
@@ -412,7 +427,7 @@
 				};
 			};
 			buildConfigurationList = 5D51F7652063304D00DEC8D4 /* Build configuration list for PBXProject "JustALine" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -420,6 +435,9 @@
 				Base,
 			);
 			mainGroup = 5D51F7612063304D00DEC8D4;
+			packageReferences = (
+				2436457B2E03417E006D999F /* XCRemoteSwiftPackageReference "nearby" */,
+			);
 			productRefGroup = 5D51F76B2063304D00DEC8D4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -444,7 +462,6 @@
 				5D2E4ABE20813EB40060B725 /* Localizable.strings in Resources */,
 				5DA1143320A250B8009BE0A9 /* thirdPartyLicenses.html in Resources */,
 				2176323B2806838F00DD4A19 /* GoogleService-Info.plist in Resources */,
-				5D2E4ABF20813EB40060B725 /* Assets.xcassets in Resources */,
 				5D2E4AC020813EB40060B725 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -510,39 +527,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher-framework/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac-615f275e/GoogleToolboxForMac.framework",
-				"${BUILT_PRODUCTS_DIR}/Protobuf-framework/Protobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/Libuv-gRPC/uv.framework",
-				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
-				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uv.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -576,39 +570,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher-framework/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac-615f275e/GoogleToolboxForMac.framework",
-				"${BUILT_PRODUCTS_DIR}/Protobuf-framework/Protobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/Libuv-gRPC/uv.framework",
-				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
-				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uv.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -664,19 +635,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ARCore.default-CloudAnchors/ARCoreResources.bundle",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/GNSSharedResources.bundle",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/ic_expand_more.xcassets",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/ic_nearby_48pt.xcassets",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
 			);
 			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ARCoreResources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GNSSharedResources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -688,18 +656,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ARCore.default-CloudAnchors/ARCoreResources.bundle",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/GNSSharedResources.bundle",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/ic_expand_more.xcassets",
-				"${PODS_ROOT}/NearbyMessages/Resources/resources/ic_nearby_48pt.xcassets",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets.car",
 			);
 			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ARCoreResources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GNSSharedResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -723,6 +689,7 @@
 				5DA1142E20A218AB009BE0A9 /* AboutViewController.swift in Sources */,
 				5D2E4AA820813EB40060B725 /* Shaders.metal in Sources */,
 				5D2E4AA920813EB40060B725 /* RoomManager.swift in Sources */,
+				24505FAA2E0347D300265EB5 /* Reachability.m in Sources */,
 				5D2E4AAA20813EB40060B725 /* OverflowViewController.swift in Sources */,
 				5D2E4AAB20813EB40060B725 /* Stroke.swift in Sources */,
 				5D2E4AAC20813EB40060B725 /* ViewController+InterfaceViewControllerDelegate.swift in Sources */,
@@ -757,6 +724,7 @@
 				5DA1142D20A218AB009BE0A9 /* AboutViewController.swift in Sources */,
 				5D3E41332075537800E63743 /* RoomManager.swift in Sources */,
 				5D2E4A9D207D8C4F0060B725 /* OverflowViewController.swift in Sources */,
+				24505FA92E0347D300265EB5 /* Reachability.m in Sources */,
 				5D51F7A5206330C900DEC8D4 /* Stroke.swift in Sources */,
 				5D51F7A4206330C900DEC8D4 /* ViewController+InterfaceViewControllerDelegate.swift in Sources */,
 				5D51F76E2063304D00DEC8D4 /* AppDelegate.swift in Sources */,
@@ -835,15 +803,18 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/JustALine Global-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.google.justaline-demo-ios";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "me.haroldmartin.justaline-demo-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG JOIN_GLOBAL_ROOM";
 				SWIFT_OBJC_BRIDGING_HEADER = "JustALine-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -861,15 +832,18 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/JustALine Global-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.google.justaline-demo-ios";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "me.haroldmartin.justaline-demo-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = JOIN_GLOBAL_ROOM;
 				SWIFT_OBJC_BRIDGING_HEADER = "JustALine-Bridging-Header.h";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -880,7 +854,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -924,7 +898,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -939,7 +913,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -977,7 +951,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -998,15 +972,18 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.google.justaline-ios";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "me.haroldmartin.justaline-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_BRIDGING_HEADER = "JustALine-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1024,14 +1001,17 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.google.justaline-ios";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "me.haroldmartin.justaline-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "JustALine-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1045,10 +1025,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D97X66A37C;
 				INFOPLIST_FILE = JustALineTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.JustALineTests;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.haroldmartin.JustALineTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JustALine.app/JustALine";
 			};
@@ -1063,10 +1047,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D97X66A37C;
 				INFOPLIST_FILE = JustALineTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.JustALineTests;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.haroldmartin.JustALineTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JustALine.app/JustALine";
 			};
@@ -1112,6 +1100,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2436457B2E03417E006D999F /* XCRemoteSwiftPackageReference "nearby" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/nearby/";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2436457C2E03423F006D999F /* NearbyConnections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2436457B2E03417E006D999F /* XCRemoteSwiftPackageReference "nearby" */;
+			productName = NearbyConnections;
+		};
+		2436457E2E034247006D999F /* NearbyConnections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2436457B2E03417E006D999F /* XCRemoteSwiftPackageReference "nearby" */;
+			productName = NearbyConnections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5D51F7622063304D00DEC8D4 /* Project object */;
 }
