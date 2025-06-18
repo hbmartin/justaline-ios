@@ -64,9 +64,12 @@ class LineGeometry : SCNGeometry {
         program = lineProgram
         program?.isOpaque = false
         
-        let endCapImage = UIImage(named: "linecap")!
-        let endCapTexture = SCNMaterialProperty(contents: endCapImage)
-        self.setValue(endCapTexture, forKey: "endCapTexture")
+        if let endCapImage = UIImage(named: "linecap") {
+            let endCapTexture = SCNMaterialProperty(contents: endCapImage)
+            self.setValue(endCapTexture, forKey: "endCapTexture")
+        } else {
+            print("Warning: linecap image not found in bundle")
+        }
         
 //        let borderImage = UIImage(named: "texture")!
 //        let borderTexture = SCNMaterialProperty(contents: borderImage)
