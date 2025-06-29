@@ -19,9 +19,9 @@ class ProgressView: UIView {
     let progressCircle: CAShapeLayer
     let lineWidth: CGFloat = 5.0
     let strokeColor = UIColor.red
-    
+
     override init(frame: CGRect) {
-        progressCircle = CAShapeLayer ()
+        progressCircle = CAShapeLayer()
         circle = UIView(frame: frame)
         
         circle.layoutIfNeeded()
@@ -33,11 +33,10 @@ class ProgressView: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        progressCircle = CAShapeLayer ()
+        progressCircle = CAShapeLayer()
         circle = UIView(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
         
         super.init(coder: aDecoder)
-        //        fatalError("init(coder:) has not been implemented")
     }
     
     override func awakeFromNib() {
@@ -49,7 +48,13 @@ class ProgressView: UIView {
         let centerPoint = CGPoint (x: circle.bounds.width / 2, y: circle.bounds.width / 2)
         let circleRadius: CGFloat = circle.bounds.width / 2 - (lineWidth / 2)
         
-        let circlePath = UIBezierPath(arcCenter: centerPoint, radius: circleRadius, startAngle: CGFloat(-0.5 * .pi), endAngle: CGFloat(1.5 * .pi), clockwise: true    )
+        let circlePath = UIBezierPath(
+            arcCenter: centerPoint,
+            radius: circleRadius,
+            startAngle: CGFloat(-0.5 * .pi),
+            endAngle: CGFloat(1.5 * .pi),
+            clockwise: true
+        )
         circlePath.lineCapStyle = .round
         
         progressCircle.path = circlePath.cgPath
@@ -91,5 +96,4 @@ class ProgressView: UIView {
         // Drawing code
     }
     */
-
 }

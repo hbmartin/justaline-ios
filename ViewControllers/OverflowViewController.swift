@@ -18,7 +18,6 @@ protocol OverflowViewControllerDelegate {
     func aboutButtonTapped(_ sender: UIButton)
 }
 class OverflowViewController: UIViewController {
-    
     var delegate: OverflowViewControllerDelegate?
     var offscreenContainerPosition: CGFloat = 0
 
@@ -53,20 +52,14 @@ class OverflowViewController: UIViewController {
             self.buttonContainer.transform = CGAffineTransform(translationX: 0, y: self.offscreenContainerPosition)
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction private func aboutButtonTapped(_ sender: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.aboutButtonTapped(sender)
         })
-        
     }
     
-    @IBAction private func cancelTapped(_ sender: UIButton) {
+    @IBAction private func cancelTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -79,5 +72,4 @@ class OverflowViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
 }

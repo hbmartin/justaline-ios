@@ -203,7 +203,7 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
         
         #if JOIN_GLOBAL_ROOM
-        let globalRoomBase = "global_rooms/global_room"
+        let globalRoomBase = GLOBAL_ROOM_ROOT + "/global_room"
         let alert = UIAlertController(title: "Global room session", message: "Please Choose Your Session", preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "0 Sandbox A", style: .default, handler: { (action) in
             self.pairingManager?.setGlobalRoomName(globalRoomBase+"_0")

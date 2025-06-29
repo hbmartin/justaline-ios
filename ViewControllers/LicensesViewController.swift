@@ -16,9 +16,8 @@ import UIKit
 import WebKit
 
 class LicensesViewController: UIViewController, WKNavigationDelegate {
-
     var homeUrl: URL?
-    @IBOutlet private weak var webView: WKWebView!
+    @IBOutlet private var webView: WKWebView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,11 +29,6 @@ class LicensesViewController: UIViewController, WKNavigationDelegate {
             webView.loadFileURL(homeUrl!, allowingReadAccessTo: homeUrl!)
             webView.navigationDelegate = self
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -55,5 +49,4 @@ class LicensesViewController: UIViewController, WKNavigationDelegate {
         // Pass the selected object to the new view controller.
     }
     */
-
 }

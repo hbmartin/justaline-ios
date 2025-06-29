@@ -16,6 +16,10 @@
 		24505FAA2E0347D300265EB5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 24505FA82E0347D300265EB5 /* Reachability.m */; };
 		24505FAC2E03480800265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
 		24505FAD2E03481100265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
+		249033182E11E08600AE9FED /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033172E11E08300AE9FED /* Payload.swift */; };
+		249033192E11E08600AE9FED /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033172E11E08300AE9FED /* Payload.swift */; };
+		2490331B2E11E10600AE9FED /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331A2E11E10200AE9FED /* Config.swift */; };
+		2490331C2E11E10600AE9FED /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331A2E11E10200AE9FED /* Config.swift */; };
 		24BB20022E11CE09008F304E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7762063304D00DEC8D4 /* Assets.xcassets */; };
 		5D2E4A9B207D337E0060B725 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9A207D337E0060B725 /* Shaders.metal */; };
 		5D2E4A9D207D8C4F0060B725 /* OverflowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9C207D8C4F0060B725 /* OverflowViewController.swift */; };
@@ -110,6 +114,8 @@
 		24505FA72E0347D300265EB5 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		24505FA82E0347D300265EB5 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		24505FAB2E03480800265EB5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		249033172E11E08300AE9FED /* Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payload.swift; sourceTree = "<group>"; };
+		2490331A2E11E10200AE9FED /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		48BC9F5CA376BD5ABEFFF4AE /* Pods_JustALine_Global.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine_Global.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		566B75E0E566A9EFCF78CDD1 /* Pods-JustALine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JustALine.release.xcconfig"; path = "Target Support Files/Pods-JustALine/Pods-JustALine.release.xcconfig"; sourceTree = "<group>"; };
 		56E46A082CA40C915F6D586E /* Pods_JustALine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -288,6 +294,8 @@
 		5DEF7513208679CD00D1B95B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				2490331A2E11E10200AE9FED /* Config.swift */,
+				249033172E11E08300AE9FED /* Payload.swift */,
 				5D3E4136207553A500E63743 /* RoomData.swift */,
 				5D51F79E206330C900DEC8D4 /* Stroke.swift */,
 				5D6BC2C620867C9C002AD8F1 /* FBModel.swift */,
@@ -698,9 +706,11 @@
 				5D2E4AAD20813EB40060B725 /* AppDelegate.swift in Sources */,
 				5D2E4AAE20813EB40060B725 /* RoomData.swift in Sources */,
 				5D886356208A9F970021C0B4 /* FBModel.swift in Sources */,
+				2490331C2E11E10600AE9FED /* Config.swift in Sources */,
 				5DA1143120A24602009BE0A9 /* LicensesViewController.swift in Sources */,
 				5D4F7DD6208F95660001337C /* StrokeUploadManager.swift in Sources */,
 				5D2E4AAF20813EB40060B725 /* LineGeometry.swift in Sources */,
+				249033182E11E08600AE9FED /* Payload.swift in Sources */,
 				5D2E4AB020813EB40060B725 /* Utilities.swift in Sources */,
 				5D2E4AB120813EB40060B725 /* FBAnchor.swift in Sources */,
 				5D2E4AB220813EB40060B725 /* StateManager.swift in Sources */,
@@ -733,9 +743,11 @@
 				5D3E4137207553A500E63743 /* RoomData.swift in Sources */,
 				5D6BC2C520867BC5002AD8F1 /* FBParticipant.swift in Sources */,
 				5D51F7A2206330C900DEC8D4 /* LineGeometry.swift in Sources */,
+				2490331B2E11E10600AE9FED /* Config.swift in Sources */,
 				5DA1143020A245FA009BE0A9 /* LicensesViewController.swift in Sources */,
 				5D51F7A720647ACF00DEC8D4 /* Utilities.swift in Sources */,
 				5D3E41352075538200E63743 /* FBAnchor.swift in Sources */,
+				249033192E11E08600AE9FED /* Payload.swift in Sources */,
 				5DEB6489207ADACE009DCEE7 /* StateManager.swift in Sources */,
 				5D51F7A3206330C900DEC8D4 /* ViewController+ARSceneViewDelegate.swift in Sources */,
 				5DB534A7206D3DA3004E3E43 /* ProgressView.swift in Sources */,

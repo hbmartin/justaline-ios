@@ -94,17 +94,14 @@ class PairingManager: NSObject {
     
     private func setupNearbyConnections() {
         // Initialize Nearby Connections components
-        // Note: This will need to be uncommented when NearbyConnections is available
-        /*
-        advertiser = Advertiser(serviceID: serviceID)
-        discoverer = Discoverer(serviceID: serviceID)
-        connectionManager = ConnectionManager()
+        connectionManager = ConnectionManager(serviceID: Config.serviceId, strategy: .cluster)
+        advertiser = Advertiser(connectionManager: connectionManager!)
+        discoverer = Discoverer(connectionManager: connectionManager!)
         
         // Set delegates
         advertiser?.delegate = self
         discoverer?.delegate = self
         connectionManager?.delegate = self
-        */
     }
     
     func createGSession() {
@@ -112,9 +109,10 @@ class PairingManager: NSObject {
             do {
                 try gSession = GARSession(apiKey: firebaseKey, bundleIdentifier: nil)
             } catch let error as NSError {
-                print("Couldn't start GoogleAR session: \(error)")
+                print("PairingManager: Couldn't start GoogleAR session: \(error)")
             }
         }
+        print("Created GoogleAR session: \(String(describing: gSession))")
     }
     
     func setGlobalRoomName(_ name: String){
@@ -122,6 +120,7 @@ class PairingManager: NSObject {
     }
     
     func beginGlobalSession(_ withPairing: Bool) {
+        print("PairingManager: beginGlobalSession")
         configureReachability()
         
         isPairingOrPaired = true
@@ -131,6 +130,8 @@ class PairingManager: NSObject {
         if let session = gSession {
             session.delegate = self
             session.delegateQueue = DispatchQueue.main
+        } else {
+            print("PairingManager: Couldn't start GoogleAR session")
         }
         
         if reachability?.currentReachabilityStatus() == .NotReachable {
@@ -174,8 +175,6 @@ class PairingManager: NSObject {
     }
     
     private func startAdvertising() {
-        // Note: This will need to be uncommented when NearbyConnections is available
-        /*
         guard let advertiser = advertiser else { return }
         
         let deviceName = UIDevice.current.name
@@ -187,12 +186,9 @@ class PairingManager: NSObject {
         } catch {
             print("Failed to start advertising: \(error)")
         }
-        */
     }
     
     private func startDiscovering() {
-        // Note: This will need to be uncommented when NearbyConnections is available
-        /*
         guard let discoverer = discoverer else { return }
         
         do {
@@ -201,12 +197,9 @@ class PairingManager: NSObject {
         } catch {
             print("Failed to start discovery: \(error)")
         }
-        */
     }
     
     private func sendRoomData(_ roomData: RoomData, to endpointID: String) {
-        // Note: This will need to be uncommented when NearbyConnections is available
-        /*
         guard let connectionManager = connectionManager else { return }
         
         let messageData = roomData.getMessageData()
@@ -217,7 +210,6 @@ class PairingManager: NSObject {
         } catch {
             print("Failed to send room data: \(error)")
         }
-        */
     }
     
     func resumeSession(fromDate: Date) {
@@ -363,12 +355,9 @@ class PairingManager: NSObject {
     }
     
     private func stopNearbyConnections() {
-        // Note: This will need to be uncommented when NearbyConnections is available
-        /*
         advertiser?.stopAdvertising()
         discoverer?.stopDiscovery()
         connectionManager?.disconnectFromAllEndpoints()
-        */
         
         connectedEndpoints.removeAll()
         pendingConnections.removeAll()
@@ -402,9 +391,7 @@ class PairingManager: NSObject {
 }
 
 // MARK: - Nearby Connections Delegate Extensions
-// Note: These will need to be uncommented when NearbyConnections is available
 
-/*
 extension PairingManager: AdvertiserDelegate {
     func advertiser(_ advertiser: Advertiser, 
                    didReceiveConnectionRequestFrom endpointID: String, 
@@ -517,7 +504,6 @@ extension PairingManager: ConnectionManagerDelegate {
         pendingConnections.remove(endpointID)
     }
 }
-*/
 
 // Helper method for handling received room data
 private extension PairingManager {
@@ -532,7 +518,7 @@ private extension PairingManager {
 // MARK: - RoomManagerDelegate
 extension PairingManager : RoomManagerDelegate {
     func anchorIdCreated(_ id: String) {
-        print("Resolving GARAnchor")
+        print("RoomManagerDelegate: Resolving GARAnchor")
         if self.gSession == nil {
             print ("There is a problem with your co-presence session" )
             pairingFailed()

@@ -17,4 +17,13 @@ pod install
 ```
 
 Then the project can be built using Xcode 16.
+
+## Firebase Setup
 You will need to set up a cloud project with Firebase, ARCore, and with nearby messages enabled before running the app. Follow the setup steps in the [ARCore Cloud Anchors Quickstart guide](https://developers.google.com/ar/develop/ios/cloud-anchors-quickstart-ios).
+
+**Important Firebase Configuration Requirements:**
+- **Anonymous Authentication** must be enabled in Firebase Authentication
+- **Realtime Database** must be enabled and configured
+- Ensure your `GoogleService-Info.plist` file is properly added to the project
+
+The app uses Firebase Anonymous Authentication for user identification and Firebase Realtime Database for storing and synchronizing drawing data between devices.
