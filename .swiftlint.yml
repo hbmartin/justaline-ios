@@ -16,6 +16,9 @@ disabled_rules:
   - prohibited_interface_builder
   - class_delegate_protocol
   - one_declaration_per_file
+  - no_magic_numbers
+  - trailing_closure
+  - required_deinit
 
 opt_in_rules:
   - all

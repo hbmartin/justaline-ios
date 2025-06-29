@@ -18,13 +18,14 @@ protocol OverflowViewControllerDelegate {
     func aboutButtonTapped(_ sender: UIButton)
 }
 class OverflowViewController: UIViewController {
-
-    @IBOutlet weak var overlayButton: UIButton!
-    @IBOutlet weak var buttonContainer: UIView!
-    @IBOutlet weak var aboutButton: UIButton!
-    @IBOutlet weak var cancelButton: UIButton!
+    
     var delegate: OverflowViewControllerDelegate?
     var offscreenContainerPosition: CGFloat = 0
+
+    @IBOutlet private var overlayButton: UIButton!
+    @IBOutlet private var buttonContainer: UIView!
+    @IBOutlet private var aboutButton: UIButton!
+    @IBOutlet private var cancelButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,14 +59,14 @@ class OverflowViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func aboutButtonTapped(_ sender: UIButton) {
+    @IBAction private func aboutButtonTapped(_ sender: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.aboutButtonTapped(sender)
         })
         
     }
     
-    @IBAction func cancelTapped(_ sender: UIButton) {
+    @IBAction private func cancelTapped(_ sender: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
     

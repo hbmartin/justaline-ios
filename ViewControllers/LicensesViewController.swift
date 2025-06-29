@@ -15,7 +15,6 @@
 import UIKit
 import WebKit
 
-// swiftlint:disable:next required_deinit
 class LicensesViewController: UIViewController, WKNavigationDelegate {
 
     var homeUrl: URL?
