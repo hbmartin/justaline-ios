@@ -15,27 +15,30 @@
 import UIKit
 
 extension UILabel {
+    // swiftlint:disable:next override_in_extension
     override open func awakeFromNib() {
+        super.awakeFromNib()
         let size = font.pointSize
         font = UIFont.systemFont(ofSize: size)
-//        font = UIFont(name: "CoolSans-Medium", size: size)
     }
 }
 
 extension UIButton {
+    // swiftlint:disable:next override_in_extension
     override open func awakeFromNib() {
+        super.awakeFromNib()
         if let size = titleLabel?.font.pointSize {
             titleLabel?.font = UIFont.systemFont(ofSize: size)
-//            titleLabel?.font = UIFont(name: "CoolSans-Medium", size: size)
         }
     }
 }
 
 extension UITextView {
+    // swiftlint:disable:next override_in_extension
     override open func awakeFromNib() {
+        super.awakeFromNib()
         if let size = font?.pointSize {
             font = UIFont.systemFont(ofSize: size)
-//            font = UIFont(name: "CoolSans-Medium", size: size)
         }
     }
 }

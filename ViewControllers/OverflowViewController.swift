@@ -15,58 +15,47 @@
 import UIKit
 
 protocol OverflowViewControllerDelegate {
-    func shareButtonTapped(_ sender: UIButton)
     func aboutButtonTapped(_ sender: UIButton)
 }
 class OverflowViewController: UIViewController {
-    
+
     @IBOutlet weak var overlayButton: UIButton!
     @IBOutlet weak var buttonContainer: UIView!
-    @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var aboutButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     var delegate: OverflowViewControllerDelegate?
     var offscreenContainerPosition: CGFloat = 0
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        shareButton.setTitle(NSLocalizedString("menu_share_app", comment: "Share App"), for: .normal)
         aboutButton.setTitle(NSLocalizedString("menu_about", comment: "About"), for: .normal)
         cancelButton.setTitle(NSLocalizedString("cancel", comment: "Cancel"), for: .normal)
-        
+
         offscreenContainerPosition = buttonContainer.frame.size.height
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: offscreenContainerPosition)
+
+        buttonContainer.transform = CGAffineTransform(translationX: 0, y: offscreenContainerPosition)
         UIView.animate(withDuration: 0.25, animations: {
             self.buttonContainer.transform = .identity
-        }) { (success) in
-            UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: self.shareButton)
-        }
+        })
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         UIView.animate(withDuration: 0.35) {
-            self.buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: self.offscreenContainerPosition)
+            self.buttonContainer.transform = CGAffineTransform(translationX: 0, y: self.offscreenContainerPosition)
         }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func shareButtonTapped(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: {
-            self.delegate?.shareButtonTapped(sender)
-        })
     }
     
     @IBAction func aboutButtonTapped(_ sender: UIButton) {

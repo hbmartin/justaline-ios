@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NXU-2P-aFz">
-    <device id="retina5_9" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NXU-2P-aFz">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vKI-EO-GMD" customClass="TouchView" customModule="JustALine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44" width="375" height="734"/>
+                                <rect key="frame" x="0.0" y="100" width="375" height="644"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" summaryElement="YES"/>
@@ -28,7 +26,7 @@
                                 </accessibility>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bvf-dV-c6f">
-                                <rect key="frame" x="127.66666666666669" y="680.66666666666663" width="120" height="120"/>
+                                <rect key="frame" x="127.66666666666669" y="646.66666666666663" width="120" height="120"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lm5-nw-RmE" customClass="ProgressView" customModule="JustALine" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
@@ -51,7 +49,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="14g-Uq-hmS">
-                                <rect key="frame" x="150" y="703" width="75" height="75"/>
+                                <rect key="frame" x="150" y="669" width="75" height="75"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="75" id="Ss2-q8-kPz"/>
@@ -63,7 +61,7 @@
                                 </connections>
                             </button>
                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nUC-n3-gBZ">
-                                <rect key="frame" x="181.66666666666666" y="734" width="12" height="12"/>
+                                <rect key="frame" x="181.66666666666666" y="700.66666666666663" width="12" height="12"/>
                                 <color key="backgroundColor" red="1" green="0.028335137901596807" blue="0.0096098035353116007" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="12" id="Fss-h8-bQ1"/>
@@ -75,21 +73,24 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YG1-bv-fvS" userLabel="Overflow Button">
-                                <rect key="frame" x="317" y="44" width="42" height="36"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YG1-bv-fvS" userLabel="Overflow Button">
+                                <rect key="frame" x="317" y="100" width="42" height="36"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="36" id="6bV-os-DOg"/>
                                     <constraint firstAttribute="width" constant="42" id="F9f-eV-zuW"/>
                                 </constraints>
-                                <state key="normal" image="overflow_white"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="overflow_white">
+                                    <color key="titleColor" systemColor="systemGreenColor"/>
+                                    <color key="titleShadowColor" systemColor="underPageBackgroundColor"/>
+                                </state>
                                 <connections>
-                                    <segue destination="xTb-LG-mem" kind="popoverPresentation" identifier="overflowSegue" popoverAnchorView="YG1-bv-fvS" id="jOX-Vr-1tG">
-                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                    </segue>
+                                    <segue destination="xTb-LG-mem" kind="presentation" identifier="overflowSegue" id="jOX-Vr-1tG"/>
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hBa-zu-yuh">
-                                <rect key="frame" x="16" y="44" width="42" height="36"/>
+                                <rect key="frame" x="16" y="100" width="42" height="36"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="9ER-lN-PiS"/>
                                     <constraint firstAttribute="height" constant="36" id="Iui-cW-u5N"/>
@@ -104,7 +105,7 @@
                                 <rect key="frame" x="0.0" y="331" width="375" height="150"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="just_a_line_tracking_icon" translatesAutoresizingMaskIntoConstraints="NO" id="Nyo-CH-m5S">
-                                        <rect key="frame" x="123" y="0.0" width="100" height="50"/>
+                                        <rect key="frame" x="122.66666666666669" y="0.0" width="100" height="50"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="584-5H-uYD"/>
                                             <constraint firstAttribute="width" constant="100" id="CxG-t7-brH"/>
@@ -129,7 +130,7 @@
                                 </constraints>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5S3-BP-7pI">
-                                <rect key="frame" x="70" y="43.666666666666664" width="42" height="35.999999999999993"/>
+                                <rect key="frame" x="70" y="100" width="42" height="36"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="36" id="iXI-wX-QRR"/>
                                     <constraint firstAttribute="width" constant="42" id="uBH-9Z-EvB"/>
@@ -140,7 +141,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1au-5n-9KI">
-                                <rect key="frame" x="295" y="722.66666666666663" width="42" height="36"/>
+                                <rect key="frame" x="295" y="688.66666666666663" width="42" height="36"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="42" id="742-Gu-rgW"/>
                                     <constraint firstAttribute="height" constant="36" id="udi-K9-M2u"/>
@@ -150,8 +151,8 @@
                                     <action selector="joinButtonTapped:" destination="NXU-2P-aFz" eventType="touchUpInside" id="Kzy-6C-dRM"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="asi-O2-lkU">
-                                <rect key="frame" x="38" y="726.66666666666663" width="28" height="28"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="asi-O2-lkU">
+                                <rect key="frame" x="38" y="692.66666666666663" width="28" height="28"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="displayP3"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <bool key="isElement" value="NO"/>
@@ -170,7 +171,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="vzz-bU-lyb">
-                                <rect key="frame" x="38" y="594.66666666666663" width="28" height="108"/>
+                                <rect key="frame" x="38" y="560.66666666666663" width="28" height="108"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="41M-qV-nl7">
                                         <rect key="frame" x="0.0" y="0.0" width="28" height="28"/>
@@ -232,7 +233,7 @@
                                 <rect key="frame" x="50" y="331" width="275" height="150"/>
                                 <subviews>
                                     <view userInteractionEnabled="NO" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="1Qz-R6-eo8" customClass="DrawPromptView" customModule="JustALine" customModuleProvider="target">
-                                        <rect key="frame" x="113" y="0.0" width="50" height="50"/>
+                                        <rect key="frame" x="112.66666666666666" y="0.0" width="50" height="50"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="F9k-6G-3FR"/>
@@ -263,7 +264,7 @@ and move around</string>
                                 </constraints>
                             </view>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PAIRED" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="722-YY-rHd">
-                                <rect key="frame" x="292" y="696" width="48" height="20"/>
+                                <rect key="frame" x="292" y="662.66666666666663" width="48" height="20"/>
                                 <color key="backgroundColor" red="0.14509803921568626" green="0.33333333333333331" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="YS4-yz-hUH"/>
@@ -286,6 +287,7 @@ and move around</string>
                                 </connections>
                             </containerView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="gan-NT-Bup"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="asi-O2-lkU" firstAttribute="top" secondItem="vzz-bU-lyb" secondAttribute="bottom" constant="24" id="3GA-hF-kso"/>
@@ -323,7 +325,6 @@ and move around</string>
                             <constraint firstItem="722-YY-rHd" firstAttribute="centerX" secondItem="1au-5n-9KI" secondAttribute="centerX" id="wzb-IH-yGG"/>
                             <constraint firstItem="gan-NT-Bup" firstAttribute="trailing" secondItem="YG1-bv-fvS" secondAttribute="trailing" constant="16" id="yvI-02-0Fl"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="gan-NT-Bup"/>
                     </view>
                     <connections>
                         <outlet property="chooseSizeButton" destination="asi-O2-lkU" id="6th-W8-fsX"/>
@@ -356,7 +357,7 @@ and move around</string>
                         <segue destination="ZGc-sl-Die" kind="popoverPresentation" identifier="pairingChooserSegue" popoverAnchorView="1au-5n-9KI" id="9m9-ft-827">
                             <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                         </segue>
-                        <segue destination="70n-YA-pDZ" kind="presentation" identifier="aboutSegue" id="kOY-CV-9bE"/>
+                        <segue destination="70n-YA-pDZ" kind="presentation" identifier="aboutSegue" modalPresentationStyle="fullScreen" id="kOY-CV-9bE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3oZ-JE-wdr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -367,12 +368,12 @@ and move around</string>
         <!--Overflow View Controller-->
         <scene sceneID="Dd5-q7-2sA">
             <objects>
-                <viewController modalTransitionStyle="crossDissolve" id="xTb-LG-mem" customClass="OverflowViewController" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="xTb-LG-mem" customClass="OverflowViewController" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qSu-Fe-aO8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w6m-hF-kFr">
+                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w6m-hF-kFr">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <accessibility key="accessibilityConfiguration">
@@ -388,7 +389,7 @@ and move around</string>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="grP-Ro-Shg">
                                         <rect key="frame" x="20" y="194" width="335" height="80"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-kh-Qzo">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-kh-Qzo">
                                                 <rect key="frame" x="5" y="5" width="325" height="70"/>
                                                 <state key="normal" title="Cancel">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -422,22 +423,13 @@ and move around</string>
                                                     <constraint firstAttribute="height" constant="1" id="iqQ-uR-wZp"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cgt-TB-gFG">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cgt-TB-gFG">
                                                 <rect key="frame" x="5" y="83" width="325" height="72"/>
                                                 <state key="normal" title="About">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
                                                 <connections>
                                                     <action selector="aboutButtonTapped:" destination="xTb-LG-mem" eventType="touchUpInside" id="7em-zU-aLx"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v1B-3h-DMi">
-                                                <rect key="frame" x="5" y="5" width="325" height="72"/>
-                                                <state key="normal" title="Share App">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="shareButtonTapped:" destination="xTb-LG-mem" eventType="touchUpInside" id="cSo-hK-tzB"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -447,14 +439,10 @@ and move around</string>
                                             <constraint firstItem="Cgt-TB-gFG" firstAttribute="leading" secondItem="AAb-iO-YsA" secondAttribute="leading" constant="5" id="CqV-2o-xJP"/>
                                             <constraint firstItem="ywA-KU-sGg" firstAttribute="centerY" secondItem="AAb-iO-YsA" secondAttribute="centerY" id="GOx-qj-mne"/>
                                             <constraint firstItem="ywA-KU-sGg" firstAttribute="centerX" secondItem="AAb-iO-YsA" secondAttribute="centerX" id="IYu-Am-AiO"/>
-                                            <constraint firstItem="v1B-3h-DMi" firstAttribute="leading" secondItem="AAb-iO-YsA" secondAttribute="leading" constant="5" id="PgU-tc-JKm"/>
-                                            <constraint firstItem="v1B-3h-DMi" firstAttribute="height" secondItem="AAb-iO-YsA" secondAttribute="height" multiplier="0.45" id="SDY-Yw-CzK"/>
                                             <constraint firstItem="Cgt-TB-gFG" firstAttribute="height" secondItem="AAb-iO-YsA" secondAttribute="height" multiplier="0.45" id="hri-x4-MId"/>
                                             <constraint firstAttribute="bottom" secondItem="Cgt-TB-gFG" secondAttribute="bottom" constant="5" id="i2g-ck-V4D"/>
-                                            <constraint firstItem="v1B-3h-DMi" firstAttribute="top" secondItem="AAb-iO-YsA" secondAttribute="top" constant="5" id="q1Q-1j-2Cx"/>
                                             <constraint firstAttribute="trailing" secondItem="Cgt-TB-gFG" secondAttribute="trailing" constant="5" id="wRr-HR-FP7"/>
                                             <constraint firstAttribute="height" constant="160" id="x73-HN-ECr"/>
-                                            <constraint firstAttribute="trailing" secondItem="v1B-3h-DMi" secondAttribute="trailing" constant="5" id="xhU-Sq-m6z"/>
                                         </constraints>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -476,6 +464,7 @@ and move around</string>
                                 </constraints>
                             </view>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="g5j-rF-uue"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="w6m-hF-kFr" firstAttribute="top" secondItem="qSu-Fe-aO8" secondAttribute="top" id="6Lm-pi-T3v"/>
@@ -486,14 +475,12 @@ and move around</string>
                             <constraint firstItem="510-5S-OMC" firstAttribute="trailing" secondItem="g5j-rF-uue" secondAttribute="trailing" id="lCc-Pl-Bvf"/>
                             <constraint firstItem="w6m-hF-kFr" firstAttribute="bottom" secondItem="qSu-Fe-aO8" secondAttribute="bottom" id="p3E-i1-oTE"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="g5j-rF-uue"/>
                     </view>
                     <connections>
                         <outlet property="aboutButton" destination="Cgt-TB-gFG" id="ZAP-9O-WFH"/>
                         <outlet property="buttonContainer" destination="510-5S-OMC" id="Ca0-aI-b7z"/>
                         <outlet property="cancelButton" destination="Rh7-kh-Qzo" id="HmX-AB-8sW"/>
                         <outlet property="overlayButton" destination="w6m-hF-kFr" id="Pr8-yP-Zal"/>
-                        <outlet property="shareButton" destination="v1B-3h-DMi" id="Ibq-bU-m2R"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aWp-ui-0wM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -504,8 +491,9 @@ and move around</string>
         <scene sceneID="6wb-Hk-ab5">
             <objects>
                 <navigationController id="70n-YA-pDZ" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="R6d-Ua-FMb"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" translucent="NO" id="CO3-B7-h3y">
-                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </navigationBar>
@@ -520,13 +508,13 @@ and move around</string>
         <!--About-->
         <scene sceneID="uA1-31-Lzs">
             <objects>
-                <viewController title="About" id="MNT-YB-O2r" customClass="AboutViewController" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="About" modalPresentationStyle="fullScreen" id="MNT-YB-O2r" customClass="AboutViewController" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ywF-A4-GfH">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="724"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="718"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" indicatorStyle="white" translatesAutoresizingMaskIntoConstraints="NO" id="kd8-27-z9n">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="690"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="684"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="just_a_line_about_icon" translatesAutoresizingMaskIntoConstraints="NO" id="dsH-ai-ajX">
                                         <rect key="frame" x="67.666666666666686" y="60" width="240" height="128"/>
@@ -547,7 +535,7 @@ and move around</string>
 visit g.co/justaline]</string>
                                                 <attributes>
                                                     <color key="NSColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <font key="NSFont" size="13" name=".AppleSystemUIFont"/>
+                                                    <font key="NSFont" metaFont="system"/>
                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
                                             </fragment>
@@ -557,7 +545,7 @@ visit g.co/justaline]</string>
                                             <outlet property="delegate" destination="MNT-YB-O2r" id="L03-ab-RIb"/>
                                         </connections>
                                     </textView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lL-pb-izT">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lL-pb-izT">
                                         <rect key="frame" x="144.66666666666666" y="423" width="86" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="hmi-ED-VV2"/>
@@ -571,7 +559,7 @@ visit g.co/justaline]</string>
                                             <action selector="buttonTapped:" destination="MNT-YB-O2r" eventType="touchUpInside" id="mNi-n5-pRa"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eh6-5e-8aE">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eh6-5e-8aE">
                                         <rect key="frame" x="126.66666666666669" y="461" width="122" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="Jcr-ga-Bue"/>
@@ -586,8 +574,8 @@ visit g.co/justaline]</string>
                                             <segue destination="EJw-te-9sg" kind="show" id="1gg-YM-WgT"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sf5-HK-O8k">
-                                        <rect key="frame" x="137.66666666666666" y="499" width="101" height="26"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sf5-HK-O8k">
+                                        <rect key="frame" x="137" y="499" width="101" height="26"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="KQD-h5-s87"/>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="sZT-Vc-iZC"/>
@@ -632,6 +620,7 @@ visit g.co/justaline]</string>
                                 </constraints>
                             </scrollView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="iS4-5z-XTE"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="kd8-27-z9n" firstAttribute="trailing" secondItem="iS4-5z-XTE" secondAttribute="trailing" id="Cqf-Bg-7s3"/>
@@ -641,7 +630,6 @@ visit g.co/justaline]</string>
                             <constraint firstItem="kd8-27-z9n" firstAttribute="height" secondItem="iS4-5z-XTE" secondAttribute="height" id="cqc-mc-eta"/>
                             <constraint firstItem="kd8-27-z9n" firstAttribute="top" secondItem="iS4-5z-XTE" secondAttribute="top" id="m22-Jx-vU3"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="iS4-5z-XTE"/>
                     </view>
                     <navigationItem key="navigationItem" title="About" id="pr5-EK-bbh">
                         <barButtonItem key="backBarButtonItem" title=" " id="nqI-ha-ivt"/>
@@ -664,11 +652,11 @@ visit g.co/justaline]</string>
             <objects>
                 <viewController title="Third Party Licenses" id="EJw-te-9sg" customClass="LicensesViewController" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aTy-Q0-dj0">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="724"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="718"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <wkWebView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r1N-wD-ihs">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="690"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="684"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <wkWebViewConfiguration key="configuration" allowsAirPlayForMediaPlayback="NO" allowsPictureInPictureMediaPlayback="NO">
                                     <dataDetectorTypes key="dataDetectorTypes" none="YES"/>
@@ -677,6 +665,7 @@ visit g.co/justaline]</string>
                                 </wkWebViewConfiguration>
                             </wkWebView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="T8K-Al-ado"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="r1N-wD-ihs" firstAttribute="leading" secondItem="T8K-Al-ado" secondAttribute="leading" id="6nG-Ps-XDL"/>
@@ -684,8 +673,8 @@ visit g.co/justaline]</string>
                             <constraint firstItem="T8K-Al-ado" firstAttribute="trailing" secondItem="r1N-wD-ihs" secondAttribute="trailing" id="arA-p9-v3d"/>
                             <constraint firstItem="T8K-Al-ado" firstAttribute="bottom" secondItem="r1N-wD-ihs" secondAttribute="bottom" id="sn6-Bw-I1J"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="T8K-Al-ado"/>
                     </view>
+                    <navigationItem key="navigationItem" id="jtJ-Vn-L2e"/>
                     <connections>
                         <outlet property="webView" destination="r1N-wD-ihs" id="ahO-c7-hcq"/>
                     </connections>
@@ -706,7 +695,7 @@ visit g.co/justaline]</string>
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                                 <subviews>
                                     <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="b9j-dK-aZu">
-                                        <rect key="frame" x="147" y="279" width="82" height="97"/>
+                                        <rect key="frame" x="146.66666666666666" y="278.33333333333331" width="82" height="97"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="97" id="0cJ-2t-ks6"/>
@@ -714,14 +703,14 @@ visit g.co/justaline]</string>
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lEb-wA-Kqt">
-                                        <rect key="frame" x="79.666666666666686" y="272.33333333333331" width="216" height="104"/>
+                                        <rect key="frame" x="79.666666666666686" y="271.33333333333331" width="216" height="104"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="216" id="8Dd-Dt-MVI"/>
                                             <constraint firstAttribute="height" constant="104" id="f0r-2A-HHj"/>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KS8-Dh-HeE">
-                                        <rect key="frame" x="10" y="396" width="355" height="21.666666666666686"/>
+                                        <rect key="frame" x="10" y="395.33333333333331" width="355" height="21.666666666666686"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="hbt-Or-aGz"/>
                                         </constraints>
@@ -730,7 +719,7 @@ visit g.co/justaline]</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z1Z-EB-aLG">
-                                        <rect key="frame" x="10" y="445.66666666666669" width="355" height="19.333333333333314"/>
+                                        <rect key="frame" x="10" y="445" width="355" height="19.333333333333314"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" id="5u5-gZ-zq5"/>
                                         </constraints>
@@ -739,15 +728,15 @@ visit g.co/justaline]</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="os5-WO-jHg">
-                                        <rect key="frame" x="62" y="437.66666666666669" width="251" height="4"/>
+                                        <rect key="frame" x="62" y="437" width="251" height="4"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="4" id="Shy-dO-YM5"/>
                                         </constraints>
                                         <color key="progressTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="trackTintColor" white="1" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </progressView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M81-lo-rDY">
-                                        <rect key="frame" x="121" y="485" width="133" height="40"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M81-lo-rDY">
+                                        <rect key="frame" x="121" y="484.33333333333331" width="133" height="39.999999999999943"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="displayP3"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="133" id="MyT-I3-NYE"/>
@@ -767,7 +756,7 @@ visit g.co/justaline]</string>
                                         </connections>
                                     </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r0I-Uq-wFJ">
-                                        <rect key="frame" x="121.66666666666669" y="437.66666666666669" width="133" height="40"/>
+                                        <rect key="frame" x="121" y="437" width="133" height="40"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.69999999999999996" colorSpace="custom" customColorSpace="displayP3"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="133" id="O1T-8l-5Xl"/>
@@ -811,7 +800,7 @@ visit g.co/justaline]</string>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FFL-bf-T1i">
-                                <rect key="frame" x="15" y="44" width="28" height="28"/>
+                                <rect key="frame" x="15" y="100" width="28" height="28"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="28" id="eq6-0N-SKf"/>
                                     <constraint firstAttribute="height" constant="28" id="j6E-6X-3V3"/>
@@ -824,6 +813,7 @@ visit g.co/justaline]</string>
                                 </connections>
                             </button>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="5dl-Ef-Dh4"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="uX7-O8-WAL" firstAttribute="top" secondItem="Q6P-Q8-Soi" secondAttribute="top" id="6yC-IV-0Gl"/>
@@ -833,7 +823,6 @@ visit g.co/justaline]</string>
                             <constraint firstAttribute="trailing" secondItem="uX7-O8-WAL" secondAttribute="trailing" id="qIi-6I-1B2"/>
                             <constraint firstItem="FFL-bf-T1i" firstAttribute="leading" secondItem="Q6P-Q8-Soi" secondAttribute="leading" constant="15" id="wt0-mW-xGC"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="5dl-Ef-Dh4"/>
                     </view>
                     <connections>
                         <outlet property="animationContainer" destination="b9j-dK-aZu" id="LCU-OB-fQL"/>
@@ -858,11 +847,11 @@ visit g.co/justaline]</string>
             <objects>
                 <viewController modalTransitionStyle="crossDissolve" id="5bE-Cx-IQi" customClass="GlobalPairingChooser" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9BD-KY-OC5">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="752"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TX1-SX-PMy">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TX1-SX-PMy">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="752"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <bool key="isElement" value="NO"/>
@@ -872,12 +861,12 @@ visit g.co/justaline]</string>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="al1-t9-Mom">
-                                <rect key="frame" x="0.0" y="478" width="375" height="300"/>
+                                <rect key="frame" x="0.0" y="452" width="375" height="300"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MUx-uT-THh">
                                         <rect key="frame" x="20" y="194" width="335" height="80"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e6Q-mo-ceu">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e6Q-mo-ceu">
                                                 <rect key="frame" x="5" y="5" width="325" height="70"/>
                                                 <state key="normal" title="Cancel">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -911,7 +900,7 @@ visit g.co/justaline]</string>
                                                     <constraint firstAttribute="height" constant="1" id="eaK-8n-h1G"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dJO-gf-gHk">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dJO-gf-gHk">
                                                 <rect key="frame" x="5" y="83" width="325" height="72"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="72" id="TQn-AL-89E"/>
@@ -923,7 +912,7 @@ visit g.co/justaline]</string>
                                                     <action selector="joinButtonTapped:" destination="5bE-Cx-IQi" eventType="touchUpInside" id="BOV-BP-Git"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EFo-bk-8vw">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EFo-bk-8vw">
                                                 <rect key="frame" x="5" y="5" width="325" height="72"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="72" id="drd-yh-j0C"/>
@@ -969,6 +958,7 @@ visit g.co/justaline]</string>
                                 </constraints>
                             </view>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="c9c-CB-y1m"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="TX1-SX-PMy" firstAttribute="top" secondItem="9BD-KY-OC5" secondAttribute="top" id="8e7-tT-DZz"/>
@@ -979,7 +969,6 @@ visit g.co/justaline]</string>
                             <constraint firstItem="TX1-SX-PMy" firstAttribute="leading" secondItem="9BD-KY-OC5" secondAttribute="leading" id="dqJ-xO-71i"/>
                             <constraint firstItem="al1-t9-Mom" firstAttribute="trailing" secondItem="c9c-CB-y1m" secondAttribute="trailing" id="k9A-2A-1vR"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="c9c-CB-y1m"/>
                     </view>
                     <connections>
                         <outlet property="buttonContainer" destination="al1-t9-Mom" id="RHy-vz-ucO"/>
@@ -998,11 +987,11 @@ visit g.co/justaline]</string>
             <objects>
                 <viewController modalTransitionStyle="crossDissolve" id="ZGc-sl-Die" customClass="PairingChooser" customModule="JustALine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hVL-x6-ByS">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="752"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2O-cS-hzd">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                            <button opaque="NO" alpha="0.5" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2O-cS-hzd">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="752"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <bool key="isElement" value="NO"/>
@@ -1012,12 +1001,12 @@ visit g.co/justaline]</string>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PLS-Ej-o9d">
-                                <rect key="frame" x="0.0" y="559" width="375" height="219"/>
+                                <rect key="frame" x="0.0" y="533" width="375" height="219"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q8a-bu-fMc">
                                         <rect key="frame" x="8" y="25" width="359" height="80"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yhz-TE-Th6">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yhz-TE-Th6">
                                                 <rect key="frame" x="8" y="8" width="343" height="64"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="64" id="m0p-cv-hwT"/>
@@ -1050,7 +1039,7 @@ visit g.co/justaline]</string>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5IR-9a-ZRD">
                                         <rect key="frame" x="8" y="113" width="359" height="80"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oZr-Pn-avI">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oZr-Pn-avI">
                                                 <rect key="frame" x="8" y="8" width="343" height="64"/>
                                                 <state key="normal" title="Cancel">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1088,6 +1077,7 @@ visit g.co/justaline]</string>
                                 </constraints>
                             </view>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="JxK-9R-lqb"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="j2O-cS-hzd" firstAttribute="trailing" secondItem="hVL-x6-ByS" secondAttribute="trailing" id="90T-L9-ZxE"/>
@@ -1098,7 +1088,6 @@ visit g.co/justaline]</string>
                             <constraint firstItem="j2O-cS-hzd" firstAttribute="leading" secondItem="hVL-x6-ByS" secondAttribute="leading" id="qkX-lW-7ZJ"/>
                             <constraint firstItem="PLS-Ej-o9d" firstAttribute="leading" secondItem="JxK-9R-lqb" secondAttribute="leading" id="qrM-up-iPs"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="JxK-9R-lqb"/>
                     </view>
                     <connections>
                         <outlet property="buttonContainer" destination="PLS-Ej-o9d" id="QX5-bl-FhB"/>
@@ -1113,17 +1102,23 @@ visit g.co/justaline]</string>
         </scene>
     </scenes>
     <resources>
-        <image name="arrow_icon_size" width="23" height="22"/>
+        <image name="arrow_icon_size" width="23.666666030883789" height="22.333333969116211"/>
         <image name="brushLarge" width="24" height="24"/>
         <image name="brushMedium" width="24" height="24"/>
         <image name="brushSmall" width="24" height="24"/>
-        <image name="ic_close" width="21" height="21"/>
+        <image name="ic_close" width="21.333333969116211" height="21.333333969116211"/>
         <image name="ic_record_bg" width="300" height="300"/>
         <image name="just_a_line_about_icon" width="801" height="614"/>
         <image name="just_a_line_tracking_icon" width="116" height="68"/>
-        <image name="overflow_white" width="20" height="22"/>
+        <image name="overflow_white" width="20" height="22.333333969116211"/>
         <image name="partner_icon_default" width="42" height="36"/>
         <image name="trash_white" width="42" height="36"/>
         <image name="undo_white" width="42" height="36"/>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="underPageBackgroundColor">
+            <color red="0.70980392156862748" green="0.71764705882352942" blue="0.74117647058823533" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>

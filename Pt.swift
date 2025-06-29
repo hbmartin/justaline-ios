@@ -22,15 +22,17 @@
 
 import SceneKit
 
+// swiftlint:disable:next required_deinit type_name attributes
 @objc class Pt: NSObject, NSCopying {
     var sessionCoord = SCNVector3Zero
-    
+
     convenience init (sessionCoord: SCNVector3) {
         self.init()
-        
+
         self.sessionCoord = sessionCoord
     }
-    
+
+    // swiftlint:disable:next unused_parameter
     func copy(with zone: NSZone? = nil) -> Any {
         var vector = SCNVector3Make(sessionCoord.x, sessionCoord.y, sessionCoord.z)
         return Pt(sessionCoord: vector)

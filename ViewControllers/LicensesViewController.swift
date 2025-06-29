@@ -15,17 +15,19 @@
 import UIKit
 import WebKit
 
+// swiftlint:disable:next required_deinit
 class LicensesViewController: UIViewController, WKNavigationDelegate {
 
-    @IBOutlet weak var webView: WKWebView!
     var homeUrl: URL?
-    
+    @IBOutlet private weak var webView: WKWebView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         if let path = Bundle.main.path(forResource: "thirdPartyLicenses.html", ofType: "") {
             homeUrl = URL(fileURLWithPath: path)
+            // swiftlint:disable:next force_unwrapping
             webView.loadFileURL(homeUrl!, allowingReadAccessTo: homeUrl!)
             webView.navigationDelegate = self
         }
@@ -35,7 +37,7 @@ class LicensesViewController: UIViewController, WKNavigationDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let url = navigationAction.request.url, url != homeUrl {
             decisionHandler(.cancel)

@@ -16,6 +16,7 @@
 		24505FAA2E0347D300265EB5 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 24505FA82E0347D300265EB5 /* Reachability.m */; };
 		24505FAC2E03480800265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
 		24505FAD2E03481100265EB5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24505FAB2E03480800265EB5 /* SystemConfiguration.framework */; };
+		24BB20022E11CE09008F304E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7762063304D00DEC8D4 /* Assets.xcassets */; };
 		5D2E4A9B207D337E0060B725 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9A207D337E0060B725 /* Shaders.metal */; };
 		5D2E4A9D207D8C4F0060B725 /* OverflowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9C207D8C4F0060B725 /* OverflowViewController.swift */; };
 		5D2E4AA520813EB40060B725 /* InterfaceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D51F798206330C800DEC8D4 /* InterfaceViewController.swift */; };
@@ -458,6 +459,7 @@
 				5D886362208E419F0021C0B4 /* partner_found.json in Resources */,
 				5D886360208E419F0021C0B4 /* looking_partner.json in Resources */,
 				5D2E4ABD20813EB40060B725 /* UI.storyboard in Resources */,
+				24BB20022E11CE09008F304E /* Assets.xcassets in Resources */,
 				5D4DA7F02098BD5300CE110B /* stay_put.json in Resources */,
 				5D2E4ABE20813EB40060B725 /* Localizable.strings in Resources */,
 				5DA1143320A250B8009BE0A9 /* thirdPartyLicenses.html in Resources */,
@@ -530,9 +532,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -569,9 +575,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -630,9 +640,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine/Pods-JustALine-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -647,9 +661,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JustALine Global/Pods-JustALine Global-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
