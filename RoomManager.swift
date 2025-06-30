@@ -34,6 +34,8 @@ protocol RoomManagerDelegate {
     func leaveRoom()
 }
 
+let GLOBAL_ROOM_ROOT = "global_rooms"
+
 class RoomManager: StrokeUploaderDelegate {
     // MARK: Variables
     
@@ -57,7 +59,7 @@ class RoomManager: StrokeUploaderDelegate {
 
     private let ROOT_FIREBASE_ROOMS = "rooms"
     
-    var ROOT_GLOBAL_ROOM = "global_room_0"
+    var ROOT_GLOBAL_ROOM = GLOBAL_ROOM_ROOT + "global_room_0"
     
     private let DISPLAY_NAME_VALUE = "Just a Line"
 
@@ -109,6 +111,13 @@ class RoomManager: StrokeUploaderDelegate {
     private var pairing: Bool = false
     
     var isRetrying = false
+    
+    /// Current room data for sharing via Nearby Connections
+    var currentRoomData: RoomData? {
+        guard let roomKey = roomKey else { return nil }
+        let timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        return RoomData(code: roomKey, timestamp: timestamp)
+    }
 
 //    private var stroke
 
@@ -137,6 +146,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
     
     func updateGlobalRoomName(_ name: String) {
+        print("updateGlobalRoomName: \(name)")
         let rootRef = Database.database().reference()
         ROOT_GLOBAL_ROOM = name
         globalRoomRef = rootRef.child(ROOT_GLOBAL_ROOM)
@@ -147,6 +157,8 @@ class RoomManager: StrokeUploaderDelegate {
         if let currentUser = firebaseAuth?.currentUser {
             userUid = currentUser.uid
             print("firebaseLogin: user uid \(String(describing:userUid))")
+            // Notify that authentication is complete
+            NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
         } else {
             loginAnonymously();
         }
@@ -160,9 +172,65 @@ class RoomManager: StrokeUploaderDelegate {
                 if let currentUser = self.firebaseAuth?.currentUser {
                     self.userUid = currentUser.uid
                     print("loginAnonymously: user uid \(String(describing: self.userUid))")
+                    
+                    // Notify that authentication is complete
+                    NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
                 }
+            } else {
+                print("Firebase anonymous login failed: \(error?.localizedDescription ?? "Unknown error")")
+                // Retry authentication after a delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    print("Retrying Firebase authentication with loginAnonymously...")
+                    self.loginAnonymously()
+                }
+                // Notify that authentication failed
+                NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthFailed"), object: error)
             }
         })
+    }
+    
+    // MARK: - Firebase Status
+    
+    /// Check if Firebase is ready for operations
+    func isFirebaseReady() -> Bool {
+        print("userUid: \(String(describing: userUid)), roomsListRef: \(String(describing: roomsListRef))")
+        return app != nil && userUid != nil && roomsListRef != nil
+    }
+    
+    /// Wait for Firebase to be ready with completion handler
+    func waitForFirebaseReady(completion: @escaping () -> Void) {
+        if isFirebaseReady() {
+            completion()
+        } else {
+            // Use a different approach to avoid capture issues
+            var observer: NSObjectProtocol?
+            observer = NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("FirebaseAuthCompleted"),
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                if let obs = observer {
+                    NotificationCenter.default.removeObserver(obs)
+                }
+                if self?.isFirebaseReady() == true {
+                    completion()
+                } else {
+                    // If still not ready, retry after a short delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self?.waitForFirebaseReady(completion: completion)
+                    }
+                }
+            }
+            
+            // Also set up a timeout fallback
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                if let obs = observer {
+                    NotificationCenter.default.removeObserver(obs)
+                }
+                print("Firebase authentication timeout - proceeding anyway")
+                completion()
+            }
+        }
     }
     
     // MARK: - Room Flow
@@ -170,6 +238,15 @@ class RoomManager: StrokeUploaderDelegate {
     /// When pairing both users create a room
     func createRoom() {
         print("RoomManager:createRoom")
+        
+        // Check if Firebase is ready
+        guard isFirebaseReady() else {
+            print("RoomManager:createRoom: Firebase not ready, waiting for auth...")
+            waitForFirebaseReady {
+                self.createRoom()
+            }
+            return
+        }
         
         if let room = roomsListRef?.childByAutoId() {
             updateRoomReference(room)
@@ -188,6 +265,7 @@ class RoomManager: StrokeUploaderDelegate {
             let roomData = RoomData(code: roomString, timestamp: timestamp)
             self.delegate?.roomCreated(roomData)
         } else {
+            print("RoomManager:createRoom: Failed to create room - no room key")
             StateManager.updateState(.UNKNOWN_ERROR)
         }
 
@@ -229,14 +307,46 @@ class RoomManager: StrokeUploaderDelegate {
     
     func findGlobalRoom(_ withPairing: Bool = false) {
         guard let globalRoom = globalRoomRef else {
+            print("RoomManager:findGlobalRoom: No global room reference")
+            StateManager.updateState(.UNKNOWN_ERROR)
             return
         }
-        pairing = withPairing
         
-        globalRoom.observeSingleEvent(of: .value) { (snapshot) in
-            if let roomString = snapshot.value as? String {
-                self.joinRoom(roomKey: roomString)
+        guard isFirebaseReady() else {
+            print("RoomManager:findGlobalRoom: Firebase not ready, waiting for auth...")
+            waitForFirebaseReady {
+                self.findGlobalRoom(withPairing)
             }
+            return
+        }
+        
+        pairing = withPairing
+
+        print("globalRoom reference URL: \(globalRoom.url)")
+        globalRoom.observeSingleEvent(of: .value) { (snapshot) in
+          print("Reference path: \(snapshot.ref.url)")
+            if (!snapshot.exists()) {
+                let parts = globalRoom.url.split(separator: "/")
+                globalRoom.setValue(parts.last) { (error, ref) in
+                    if let error = error {
+                        print("Failed to setup global room: \(error.localizedDescription)")
+                    } else {
+                        print("Did setup global room: \(parts.last)")
+                        self.joinRoom(roomKey: String(parts.last!))
+                    }
+                }
+            } else {
+                if let optionalValue = snapshot.value, let roomString = optionalValue as? String {
+                    print("RoomManager:findGlobalRoom: Found global room: \(roomString)")
+                    self.joinRoom(roomKey: roomString)
+                } else {
+                    print("RoomManager:findGlobalRoom: No global room found")
+                    StateManager.updateState(.GLOBAL_NO_ANCHOR)
+                }
+            }
+        } withCancel: { (error) in
+            print("RoomManager:findGlobalRoom: Error finding global room: \(error.localizedDescription)")
+            StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
         }
     }
     
@@ -252,7 +362,11 @@ class RoomManager: StrokeUploaderDelegate {
     /// Adds user id to participants list, and begins watching for an anchor
     func joinRoom(roomKey: String) {
         print("RoomManager:joinRoom: Joining Room: \(roomKey)")
-        guard let _ = app, let _ = userUid else {
+        guard isFirebaseReady() else {
+            print("RoomManager:joinRoom: Firebase not ready, waiting for auth...")
+            waitForFirebaseReady {
+                self.joinRoom(roomKey: roomKey)
+            }
             return
         }
         
@@ -267,6 +381,8 @@ class RoomManager: StrokeUploaderDelegate {
                 self.observeAnchor()
             }
             #endif
+        } else {
+            print("Unable to find room: \(roomKey)")
         }
     }
     
@@ -460,22 +576,26 @@ class RoomManager: StrokeUploaderDelegate {
     // MARK: - Anchor Flow
     
     func observeAnchor() {
+        print("observeAnchor: \(String(describing: roomRef))")
         guard let room = roomRef else {
             return
         }
         let anchorUpdateRef = room.child(FBKey.val(.anchor))
+        print(String(describing: anchorUpdateRef))
         
         // Clear anchor before adding creation listener, except in global room when not pairing
         #if !JOIN_GLOBAL_ROOM
+        print("NOT JOINING GLOBAL ROOM")
         anchorUpdateRef.removeValue()
         #else
+        print("JOINING GLOBAL ROOM, pair: \(pairing)")
         if pairing == true {
-        anchorUpdateRef.removeValue()
+            anchorUpdateRef.removeValue()
         }
         #endif
-        
+        print("Observing Anchor Value Reference: \(anchorUpdateRef)")
         anchorValueHandle = anchorUpdateRef.observe(.value, with: { (dataSnapshot) in
-            print("Anchor Value Callback Reference: \(anchorUpdateRef)")
+            print("Anchor Value Data: \(dataSnapshot)")
 
             if let anchorValue = dataSnapshot.value as? [String: Any?] {
                 print("RoomManager:observeAnchor: FBAnchor object found")
@@ -528,6 +648,7 @@ class RoomManager: StrokeUploaderDelegate {
 //                    anchorUpdateRef.removeAllObservers()
                 }
             } else {
+                print("Failed to observe anchor")
                 #if JOIN_GLOBAL_ROOM
                 if (self.pairing == false) {
                     StateManager.updateState(.GLOBAL_NO_ANCHOR)
@@ -548,6 +669,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
     
     func setReadyToSetAnchor() {
+        print("setReadyToSetAnchor")
         guard let partnersRef = participantsRef, let uid = userUid else {
             return
         }
@@ -560,6 +682,7 @@ class RoomManager: StrokeUploaderDelegate {
     
     /// After resolving cloud anchor, set cloud identifier in Firebase for partner to discover
     func setAnchorId(_ identifier: String) {
+        print("setAnchorId: \(identifier)")
         guard let room = roomRef else {
             return
         }
@@ -637,6 +760,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
     
     private func addStroke(_ stroke: Stroke) {
+        print("RoomManager: addStroke \(String(describing: roomRef)) , \(String(describing: userUid))")
         guard let room = roomRef, let uid = userUid else {
             return
         }
@@ -657,6 +781,7 @@ class RoomManager: StrokeUploaderDelegate {
     
     // MARK: StrokeUploadManager Delegate methods
     func uploadStroke(_ stroke: Stroke, completion: @escaping ((Error?, DatabaseReference) -> Void)) {
+        print("RoomManager: uploadStroke")
         guard let fbStrokeRef = stroke.fbReference else {
             return
         }

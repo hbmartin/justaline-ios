@@ -203,10 +203,9 @@ class PairingManager: NSObject {
         guard let connectionManager = connectionManager else { return }
         
         let messageData = roomData.getMessageData()
-        let payload = Payload(data: messageData)
         
         do {
-            try connectionManager.send(payload, to: [endpointID])
+            try connectionManager.send(messageData, to: [endpointID])
         } catch {
             print("Failed to send room data: \(error)")
         }
@@ -442,11 +441,32 @@ extension PairingManager: DiscovererDelegate {
 }
 
 extension PairingManager: ConnectionManagerDelegate {
+    func connectionManager(_ connectionManager: NearbyConnections.ConnectionManager, didChangeTo state: NearbyConnections.ConnectionState, for endpointID: NearbyConnections.EndpointID) {
+        print("ConnectionManagerDelegate: didChangeTo: \(state), for: \(endpointID)")
+    }
+    
+    func connectionManager(_ connectionManager: NearbyConnections.ConnectionManager, didReceiveTransferUpdate update: NearbyConnections.TransferUpdate, from endpointID: NearbyConnections.EndpointID, forPayload payloadID: NearbyConnections.PayloadID) {
+        print("ConnectionManagerDelegate: didReceiveTransferUpdate: \(update), for: \(endpointID)")
+
+    }
+    
+    func connectionManager(_ connectionManager: NearbyConnections.ConnectionManager, didStartReceivingResourceWithID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID, at localURL: URL, withName name: String, cancellationToken token: NearbyConnections.CancellationToken) {
+        print("ConnectionManagerDelegate: didStartReceivingResourceWithID: \(payloadID), for: \(endpointID)")
+    }
+    
+    func connectionManager(_ connectionManager: NearbyConnections.ConnectionManager, didReceive stream: InputStream, withID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID, cancellationToken token: NearbyConnections.CancellationToken) {
+        print("ConnectionManagerDelegate: didReceive stream: \(payloadID), for: \(endpointID)")
+    }
+    
+    func connectionManager(_ connectionManager: NearbyConnections.ConnectionManager, didReceive data: Data, withID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID) {
+        print("dConnectionManagerDelegate: idReceive data: \(payloadID), for: \(endpointID)")
+    }
+    
     func connectionManager(_ connectionManager: ConnectionManager, 
                           didReceive verificationCode: String, 
                           from endpointID: String, 
                           verificationHandler: @escaping (Bool) -> Void) {
-        print("Received verification code: \(verificationCode) from: \(endpointID)")
+        print("ConnectionManagerDelegate: Received verification code: \(verificationCode) from: \(endpointID)")
         
         // Auto-accept verification for simplicity
         // In a production app, you might want to show this code to the user
@@ -455,7 +475,7 @@ extension PairingManager: ConnectionManagerDelegate {
     
     func connectionManager(_ connectionManager: ConnectionManager, 
                           didConnect endpointID: String) {
-        print("Connected to endpoint: \(endpointID)")
+        print("ConnectionManagerDelegate: Connected to endpoint: \(endpointID)")
         
         connectedEndpoints.insert(endpointID)
         pendingConnections.remove(endpointID)
@@ -475,7 +495,7 @@ extension PairingManager: ConnectionManagerDelegate {
     
     func connectionManager(_ connectionManager: ConnectionManager, 
                           didDisconnectFrom endpointID: String) {
-        print("Disconnected from endpoint: \(endpointID)")
+        print("ConnectionManagerDelegate: Disconnected from endpoint: \(endpointID)")
         
         connectedEndpoints.remove(endpointID)
         pendingConnections.remove(endpointID)
@@ -486,20 +506,18 @@ extension PairingManager: ConnectionManagerDelegate {
     }
     
     func connectionManager(_ connectionManager: ConnectionManager, 
-                          didReceive payload: Payload, 
+                          didReceive data: Data, 
                           from endpointID: String) {
-        print("Received payload from: \(endpointID)")
+        print("ConnectionManagerDelegate: Received data from: \(endpointID)")
         
         // Handle received room data
-        if let data = payload.data {
-            handleReceivedRoomData(data)
-        }
+        handleReceivedRoomData(data)
     }
     
     func connectionManager(_ connectionManager: ConnectionManager, 
                           didFailToConnect endpointID: String, 
                           withError error: Error) {
-        print("Failed to connect to \(endpointID): \(error)")
+        print("ConnectionManagerDelegate: Failed to connect to \(endpointID): \(error)")
         
         pendingConnections.remove(endpointID)
     }
