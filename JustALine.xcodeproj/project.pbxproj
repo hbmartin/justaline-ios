@@ -20,6 +20,12 @@
 		249033192E11E08600AE9FED /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033172E11E08300AE9FED /* Payload.swift */; };
 		2490331B2E11E10600AE9FED /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331A2E11E10200AE9FED /* Config.swift */; };
 		2490331C2E11E10600AE9FED /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331A2E11E10200AE9FED /* Config.swift */; };
+		2490331E2E14537F00AE9FED /* ViewController+RPScreenRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331D2E14537900AE9FED /* ViewController+RPScreenRecorderDelegate.swift */; };
+		2490331F2E14537F00AE9FED /* ViewController+RPScreenRecorderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2490331D2E14537900AE9FED /* ViewController+RPScreenRecorderDelegate.swift */; };
+		249033212E14554000AE9FED /* ViewController+PairingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033202E14553C00AE9FED /* ViewController+PairingManagerDelegate.swift */; };
+		249033222E14554000AE9FED /* ViewController+PairingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033202E14553C00AE9FED /* ViewController+PairingManagerDelegate.swift */; };
+		249033242E14555C00AE9FED /* ViewController+StateManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033232E14555900AE9FED /* ViewController+StateManagerDelegate.swift */; };
+		249033252E14555C00AE9FED /* ViewController+StateManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249033232E14555900AE9FED /* ViewController+StateManagerDelegate.swift */; };
 		24BB20022E11CE09008F304E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D51F7762063304D00DEC8D4 /* Assets.xcassets */; };
 		5D2E4A9B207D337E0060B725 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9A207D337E0060B725 /* Shaders.metal */; };
 		5D2E4A9D207D8C4F0060B725 /* OverflowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E4A9C207D8C4F0060B725 /* OverflowViewController.swift */; };
@@ -116,6 +122,9 @@
 		24505FAB2E03480800265EB5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		249033172E11E08300AE9FED /* Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payload.swift; sourceTree = "<group>"; };
 		2490331A2E11E10200AE9FED /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		2490331D2E14537900AE9FED /* ViewController+RPScreenRecorderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+RPScreenRecorderDelegate.swift"; sourceTree = "<group>"; };
+		249033202E14553C00AE9FED /* ViewController+PairingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+PairingManagerDelegate.swift"; sourceTree = "<group>"; };
+		249033232E14555900AE9FED /* ViewController+StateManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+StateManagerDelegate.swift"; sourceTree = "<group>"; };
 		48BC9F5CA376BD5ABEFFF4AE /* Pods_JustALine_Global.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine_Global.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		566B75E0E566A9EFCF78CDD1 /* Pods-JustALine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JustALine.release.xcconfig"; path = "Target Support Files/Pods-JustALine/Pods-JustALine.release.xcconfig"; sourceTree = "<group>"; };
 		56E46A082CA40C915F6D586E /* Pods_JustALine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JustALine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -309,6 +318,9 @@
 		5DEF751420867A0A00D1B95B /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				249033232E14555900AE9FED /* ViewController+StateManagerDelegate.swift */,
+				249033202E14553C00AE9FED /* ViewController+PairingManagerDelegate.swift */,
+				2490331D2E14537900AE9FED /* ViewController+RPScreenRecorderDelegate.swift */,
 				5D51F7712063304D00DEC8D4 /* ViewController.swift */,
 				5D51F798206330C800DEC8D4 /* InterfaceViewController.swift */,
 				5D51F79C206330C900DEC8D4 /* ViewController+ARSceneViewDelegate.swift */,
@@ -703,7 +715,10 @@
 				5D2E4AAA20813EB40060B725 /* OverflowViewController.swift in Sources */,
 				5D2E4AAB20813EB40060B725 /* Stroke.swift in Sources */,
 				5D2E4AAC20813EB40060B725 /* ViewController+InterfaceViewControllerDelegate.swift in Sources */,
+				249033252E14555C00AE9FED /* ViewController+StateManagerDelegate.swift in Sources */,
 				5D2E4AAD20813EB40060B725 /* AppDelegate.swift in Sources */,
+				2490331E2E14537F00AE9FED /* ViewController+RPScreenRecorderDelegate.swift in Sources */,
+				249033222E14554000AE9FED /* ViewController+PairingManagerDelegate.swift in Sources */,
 				5D2E4AAE20813EB40060B725 /* RoomData.swift in Sources */,
 				5D886356208A9F970021C0B4 /* FBModel.swift in Sources */,
 				2490331C2E11E10600AE9FED /* Config.swift in Sources */,
@@ -740,7 +755,10 @@
 				5D51F7A5206330C900DEC8D4 /* Stroke.swift in Sources */,
 				5D51F7A4206330C900DEC8D4 /* ViewController+InterfaceViewControllerDelegate.swift in Sources */,
 				5D51F76E2063304D00DEC8D4 /* AppDelegate.swift in Sources */,
+				249033242E14555C00AE9FED /* ViewController+StateManagerDelegate.swift in Sources */,
 				5D3E4137207553A500E63743 /* RoomData.swift in Sources */,
+				2490331F2E14537F00AE9FED /* ViewController+RPScreenRecorderDelegate.swift in Sources */,
+				249033212E14554000AE9FED /* ViewController+PairingManagerDelegate.swift in Sources */,
 				5D6BC2C520867BC5002AD8F1 /* FBParticipant.swift in Sources */,
 				5D51F7A2206330C900DEC8D4 /* LineGeometry.swift in Sources */,
 				2490331B2E11E10600AE9FED /* Config.swift in Sources */,

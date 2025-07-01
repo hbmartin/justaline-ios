@@ -19,7 +19,7 @@ class RoomData {
 
     var timestamp: Int64 = 0
 
-    private var messageData: Data!
+    private var messageData: Data! // swiftlint:disable:this implicitly_unwrapped_optional
 
     convenience init(code: String, timestamp: Int64) {
         let messageString = String("\(code),\(timestamp)")
@@ -40,7 +40,7 @@ class RoomData {
             // Missing error state handling which got complicated
             if parts.count == 2 {
                 code = String(parts[0])
-                timestamp = Int64(parts[1])!
+                timestamp = Int64(parts[1])! // swiftlint:disable:this force_unwrapping
             }
         }
     }

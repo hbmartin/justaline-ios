@@ -13,11 +13,10 @@
 // limitations under the License.
 
 import ARCoreCloudAnchors
-import UIKit
-import SceneKit
 import ARKit
 import ReplayKit
-import FirebaseAnalytics
+import SceneKit
+import UIKit
 
 enum ViewMode {
     case DRAW
@@ -26,9 +25,6 @@ enum ViewMode {
 }
 
 class ViewController: UIViewController {
-    // MARK: Variables
-    @IBOutlet var sceneView: ARSCNView!
-
     /// store current touch location in view
     var touchPoint: CGPoint = .zero
 
@@ -36,7 +32,7 @@ class ViewController: UIViewController {
     var hitNode: SCNNode?
 
     /// array of strokes a user has drawn in current session
-    var strokes: [Stroke] = [Stroke]()
+    var strokes = [Stroke]()
 
     /// array of strokes a user has drawn in current session
     var partnerStrokes: [String: Stroke] = [String: Stroke]()
@@ -71,7 +67,7 @@ class ViewController: UIViewController {
                 // make sure we are not coming out of tracking, and that we are in a paired state
                 if modeBeforeTracking != .DRAW, let isPaired = pairingManager?.isPairingOrPaired, isPaired == true {
                     uiViewController?.showDrawingPrompt(isPaired: true)
-                } else if strokes.count > 0 {
+                } else if !strokes.isEmpty {
                     uiViewController?.hideDrawingPrompt()
                 } else {
                     uiViewController?.showDrawingPrompt()
@@ -152,6 +148,11 @@ class ViewController: UIViewController {
     /// temporary bool for toggling recording state
     var isRecording: Bool = false
 
+    private var appDidBecomeActiveObserver: NSObjectProtocol?
+
+    // swiftlint:disable:next private_outlet
+    @IBOutlet internal var sceneView: ARSCNView!
+
     // MARK: - View State
 
     override func viewDidLoad() {
@@ -174,14 +175,20 @@ class ViewController: UIViewController {
         sceneView.scene = scene
 
         hitNode = SCNNode()
+        // swiftlint:disable:next force_unwrapping
         hitNode!.position = SCNVector3Make(0, 0, -0.17)
+        // swiftlint:disable:next force_unwrapping
         sceneView.pointOfView?.addChildNode(hitNode!)
 
         setupUI()
         screenRecorder = RPScreenRecorder.shared()
         screenRecorder?.isMicrophoneEnabled = true
 
-        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
+        appDidBecomeActiveObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: nil
+        ) { _ in
             self.touchPoint = .zero
         }
     }
@@ -266,7 +273,7 @@ class ViewController: UIViewController {
 
     /// Places anchor on hitNode plane at point
     func makeAnchor(at point: CGPoint) -> ARAnchor? {
-        guard let hitNode = hitNode else {
+        guard let hitNode else {
             return nil
         }
         let projectedOrigin = sceneView.projectPoint(hitNode.worldPosition)
@@ -283,7 +290,7 @@ class ViewController: UIViewController {
 
     /// Updates stroke with new SCNVector3 point, and regenerates line geometry
     func updateLine(for stroke: Stroke) {
-        guard let _ = stroke.points.last, let strokeNode = stroke.node else {
+        guard stroke.points.last != nil, let strokeNode = stroke.node else {
             return
         }
         let offset = unprojectedPosition(for: stroke, at: touchPoint)
@@ -304,11 +311,13 @@ class ViewController: UIViewController {
             let width = stroke.mLineWidth
             let lengths = stroke.mLength
             let totalLength = (stroke.drawnLocally) ? stroke.totalLength : stroke.animatedLength
-            let line = LineGeometry(vectors: vectors,
-                                    sides: sides,
-                                    width: width,
-                                    lengths: lengths,
-                                    endCapPosition: totalLength)
+            let line = LineGeometry(
+                vectors: vectors,
+                sides: sides,
+                width: width,
+                lengths: lengths,
+                endCapPosition: totalLength
+            )
 
             stroke.node?.geometry = line
             uiViewController?.hasDrawnInSession = true
@@ -323,9 +332,8 @@ class ViewController: UIViewController {
         }
 
         let projectedOrigin = sceneView.projectPoint(hitNode.worldPosition)
-        let offset = sceneView.unprojectPoint(SCNVector3Make(Float(touch.x), Float(touch.y), projectedOrigin.z))
-
-        return offset
+        // Offset
+        return sceneView.unprojectPoint(SCNVector3Make(Float(touch.x), Float(touch.y), projectedOrigin.z))
     }
 
     /// Checks user's strokes for match, then partner's strokes
@@ -334,11 +342,9 @@ class ViewController: UIViewController {
             return stroke.anchor == anchor
         }
 
-        if matchStrokeArray.count == 0 {
-            for (_, stroke) in partnerStrokes {
-                if stroke.anchor == anchor {
-                    matchStrokeArray.append(stroke)
-                }
+        if matchStrokeArray.isEmpty {
+            for (_, stroke) in partnerStrokes where stroke.anchor == anchor {
+                matchStrokeArray.append(stroke)
             }
         }
 
@@ -351,11 +357,9 @@ class ViewController: UIViewController {
             return stroke.node == node
         }
 
-        if matchStrokeArray.count == 0 {
-            for (_, stroke) in partnerStrokes {
-                if stroke.node == node {
-                    matchStrokeArray.append(stroke)
-                }
+        if matchStrokeArray.isEmpty {
+            for (_, stroke) in partnerStrokes where stroke.node == node {
+                matchStrokeArray.append(stroke)
             }
         }
 
@@ -370,207 +374,11 @@ class ViewController: UIViewController {
             partnerStroke.node?.isHidden = isHidden
         }
     }
-}
 
-// MARK: - Extensions
-
-// MARK: PairingManagerDelegate
-extension ViewController: PairingManagerDelegate {
-    func cloudAnchorResolved(_ anchor: GARAnchor) {
-        print("World Origin Updated")
-        shouldRetryAnchorResolve = false
-        if !isTracking() {
-            exitTrackingState()
-        }
-        sceneView.session.setWorldOrigin(relativeTransform: anchor.transform)
-    }
-
-    func createAnchor() {
-        if let anchor = makeAnchor(at: view.center) {
-            sharedAnchor = anchor
-            pairingManager?.setAnchor(anchor)
-
-            mode = .PAIR
-        } else {
-            print("ViewController:createAnchor: There was a problem creating a shared anchor")
-        }
-    }
-
-    func anchorWasReset() {
-        uiViewController?.updatePairButtonState(.unpaired)
-        let alert = UIAlertController(title: NSLocalizedString("drawing_session_ended_title", comment: "Session Reset"), message: NSLocalizedString("drawing_session_ended_message", comment: "The drawing session has been reset"), preferredStyle: .alert)
-
-        let okAction = UIAlertAction(title: NSLocalizedString("ok", comment: "OK"), style: .default) { _ in
-            alert.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(okAction)
-        uiViewController?.present(alert, animated: true, completion: nil)
-    }
-
-    func localStrokeRemoved(_ stroke: Stroke) {
-        if let localAnchor = stroke.anchor {
-            sceneView.session.remove(anchor: localAnchor)
-            print("Local stroke removed: \(String(describing: stroke))")
-        }
-    }
-
-    func addPartnerStroke(_ stroke: Stroke, key: String) {
-        // coordinate system for ARKit is relative to anchor
-        stroke.prepareLine()
-        partnerStrokes[key] = stroke
-        print("Partner stroke added: \(stroke)")
-
-        sceneView.session.add(anchor: stroke.anchor!)
-    }
-
-    func partnerStrokeUpdated(_ stroke: Stroke, id key: String) {
-        if partnerStrokes[key] == nil {
-            addPartnerStroke(stroke, key: key)
-        } else {
-            partnerStrokes[key]?.points = stroke.points
-            partnerStrokes[key]?.prepareLine()
-        }
-    }
-
-    func partnerJoined(isHost _: Bool) {
-        uiViewController?.updatePairButtonState(.connected)
-    }
-
-    func partnerLost() {
-        uiViewController?.updatePairButtonState(.lost)
-    }
-
-    func partnerStrokeRemoved(id key: String) {
-        if let partnerAnchor = partnerStrokes[key]?.anchor {
-            sceneView.session.remove(anchor: partnerAnchor)
-            print("Partner stroke removed: \(String(describing: partnerStrokes[key]))")
-        }
-    }
-
-    func isTracking() -> Bool {
-        return mode == .TRACKING
-    }
-}
-
-// MARK: - StateManagerDelegate
-extension ViewController: StateManagerDelegate {
-    func stateChangeCompleted(_: State) {
-        if shouldShowTrackingIndicator() {
-            enterTrackingState()
-        } else {
-            exitTrackingState()
-        }
-    }
-
-    func attemptPartnerDiscovery() {
-        #if JOIN_GLOBAL_ROOM
-        pairingManager?.beginGlobalSession(true)
-        #else
-        pairingManager?.beginPairing()
-        #endif
-    }
-
-    func anchorDrawingTryAgain() {
-//        mode = .DRAW_ANCHOR
-    }
-
-    func pairingFinished() {
-        uiViewController?.pairButton.accessibilityLabel = NSLocalizedString("content_description_disconnect", comment: "Disconnect")
-
-        mode = .DRAW
-        uiViewController?.updatePairButtonState(.connected)
-    }
-
-    func pairCancelled() {
-        // reset pairing button accessibility to original state
-        uiViewController?.configureAccessibility()
-
-        pairingManager?.cancelPairing()
-
-        shouldRetryAnchorResolve = false
-        if shouldShowTrackingIndicator() {
-            // when cancelling pairing while tracking, we need to act like we came from .DRAW mode, not .PAIR mode
-            modeBeforeTracking = .DRAW
-            uiViewController?.messagesContainerView.isHidden = true
-            uiViewController?.drawingUIHidden(false)
-            mode = .TRACKING
-        } else {
-            mode = .DRAW
-        }
-        uiViewController?.updatePairButtonState(.unpaired)
-    }
-
-    func retryResolvingAnchor() {
-        if shouldRetryAnchorResolve {
-            pairingManager?.retryResolvingAnchor()
-        }
-    }
-
-    func onReadyToSetAnchor() {
-        pairingManager?.setReadyToSetAnchor()
-        Analytics.logEvent(AnalyticsKey.val(.tapped_ready_to_set_anchor), parameters: nil)
-    }
-
-    func offlineDetected() {
-        if mode != .PAIR {
-            self.pairCancelled()
-            self.clearAllStrokes()
-            let alert = UIAlertController(title: NSLocalizedString("pair_no_data_connection_title", comment: "No Connection"), message: NSLocalizedString("pair_no_data_connection", comment: "Looks like it\' pen and paper"), preferredStyle: .alert)
-
-            let okAction = UIAlertAction(title: NSLocalizedString("ok", comment: "OK"), style: .default) { _ in
-                alert.dismiss(animated: true, completion: nil)
-            }
-            alert.addAction(okAction)
-            self.uiViewController?.present(alert, animated: true, completion: nil)
-        }
-    }
-}
-
-// MARK: ReplayKit Preview Extension for status bar
-
-/*extension RPPreviewViewController {
- open override var childViewControllerForStatusBarHidden: UIViewController? {
- return nil
- }
- 
- open override var prefersStatusBarHidden: Bool {
- return true
- }
- }*/
-
-// MARK: - ReplayKit Preview Delegate
-extension ViewController: RPPreviewViewControllerDelegate {
-    func previewController(_ previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
-        if activityTypes.contains(UIActivity.ActivityType.saveToCameraRoll.rawValue) {
-            Analytics.logEvent(AnalyticsKey.val(.tapped_save), parameters: nil)
-        } else if activityTypes.contains(UIActivity.ActivityType.postToVimeo.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToFlickr.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToWeibo.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToTwitter.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToFacebook.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.mail.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.message.rawValue) {
-            Analytics.logEvent(AnalyticsKey.val(.tapped_share_recording), parameters: nil)
-        }
-
-        uiViewController?.progressCircle.reset()
-        uiViewController?.recordBackgroundView.alpha = 0
-
-        previewController.dismiss(animated: true) {
-            self.uiWindow?.isHidden = false
-        }
-    }
-}
-
-// MARK: - RPScreenRecorderDelegate
-extension ViewController: RPScreenRecorderDelegate {
-    func screenRecorderDidChangeAvailability(_ screenRecorder: RPScreenRecorder) {
-        if screenRecorder.isAvailable == false {
-            let alert = UIAlertController.init(title: "Screen Recording Failed", message: "Screen Recorder is no longer available.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { _ in
-                self.dismiss(animated: true, completion: nil)
-            }))
-            self.present(self, animated: true, completion: nil)
+    deinit {
+        // Remove the observer
+        if let observer = appDidBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
         }
     }
 }

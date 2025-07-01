@@ -28,6 +28,8 @@ disabled_rules:
   - implicit_return
   - indentation_width
   - fallthrough
+  - no_fallthrough_only
+  - object_literal
 
 opt_in_rules:
   - all

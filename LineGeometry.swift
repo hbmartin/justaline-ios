@@ -68,7 +68,6 @@ class LineGeometry: SCNGeometry {
         program = lineProgram
         program?.isOpaque = false
 
-        // swiftlint:disable:next object_literal
         if let endCapImage = UIImage(named: "linecap") {
             let endCapTexture = SCNMaterialProperty(contents: endCapImage)
             self.setValue(endCapTexture, forKey: "endCapTexture")

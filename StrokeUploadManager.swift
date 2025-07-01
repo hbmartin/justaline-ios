@@ -15,12 +15,12 @@
 import FirebaseDatabase
 import Foundation
 
-struct StrokeUpdate: AnyObject {
+struct StrokeUpdate {
     var stroke: Stroke
     var shouldRemove: Bool
 }
 
-protocol StrokeUploaderDelegate {
+protocol StrokeUploaderDelegate: AnyObject {
     func removeStroke(_ stroke: Stroke)
     func uploadStroke(_ stroke: Stroke, completion: @escaping ((Error?, DatabaseReference) -> Void))
 }

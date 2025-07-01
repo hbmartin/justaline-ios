@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import FirebaseAnalytics
 import Foundation
 import Lottie
-import FirebaseAnalytics
 
 // swiftlint:disable:next legacy_objc_type
 extension NSNotification.Name {
@@ -62,36 +62,36 @@ protocol StateManagerDelegate {
 /// In the meantime, AppDelegate stores changes, and static StateManager method publishes
 class StateManager: UIViewController {
     /// When using an image instead of an animation
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet private var imageView: UIImageView!
 
     /// Holds Lottie view, managing constraints
-    @IBOutlet weak var animationContainer: UIView!
-    @IBOutlet weak var animationWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var animationHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private var animationContainer: UIView!
+    @IBOutlet private var animationWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private var animationHeightConstraint: NSLayoutConstraint!
 
     /// Lottie animation view
     var animationView: LottieAnimationView?
 
     /// Primary message for pairing
-    @IBOutlet weak var centerMessageLabel: UILabel!
+    @IBOutlet var centerMessageLabel: UILabel! // swiftlint:disable:this private_outlet
 
     /// Smaller additional line for detail
-    @IBOutlet weak var secondaryMessageLabel: UILabel!
+    @IBOutlet private var secondaryMessageLabel: UILabel!
 
     /// Modal background, also container for rest of interface
-    @IBOutlet weak var fullBackground: UIView!
+    @IBOutlet var fullBackground: UIView! // swiftlint:disable:this private_outlet
 
     /// Try again button for failed pairing
-    @IBOutlet weak var tryAgainButton: UIButton!
+    @IBOutlet private var tryAgainButton: UIButton!
 
     /// Progress Bar
-    @IBOutlet weak var progressView: UIProgressView!
+    @IBOutlet private var progressView: UIProgressView!
 
     /// Ready button
-    @IBOutlet weak var readyButton: UIButton!
+    @IBOutlet private var readyButton: UIButton!
 
     /// Cancel button
-    @IBOutlet weak var closeButton: UIButton!
+    @IBOutlet private var closeButton: UIButton!
 
     /// Constant for time delay between automatic sequential states
     let SEQUENTIAL_STATE_DELAY: Double = 2.0
@@ -117,25 +117,7 @@ class StateManager: UIViewController {
 
     /// determines when to allow tracking state to override pairing state
     static func shouldShowTracking(for pairState: State) -> Bool {
-        var shouldShow = true
-        switch pairState {
-        case .NO_STATE: fallthrough
-        case .LOOKING: fallthrough
-        case .HOST_CONNECTED: fallthrough
-        case .PARTNER_CONNECTED: fallthrough
-        case .UNKNOWN_ERROR: fallthrough
-        case .HOST_ANCHOR_ERROR: fallthrough
-        case .PARTNER_RESOLVE_ERROR: fallthrough
-        case .HOST_RESOLVE_ERROR: fallthrough
-        case .GLOBAL_RESOLVE_ERROR: fallthrough
-        case .SYNCED:
-            shouldShow = false
-
-        default:
-            break
-        }
-
-        return shouldShow
+        return pairState == .SYNCED
     }
 
     override func viewDidLoad() {
@@ -155,7 +137,8 @@ class StateManager: UIViewController {
         closeButton.accessibilityLabel = NSLocalizedString("menu_close", comment: "Close")
     }
 
-    @objc func stateNotification(notification: Notification) {
+    @objc
+    func stateNotification(notification: Notification) {
         if let userInfo = notification.userInfo, let state = userInfo["state"] as? State {
             DispatchQueue.main.async {
                 self.setState(state)
@@ -189,7 +172,7 @@ class StateManager: UIViewController {
         }
     }
 
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func setState(_ newState: State) {
         print("StateManager: setState - Setting state to \(newState.rawValue)")
         if newState == .NO_STATE {
@@ -197,6 +180,7 @@ class StateManager: UIViewController {
         } else {
             self.state = newState
         }
+        // swiftlint:disable:next force_cast
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.pairingState = self.state
 
@@ -255,7 +239,10 @@ class StateManager: UIViewController {
                 image = UIImage(named: "jal_ui_illustrations_sync")
 
             case .HOST_ANCHOR_ERROR:
-                message = NSLocalizedString("pair_anchor_error", comment: "Something went wrong syncronizing with your partner. Try again, drawing in a new area.")
+                message = NSLocalizedString(
+                    "pair_anchor_error",
+                    comment: "Something went wrong syncronizing with your partner. Try again, drawing in a new area."
+                )
                 showTryAgain = true
 
             case .HOST_CONNECTING: fallthrough
@@ -357,6 +344,7 @@ class StateManager: UIViewController {
                     self.progressTimer = nil
                 }
             })
+            // swiftlint:disable:next force_unwrapping
             RunLoop.main.add(progressTimer!, forMode: RunLoop.Mode.default)
         }
 
@@ -396,6 +384,7 @@ class StateManager: UIViewController {
         animationView?.frame = CGRect(origin: .zero, size: CGSize(width: animationWidthConstraint.constant, height: animationHeightConstraint.constant))
         animationView?.loopMode = loopAnimation
         animationView?.contentMode = .scaleAspectFit
+        // swiftlint:disable:next force_unwrapping
         animationContainer.addSubview(animationView!)
 
         if name == "stay_put" {
@@ -424,7 +413,7 @@ class StateManager: UIViewController {
 
     // MARK: - Button Methods
 
-    @IBAction func anchorDoneTapped(_: UIButton) {
+    @IBAction private func anchorDoneTapped(_: UIButton) {
         guard let state = self.state else {
             return
         }
@@ -436,7 +425,7 @@ class StateManager: UIViewController {
         readyButton?.isHidden = true
     }
 
-    @IBAction func closeTapped(_: UIButton) {
+    @IBAction private func closeTapped(_: UIButton) {
         if state == .SYNCED || state == .FINISHED {
             delegate?.stateChangeCompleted(.SYNCED)
             return
@@ -445,7 +434,7 @@ class StateManager: UIViewController {
         Analytics.logEvent(AnalyticsKey.val(.tapped_exit_pair_flow), parameters: nil)
     }
 
-    @IBAction func tryAgainTapped(_ sender: UIButton) {
+    @IBAction private func tryAgainTapped(_ sender: UIButton) {
         guard let state = self.state else {
             return
         }
@@ -456,13 +445,13 @@ class StateManager: UIViewController {
 
             case .HOST_ANCHOR_ERROR: fallthrough
             case .HOST_RESOLVE_ERROR:
-                StateManager.updateState(.HOST_SET_ANCHOR)
+                Self.updateState(.HOST_SET_ANCHOR)
 
             case .PARTNER_RESOLVE_ERROR:
-                StateManager.updateState(.PARTNER_SET_ANCHOR)
+                Self.updateState(.PARTNER_SET_ANCHOR)
 
             case .GLOBAL_RESOLVE_ERROR:
-                StateManager.updateState(.GLOBAL_CONNECTING)
+                Self.updateState(.GLOBAL_CONNECTING)
                 delegate?.retryResolvingAnchor()
 
             // try again button is used as an ok button on connection lost

@@ -25,7 +25,6 @@ class AboutViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // swiftlint:disable:next object_literal
         let closeButton = UIBarButtonItem(image: UIImage(named: "ic_close"), style: .plain, target: self, action: #selector(closeTapped))
         closeButton.accessibilityLabel = NSLocalizedString("menu_close", comment: "Close")
 
@@ -39,11 +38,6 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         let versionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
         let buildString = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as! String
         buildLabel.text = "\(versionString)(\(buildString))"
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     @IBAction private func buttonTapped(_ sender: UIButton) {
