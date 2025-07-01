@@ -26,6 +26,8 @@ protocol StrokeUploaderDelegate: AnyObject {
 }
 
 class StrokeUploadManager {
+    // MARK: Properties
+
     var uploadingStrokeKeys: [String]
 
     var queuedUpdates: [String: StrokeUpdate]
@@ -34,17 +36,22 @@ class StrokeUploadManager {
 
     let queue: DispatchQueue
 
+    // MARK: Lifecycle
+
     init() {
         uploadingStrokeKeys = [String]()
         queuedUpdates = [String: StrokeUpdate]()
         queue = DispatchQueue(label: "uploadQueue", attributes: .concurrent)
     }
 
+    // MARK: Functions
+
     func queueStroke(_ stroke: Stroke, remove: Bool) {
         print("queueStroke: \(String(describing: stroke.fbReference?.key))")
         guard let key = stroke.fbReference?.key else {
             return
         }
+
         let update = StrokeUpdate(stroke: stroke, shouldRemove: remove)
         queue.sync {
             if uploadingStrokeKeys.isEmpty {
@@ -66,6 +73,7 @@ class StrokeUploadManager {
             guard let strokeKey = update.stroke.fbReference?.key else {
                 return
             }
+
             queue.async(flags: .barrier) {
                 print("StrokeUploadManager: upload: move \(strokeKey) from queue to uploading")
                 self.uploadingStrokeKeys.append(strokeKey)

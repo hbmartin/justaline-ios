@@ -427,13 +427,12 @@ class StateManager: UIViewController {
     func hostAnchorDrawn() {
         readyButton?.isHidden = false
     }
-    
+
     func readyToSetAnchor() {
         print("readyToSetAnchor: \(state)")
         if state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR || state == .GLOBAL_NO_ANCHOR {
             delegate?.onReadyToSetAnchor()
         }
-
     }
 
     // MARK: - Button Methods

@@ -1,3 +1,4 @@
+// swiftlint:disable file_length no_grouping_extension
 // Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +19,7 @@ import Foundation
 import NearbyConnections
 import RealityKit
 
-protocol PairingManagerDelegate {
+protocol PairingManagerDelegate: AnyObject {
     func localStrokeRemoved(_ stroke: Stroke)
     func partnerStrokeUpdated(_ stroke: Stroke, id key: String)
     func partnerStrokeRemoved(id key: String)
@@ -31,22 +32,15 @@ protocol PairingManagerDelegate {
     func isTracking() -> Bool
 }
 
+// swiftlint:disable:next type_body_length
 class PairingManager: NSObject {
     // MARK: Properties
+
     /// Delegate property for ViewController
-    var delegate: PairingManagerDelegate?
+    weak var delegate: PairingManagerDelegate?
 
     /// RoomManager handles Firebase interactions
     let roomManager: RoomManager
-
-    /// Nearby Connections components
-    private var advertiser: Advertiser?
-    private var discoverer: Discoverer?
-    private var connectionManager: ConnectionManager?
-
-    /// Connection state
-    private var connectedEndpoints: Set<String> = []
-    private var pendingConnections: Set<String> = []
 
     /// GoogleAR Session
     var gSession: GARSession?
@@ -69,19 +63,33 @@ class PairingManager: NSObject {
 
     var discoveryTimeout: Timer?
 
+    /// Nearby Connections components
+    private var advertiser: Advertiser?
+    private var discoverer: Discoverer?
+    private var connectionManager: ConnectionManager?
+
+    /// Connection state
+    private var connectedEndpoints: Set<String> = []
+    private var pendingConnections: Set<String> = []
+
     // Service ID for Nearby Connections
     private let serviceID = "com.google.justaline.nearby"
 
+    // MARK: Lifecycle
+
     // MARK: Methods
+
     override init() {
         roomManager = RoomManager()
 
+        // swiftlint:disable:next legacy_objc_type
         var myDict: NSDictionary?
         if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") {
+            // swiftlint:disable:next legacy_objc_type
             myDict = NSDictionary(contentsOfFile: path)
         }
 
-        if let dict = myDict, let key = dict["API_KEY"] as? String {
+        if let myDict, let key = myDict["API_KEY"] as? String {
             print("PairingManager: Setting Firebase API key: \(key)")
             firebaseKey = key
         }
@@ -92,17 +100,7 @@ class PairingManager: NSObject {
         setupNearbyConnections()
     }
 
-    private func setupNearbyConnections() {
-        // Initialize Nearby Connections components
-        connectionManager = ConnectionManager(serviceID: Config.serviceID, strategy: .cluster)
-        advertiser = Advertiser(connectionManager: connectionManager!)
-        discoverer = Discoverer(connectionManager: connectionManager!)
-
-        // Set delegates
-        advertiser?.delegate = self
-        discoverer?.delegate = self
-        connectionManager?.delegate = self
-    }
+    // MARK: Functions
 
     func createGSession() {
         if gSession == nil {
@@ -114,10 +112,10 @@ class PairingManager: NSObject {
             }
             let configuration = GARSessionConfiguration()
             configuration.cloudAnchorMode = .enabled
-            var error: NSError? = nil
+            var error: NSError?
             gSession?.setConfiguration(configuration, error: &error)
             if let error {
-              print("Failed to configure the GARSession: \(error)")
+                print("Failed to configure the GARSession: \(error)")
             }
         }
     }
@@ -168,55 +166,13 @@ class PairingManager: NSObject {
         // Start advertising and discovering using Nearby Connections
         startNearbyConnections()
 
+        // swiftlint:disable:next force_cast
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if appDelegate.pairingState == nil || appDelegate.pairingState != .OFFLINE {
             StateManager.updateState(.LOOKING)
 
             // build a room for potential use (if end up being the host)
             roomManager.createRoom()
-        }
-    }
-
-    private func startNearbyConnections() {
-        // Start both advertising and discovering
-        startAdvertising()
-        startDiscovering()
-    }
-
-    private func startAdvertising() {
-        guard let advertiser = advertiser else { return }
-
-        let deviceName = UIDevice.current.name
-        let advertisingData = deviceName.data(using: .utf8) ?? Data()
-
-        do {
-            try advertiser.startAdvertising(using: advertisingData)
-            print("Started advertising for Nearby Connections")
-        } catch {
-            print("Failed to start advertising: \(error)")
-        }
-    }
-
-    private func startDiscovering() {
-        guard let discoverer = discoverer else { return }
-
-        do {
-            try discoverer.startDiscovery()
-            print("Started discovering for Nearby Connections")
-        } catch {
-            print("Failed to start discovery: \(error)")
-        }
-    }
-
-    private func sendRoomData(_ roomData: RoomData, to endpointID: String) {
-        guard let connectionManager = connectionManager else { return }
-
-        let messageData = roomData.getMessageData()
-
-        do {
-            try connectionManager.send(messageData, to: [endpointID])
-        } catch {
-            print("Failed to send room data: \(error)")
         }
     }
 
@@ -286,7 +242,7 @@ class PairingManager: NSObject {
         readyToSetAnchor = true
         roomManager.setReadyToSetAnchor()
 
-        if roomManager.isHost && partnerReadyToSetAnchor {
+        if roomManager.isHost, partnerReadyToSetAnchor {
             sendSetAnchorEvent()
         } else if roomManager.isHost {
             StateManager.updateState(.HOST_READY_AND_WAITING)
@@ -294,14 +250,20 @@ class PairingManager: NSObject {
             StateManager.updateState(.PARTNER_CONNECTING)
             beginPairingTimeout()
         } else {
-            StateManager.updateState(.PARTNER_READY_AND_WAITING)
+            #if !JOIN_GLOBAL_ROOM
+                StateManager.updateState(.PARTNER_READY_AND_WAITING)
+            #else
+                sendSetAnchorEvent()
+            #endif
         }
     }
 
     func sendSetAnchorEvent() {
         print("sendSetAnchorEvent")
         delegate?.createAnchor()
-        StateManager.updateState(.HOST_CONNECTING)
+        #if !JOIN_GLOBAL_ROOM
+            StateManager.updateState(.HOST_CONNECTING)
+        #endif
         beginPairingTimeout()
     }
 
@@ -363,15 +325,6 @@ class PairingManager: NSObject {
         cancelDiscoveryTimeout()
     }
 
-    private func stopNearbyConnections() {
-        advertiser?.stopAdvertising()
-        discoverer?.stopDiscovery()
-//        connectionManager?.disconnect(from: EndpointID, )
-
-        connectedEndpoints.removeAll()
-        pendingConnections.removeAll()
-    }
-
     func roomCreated(_ roomData: RoomData) {
         print("Room Created with Room Number: \(roomData.code)")
         // With Nearby Connections, we'll send room data when connections are established
@@ -398,15 +351,89 @@ class PairingManager: NSObject {
         // restart gar session so that it is available next time
         createGSession()
     }
+
+    private func setupNearbyConnections() {
+        // Initialize Nearby Connections components
+        connectionManager = ConnectionManager(serviceID: Config.serviceID, strategy: .cluster)
+        // swiftlint:disable:next force_unwrapping
+        advertiser = Advertiser(connectionManager: connectionManager!)
+        // swiftlint:disable:next force_unwrapping
+        discoverer = Discoverer(connectionManager: connectionManager!)
+
+        // Set delegates
+        advertiser?.delegate = self
+        discoverer?.delegate = self
+        connectionManager?.delegate = self
+    }
+
+    private func startNearbyConnections() {
+        // Start both advertising and discovering
+        startAdvertising()
+        startDiscovering()
+    }
+
+    private func startAdvertising() {
+        guard let advertiser else {
+            return
+        }
+
+        let deviceName = UIDevice.current.name
+        let advertisingData = deviceName.data(using: .utf8) ?? Data()
+
+        do {
+            try advertiser.startAdvertising(using: advertisingData)
+            print("Started advertising for Nearby Connections")
+        } catch {
+            print("Failed to start advertising: \(error)")
+        }
+    }
+
+    private func startDiscovering() {
+        guard let discoverer else {
+            return
+        }
+
+        do {
+            try discoverer.startDiscovery()
+            print("Started discovering for Nearby Connections")
+        } catch {
+            print("Failed to start discovery: \(error)")
+        }
+    }
+
+    private func sendRoomData(_ roomData: RoomData, to endpointID: String) {
+        guard let connectionManager else {
+            return
+        }
+
+        let messageData = roomData.getMessageData()
+
+        do {
+            try connectionManager.send(messageData, to: [endpointID])
+        } catch {
+            print("Failed to send room data: \(error)")
+        }
+    }
+
+    private func stopNearbyConnections() {
+        advertiser?.stopAdvertising()
+        discoverer?.stopDiscovery()
+//        connectionManager?.disconnect(from: EndpointID, )
+
+        connectedEndpoints.removeAll()
+        pendingConnections.removeAll()
+    }
 }
 
 // MARK: - Nearby Connections Delegate Extensions
 
 extension PairingManager: AdvertiserDelegate {
-    func advertiser(_: Advertiser,
-                   didReceiveConnectionRequestFrom endpointID: String,
-                   with _: Data,
-                   connectionRequestHandler: @escaping (Bool) -> Void) {
+    func advertiser(
+        _: Advertiser,
+        didReceiveConnectionRequestFrom endpointID: String,
+        with _: Data,
+        connectionRequestHandler: @escaping (Bool) -> Void
+    ) {
         print("Received connection request from: \(endpointID)")
 
         // Accept the connection request
@@ -414,16 +441,20 @@ extension PairingManager: AdvertiserDelegate {
         pendingConnections.insert(endpointID)
     }
 
-    func advertiser(_: Advertiser,
-                   didFailToStartAdvertisingWithError error: Error) {
+    func advertiser(
+        _: Advertiser,
+        didFailToStartAdvertisingWithError error: Error
+    ) {
         print("Failed to start advertising: \(error)")
     }
 }
 
 extension PairingManager: DiscovererDelegate {
-    func discoverer(_ discoverer: Discoverer,
-                   didFind endpointID: String,
-                   with _: Data) {
+    func discoverer(
+        _ discoverer: Discoverer,
+        didFind endpointID: String,
+        with _: Data
+    ) {
         print("Found endpoint: \(endpointID)")
 
         // Request connection to the found endpoint
@@ -438,44 +469,78 @@ extension PairingManager: DiscovererDelegate {
         }
     }
 
-    func discoverer(_: Discoverer,
-                   didLose endpointID: String) {
+    func discoverer(
+        _: Discoverer,
+        didLose endpointID: String
+    ) {
         print("Lost endpoint: \(endpointID)")
         connectedEndpoints.remove(endpointID)
         pendingConnections.remove(endpointID)
     }
 
-    func discoverer(_: Discoverer,
-                   didFailToStartDiscoveryWithError error: Error) {
+    func discoverer(
+        _: Discoverer,
+        didFailToStartDiscoveryWithError error: Error
+    ) {
         print("Failed to start discovery: \(error)")
     }
 }
 
 extension PairingManager: ConnectionManagerDelegate {
-    func connectionManager(_: NearbyConnections.ConnectionManager, didChangeTo state: NearbyConnections.ConnectionState, for endpointID: NearbyConnections.EndpointID) {
+    func connectionManager(
+        _: NearbyConnections.ConnectionManager,
+        didChangeTo state: NearbyConnections.ConnectionState,
+        for endpointID: NearbyConnections.EndpointID
+    ) {
         print("ConnectionManagerDelegate: didChangeTo: \(state), for: \(endpointID)")
     }
 
-    func connectionManager(_: NearbyConnections.ConnectionManager, didReceiveTransferUpdate update: NearbyConnections.TransferUpdate, from endpointID: NearbyConnections.EndpointID, forPayload _: NearbyConnections.PayloadID) {
+    func connectionManager(
+        _: NearbyConnections.ConnectionManager,
+        didReceiveTransferUpdate update: NearbyConnections.TransferUpdate,
+        from endpointID: NearbyConnections.EndpointID,
+        forPayload _: NearbyConnections.PayloadID
+    ) {
         print("ConnectionManagerDelegate: didReceiveTransferUpdate: \(update), for: \(endpointID)")
     }
 
-    func connectionManager(_: NearbyConnections.ConnectionManager, didStartReceivingResourceWithID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID, at _: URL, withName _: String, cancellationToken _: NearbyConnections.CancellationToken) {
+    // swiftlint:disable:next function_parameter_count
+    func connectionManager(
+        _: NearbyConnections.ConnectionManager,
+        didStartReceivingResourceWithID payloadID: NearbyConnections.PayloadID,
+        from endpointID: NearbyConnections.EndpointID,
+        at _: URL,
+        withName _: String,
+        cancellationToken _: NearbyConnections.CancellationToken
+    ) {
         print("ConnectionManagerDelegate: didStartReceivingResourceWithID: \(payloadID), for: \(endpointID)")
     }
 
-    func connectionManager(_: NearbyConnections.ConnectionManager, didReceive _: InputStream, withID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID, cancellationToken _: NearbyConnections.CancellationToken) {
+    func connectionManager(
+        _: NearbyConnections.ConnectionManager,
+        didReceive _: InputStream,
+        withID payloadID: NearbyConnections.PayloadID,
+        from endpointID: NearbyConnections.EndpointID,
+        cancellationToken _: NearbyConnections.CancellationToken
+    ) {
         print("ConnectionManagerDelegate: didReceive stream: \(payloadID), for: \(endpointID)")
     }
 
-    func connectionManager(_: NearbyConnections.ConnectionManager, didReceive _: Data, withID payloadID: NearbyConnections.PayloadID, from endpointID: NearbyConnections.EndpointID) {
+    func connectionManager(
+        _: NearbyConnections.ConnectionManager,
+        didReceive _: Data,
+        withID payloadID: NearbyConnections.PayloadID,
+        from endpointID: NearbyConnections.EndpointID
+    ) {
         print("dConnectionManagerDelegate: idReceive data: \(payloadID), for: \(endpointID)")
     }
 
-    func connectionManager(_: ConnectionManager,
-                          didReceive verificationCode: String,
-                          from endpointID: String,
-                          verificationHandler: @escaping (Bool) -> Void) {
+    func connectionManager(
+        _: ConnectionManager,
+        didReceive verificationCode: String,
+        from endpointID: String,
+        verificationHandler: @escaping (Bool) -> Void
+    ) {
         print("ConnectionManagerDelegate: Received verification code: \(verificationCode) from: \(endpointID)")
 
         // Auto-accept verification for simplicity
@@ -483,8 +548,7 @@ extension PairingManager: ConnectionManagerDelegate {
         verificationHandler(true)
     }
 
-    func connectionManager(_: ConnectionManager,
-                          didConnect endpointID: String) {
+    func connectionManager(_: ConnectionManager, didConnect endpointID: String) {
         print("ConnectionManagerDelegate: Connected to endpoint: \(endpointID)")
 
         connectedEndpoints.insert(endpointID)
@@ -503,8 +567,7 @@ extension PairingManager: ConnectionManagerDelegate {
         cancelDiscoveryTimeout()
     }
 
-    func connectionManager(_: ConnectionManager,
-                          didDisconnectFrom endpointID: String) {
+    func connectionManager(_: ConnectionManager, didDisconnectFrom endpointID: String) {
         print("ConnectionManagerDelegate: Disconnected from endpoint: \(endpointID)")
 
         connectedEndpoints.remove(endpointID)
@@ -515,26 +578,19 @@ extension PairingManager: ConnectionManagerDelegate {
         }
     }
 
-    func connectionManager(_: ConnectionManager,
-                          didReceive data: Data,
-                          from endpointID: String) {
+    func connectionManager(_: ConnectionManager, didReceive data: Data, from endpointID: String) {
         print("ConnectionManagerDelegate: Received data from: \(endpointID)")
 
         // Handle received room data
         handleReceivedRoomData(data)
     }
 
-    func connectionManager(_: ConnectionManager,
-                          didFailToConnect endpointID: String,
-                          withError error: Error) {
+    func connectionManager(_: ConnectionManager, didFailToConnect endpointID: String, withError error: Error) {
         print("ConnectionManagerDelegate: Failed to connect to \(endpointID): \(error)")
 
         pendingConnections.remove(endpointID)
     }
-}
 
-// Helper method for handling received room data
-private extension PairingManager {
     func handleReceivedRoomData(_ data: Data) {
         // Parse the received room data and handle accordingly
         // This logic would be similar to the original message handling
@@ -544,16 +600,17 @@ private extension PairingManager {
 }
 
 // MARK: - RoomManagerDelegate
+
 extension PairingManager: RoomManagerDelegate {
     func anchorIdCreated(_ id: String) {
         print("RoomManagerDelegate: Resolving GARAnchor: \(id)")
         if self.gSession == nil {
-            print ("There is a problem with your co-presence session" )
+            print("There is a problem with your co-presence session")
             pairingFailed()
             #if JOIN_GLOBAL_ROOM
-            StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
+                StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
             #else
-            StateManager.updateState(.PARTNER_RESOLVE_ERROR)
+                StateManager.updateState(.PARTNER_RESOLVE_ERROR)
             #endif
             cancelPairingTimeout()
         }
@@ -565,9 +622,9 @@ extension PairingManager: RoomManagerDelegate {
             pairingFailed()
             roomManager.anchorFailedToResolve()
             #if JOIN_GLOBAL_ROOM
-            StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
+                StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
             #else
-            StateManager.updateState(.PARTNER_RESOLVE_ERROR)
+                StateManager.updateState(.PARTNER_RESOLVE_ERROR)
             #endif
             cancelPairingTimeout()
         }
@@ -581,7 +638,7 @@ extension PairingManager: RoomManagerDelegate {
     }
 
     func anchorNotAvailable() {
-        if isPairingOrPaired && roomManager.isRoomResolved {
+        if isPairingOrPaired, roomManager.isRoomResolved {
             self.leaveRoom()
             delegate?.anchorWasReset()
         }
@@ -599,6 +656,7 @@ extension PairingManager: RoomManagerDelegate {
         delegate?.partnerStrokeRemoved(id: key)
     }
 
+    // swiftlint:disable:next discouraged_optional_boolean
     func partnerJoined(isHost: Bool, isPairing: Bool?) {
         print("PairingManager: partnerJoined: isHost: \(isHost)")
         delegate?.partnerJoined(isHost: isHost)
@@ -606,14 +664,14 @@ extension PairingManager: RoomManagerDelegate {
         #if JOIN_GLOBAL_ROOM
 
         #else
-        if let pairing = isPairing, pairing == true {
-            if isHost {
-                StateManager.updateState(.HOST_CONNECTED)
-            } else {
-                StateManager.updateState(.PARTNER_CONNECTED)
+            if let pairing = isPairing, pairing == true {
+                if isHost {
+                    StateManager.updateState(.HOST_CONNECTED)
+                } else {
+                    StateManager.updateState(.PARTNER_CONNECTED)
+                }
+                stopRoomDiscovery()
             }
-            stopRoomDiscovery()
-        }
         #endif
     }
 
@@ -633,7 +691,7 @@ extension PairingManager: RoomManagerDelegate {
         print("PairingManager: updatePartnerAnchorReadiness: partnerReady: \(partnerReady), isHost: \(isHost)")
         partnerReadyToSetAnchor = partnerReady
 
-        if partnerReady && isHost {
+        if partnerReady, isHost {
             if readyToSetAnchor {
                 sendSetAnchorEvent()
             }
@@ -649,7 +707,47 @@ extension PairingManager: RoomManagerDelegate {
 }
 
 // MARK: - GARSessionDelegate
+
 extension PairingManager: GARSessionDelegate {
+    // swiftlint:disable:next cyclomatic_complexity
+    private static func stringFromCloudState(_ cloudState: GARCloudAnchorState) -> String {
+        switch cloudState {
+        case .none:
+            "None"
+
+        case .success:
+            "Success"
+
+        case .errorInternal:
+            "ErrorInternal"
+
+        case .errorNotAuthorized:
+            "ErrorNotAuthorized"
+
+        case .errorResourceExhausted:
+            "ErrorResourceExhausted"
+
+        case .errorHostingDatasetProcessingFailed:
+            "ErrorHostingDatasetProcessingFailed"
+
+        case .errorCloudIdNotFound:
+            "ErrorCloudIdNotFound"
+
+        case .errorResolvingSdkVersionTooNew:
+            "ErrorResolvingSdkVersionTooNew"
+
+        case .errorResolvingSdkVersionTooOld:
+            "ErrorResolvingSdkVersionTooOld"
+
+        case .errorHostingServiceUnavailable:
+            "ErrorHostingServiceUnavailable"
+
+        default:
+            // Not handling deprecated enum values that will never be returned.
+            "Unknown"
+        }
+    }
+
     func session(_ session: GARSession, didResolve anchor: GARAnchor) {
         print("GARAnchor Resolved: \(String(describing: session))")
         self.delegate?.cloudAnchorResolved(anchor)
@@ -670,16 +768,16 @@ extension PairingManager: GARSessionDelegate {
     func session(_: GARSession, didFailToResolve anchor: GARAnchor) {
         print("GARSession did fail to resolve anchor: \(Self.stringFromCloudState(anchor.cloudState))")
         #if JOIN_GLOBAL_ROOM
-        StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
+            StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
         #else
-        StateManager.updateState(.PARTNER_RESOLVE_ERROR)
+            StateManager.updateState(.PARTNER_RESOLVE_ERROR)
         #endif
         pairingFailed()
         roomManager.anchorFailedToResolve()
         cancelPairingTimeout()
 
         var reason = ""
-        if let _ = delegate?.isTracking() {
+        if delegate?.isTracking() != nil {
             reason = String(anchor.cloudState.rawValue)
         } else {
             reason = AnalyticsKey.val(.pair_error_sync_reason_not_tracking)
@@ -702,33 +800,5 @@ extension PairingManager: GARSessionDelegate {
 
         let params = [AnalyticsKey.val(.pair_error_sync_reason): String(anchor.cloudState.rawValue)]
         Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
-    }
-    
-    private static func stringFromCloudState(_ cloudState: GARCloudAnchorState) -> String {
-      switch cloudState {
-      case .none:
-        return "None"
-      case .success:
-        return "Success"
-      case .errorInternal:
-        return "ErrorInternal"
-      case .errorNotAuthorized:
-        return "ErrorNotAuthorized"
-      case .errorResourceExhausted:
-        return "ErrorResourceExhausted"
-      case .errorHostingDatasetProcessingFailed:
-        return "ErrorHostingDatasetProcessingFailed"
-      case .errorCloudIdNotFound:
-        return "ErrorCloudIdNotFound"
-      case .errorResolvingSdkVersionTooNew:
-        return "ErrorResolvingSdkVersionTooNew"
-      case .errorResolvingSdkVersionTooOld:
-        return "ErrorResolvingSdkVersionTooOld"
-      case .errorHostingServiceUnavailable:
-        return "ErrorHostingServiceUnavailable"
-      default:
-        // Not handling deprecated enum values that will never be returned.
-        return "Unknown"
-      }
     }
 }

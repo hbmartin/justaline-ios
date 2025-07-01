@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 // Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +19,10 @@ import FirebaseAuth
 import FirebaseDatabase
 import Foundation
 
-protocol RoomManagerDelegate {
+protocol RoomManagerDelegate: AnyObject {
     func localStrokeRemoved(_ stroke: Stroke)
     func updatePartnerAnchorReadiness(partnerReady: Bool, isHost: Bool)
+    // swiftlint:disable:next discouraged_optional_boolean
     func partnerJoined(isHost: Bool, isPairing: Bool?)
     func pairingFailed()
     func partnerLost()
@@ -33,9 +35,12 @@ protocol RoomManagerDelegate {
     func leaveRoom()
 }
 
-let GLOBAL_ROOM_ROOT = "global_rooms"
+let kGLOBAL_ROOM_ROOT = "global_rooms"
 
+// swiftlint:disable:next type_body_length
 class RoomManager: StrokeUploaderDelegate {
+    // MARK: Properties
+
     // MARK: Variables
 
     /// Auth
@@ -48,7 +53,7 @@ class RoomManager: StrokeUploaderDelegate {
     var anchorId: String?
 
     /// Delegate property for PairingManager
-    var delegate: RoomManagerDelegate?
+    weak var delegate: RoomManagerDelegate?
 
     var strokeUploader: StrokeUploadManager
 
@@ -56,9 +61,13 @@ class RoomManager: StrokeUploaderDelegate {
 
     var isHost: Bool = false
 
-    private let ROOT_FIREBASE_ROOMS = "rooms"
+    var ROOT_GLOBAL_ROOM = kGLOBAL_ROOM_ROOT + "/global_room_0"
 
-    var ROOT_GLOBAL_ROOM = GLOBAL_ROOM_ROOT + "/global_room_0"
+    var isRoomResolved: Bool = false
+
+    var isRetrying = false
+
+    private let ROOT_FIREBASE_ROOMS = "rooms"
 
     private let DISPLAY_NAME_VALUE = "Just a Line"
 
@@ -68,22 +77,15 @@ class RoomManager: StrokeUploaderDelegate {
 
     private var roomKey: String?
 
-    private var roomCodeRef: DatabaseReference?
-
-    private var hotspotListRef: DatabaseReference?
     private var roomsListRef: DatabaseReference?
     private var participantsRef: DatabaseReference?
     private var strokesRef: DatabaseReference?
 
     private var globalRoomRef: DatabaseReference?
 
-    var isRoomResolved: Bool = false
-
     private var anchorValueHandle: UInt?
 
     private var anchorRemovedHandle: UInt?
-
-    private var lineAddedHandle: UInt?
 
     private var partners = [String]()
 
@@ -108,18 +110,19 @@ class RoomManager: StrokeUploaderDelegate {
     /// Flag to indicate that we are using the global room, but pairing and resolving an anchor
     private var pairing: Bool = false
 
-    var isRetrying = false
+    // MARK: Computed Properties
 
     /// Current room data for sharing via Nearby Connections
     var currentRoomData: RoomData? {
-        guard let roomKey = roomKey else { return nil }
+        guard let roomKey else {
+            return nil
+        }
+
         let timestamp = Int64(Date().timeIntervalSince1970 * 1_000)
         return RoomData(code: roomKey, timestamp: timestamp)
     }
 
-//    private var stroke
-
-    // MARK: - Initialization
+    // MARK: Lifecycle
 
     init() {
         strokeUploader = StrokeUploadManager()
@@ -143,48 +146,13 @@ class RoomManager: StrokeUploaderDelegate {
         }
     }
 
+    // MARK: Functions
+
     func updateGlobalRoomName(_ name: String) {
         print("updateGlobalRoomName: \(name)")
         let rootRef = Database.database().reference()
         ROOT_GLOBAL_ROOM = name
         globalRoomRef = rootRef.child(ROOT_GLOBAL_ROOM)
-    }
-
-    /// Login with existing id or create a new one
-    private func firebaseLogin() {
-        if let currentUser = firebaseAuth?.currentUser {
-            userUid = currentUser.uid
-            print("firebaseLogin: user uid \(String(describing: userUid))")
-            // Notify that authentication is complete
-            NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
-        } else {
-            loginAnonymously()
-        }
-    }
-
-    /// Create new user id with anonymous sign-in
-    private func loginAnonymously() {
-        firebaseAuth?.signInAnonymously(completion: { _, error in
-            // need to handle error states
-            if error == nil {
-                if let currentUser = self.firebaseAuth?.currentUser {
-                    self.userUid = currentUser.uid
-                    print("loginAnonymously: user uid \(String(describing: self.userUid))")
-
-                    // Notify that authentication is complete
-                    NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
-                }
-            } else {
-                print("Firebase anonymous login failed: \(error?.localizedDescription ?? "Unknown error")")
-                // Retry authentication after a delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    print("Retrying Firebase authentication with loginAnonymously...")
-                    self.loginAnonymously()
-                }
-                // Notify that authentication failed
-                NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthFailed"), object: error)
-            }
-        })
     }
 
     // MARK: - Firebase Status
@@ -203,7 +171,7 @@ class RoomManager: StrokeUploaderDelegate {
             // Use a different approach to avoid capture issues
             var observer: NSObjectProtocol?
             observer = NotificationCenter.default.addObserver(
-                forName: NSNotification.Name("FirebaseAuthCompleted"),
+                forName: NSNotification.Name("FirebaseAuthCompleted"), // swiftlint:disable:this legacy_objc_type
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
@@ -291,7 +259,7 @@ class RoomManager: StrokeUploaderDelegate {
         participant.isPairing = pairing
 
         partnersRef.child(uid).setValue(participant.dictionaryValue()) { error, _ in
-            if let error = error {
+            if let error {
                 print("RoomManager:participateInRoom: Error setting participant value: \(error.localizedDescription)")
                 StateManager.updateState(.UNKNOWN_ERROR)
             } else {
@@ -317,7 +285,6 @@ class RoomManager: StrokeUploaderDelegate {
             StateManager.updateState(.UNKNOWN_ERROR)
             return
         }
-
         guard isFirebaseReady() else {
             print("RoomManager:findGlobalRoom: Firebase not ready, waiting for auth...")
             waitForFirebaseReady {
@@ -330,14 +297,15 @@ class RoomManager: StrokeUploaderDelegate {
 
         print("globalRoom reference URL: \(globalRoom.url)")
         globalRoom.observeSingleEvent(of: .value) { snapshot in
-          print("Reference path: \(snapshot.ref.url)")
+            print("Reference path: \(snapshot.ref.url)")
             if !snapshot.exists() {
                 let parts = globalRoom.url.split(separator: "/")
                 globalRoom.setValue(parts.last) { error, _ in
-                    if let error = error {
+                    if let error {
                         print("Failed to setup global room: \(error.localizedDescription)")
                     } else {
                         print("Did setup global room: \(parts.last)")
+                        // swiftlint:disable:next force_unwrapping
                         self.joinRoom(roomKey: String(parts.last!))
                     }
                 }
@@ -354,14 +322,6 @@ class RoomManager: StrokeUploaderDelegate {
             print("RoomManager:findGlobalRoom: Error finding global room: \(error.localizedDescription)")
             StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
         }
-    }
-
-    /// If no room has been created, join, otherwise only choose if my room number is lower
-    private func shouldJoinRoom(_ roomData: RoomData) -> Bool {
-        guard let roomString = self.roomKey else {
-            return true
-        }
-        return roomString.compare(roomData.code) == ComparisonResult.orderedDescending
     }
 
     /// Adds user id to participants list, and begins watching for an anchor
@@ -390,11 +350,11 @@ class RoomManager: StrokeUploaderDelegate {
 //                }
 //            }
             #if JOIN_GLOBAL_ROOM
-            // if pairing with another device, remove anchor to start fresh
-            // otherwise try to obtain an existing anchor id
-            if pairing == false {
-                self.observeAnchor()
-            }
+                // if pairing with another device, remove anchor to start fresh
+                // otherwise try to obtain an existing anchor id
+                if pairing == false {
+                    self.observeAnchor()
+                }
             #endif
         } else {
             print("Unable to find room: \(roomKey)")
@@ -402,7 +362,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     func resumeRoom() {
-        guard let _ = roomRef else {
+        if roomRef == nil {
             return
         }
 
@@ -430,7 +390,7 @@ class RoomManager: StrokeUploaderDelegate {
         }
 
         if let handle = strokeUpdatedHandle {
-            print ("stroke update handle removed for \(String(describing: strokesRef))")
+            print("stroke update handle removed for \(String(describing: strokesRef))")
             strokesRef?.removeObserver(withHandle: handle)
         }
 
@@ -485,6 +445,7 @@ class RoomManager: StrokeUploaderDelegate {
         guard let room = roomRef, let uid = userUid else {
             return
         }
+
         // remove user from participants list
         participantsRef?.child(uid).removeValue()
         participantsRef = nil
@@ -510,9 +471,9 @@ class RoomManager: StrokeUploaderDelegate {
     /// - Parameters:
     ///   - uid: userUid value
     ///   - reference: path to participants in FB
-    func partnerJoinedCallbacks(uid: String, reference: DatabaseReference) {
+    func partnerJoinedCallbacks(uid: String, reference: DatabaseReference) { // swiftlint:disable:this function_body_length
         // Partner Added
-        self.partnerAddedHandle = reference.observe(.childAdded, with: { snapshot in
+        self.partnerAddedHandle = reference.observe(.childAdded) { snapshot in
             print("RoomManager:partnerJoinedCallbacks: Partner Added Observer: \(String(describing: snapshot))")
 
             if snapshot.key != uid {
@@ -520,43 +481,43 @@ class RoomManager: StrokeUploaderDelegate {
                     self.partners.append(snapshot.key)
                     let participant = FBParticipant.from(participantDict)
                     print("self.pairing: \(self.pairing) , participant: \(String(describing: participant))")
-                    if participant?.isPairing == true && self.pairing == true {
+                    if participant?.isPairing == true, self.pairing == true {
                         // Host for global room pairing is alphabetical since we don't establish with Nearby pub/sub
                         let keyComparison = uid.compare(snapshot.key)
                         self.isHost = (keyComparison == ComparisonResult.orderedDescending) ? false : true
 
                         #if JOIN_GLOBAL_ROOM
-                        let state: State = (self.isHost) ? .HOST_CONNECTED : .PARTNER_CONNECTED
-                        StateManager.updateState(state)
-                        print("RoomManager:partnerJoinedCallbacks: updated state to: \(state)")
+                            let state: State = (self.isHost) ? .HOST_CONNECTED : .PARTNER_CONNECTED
+                            StateManager.updateState(state)
+                            print("RoomManager:partnerJoinedCallbacks: updated state to: \(state)")
                         #endif
                     }
                     self.delegate?.partnerJoined(isHost: self.isHost, isPairing: participant?.isPairing)
                 }
             }
-        }) { _ in
+        } withCancel: { _ in
             print("RoomManager:Partner Added Observer Cancelled")
         }
 
         // Partner Changed
-        self.partnerUpdatedHandle = reference.observe(.childChanged, with: { snapshot in
+        self.partnerUpdatedHandle = reference.observe(.childChanged) { snapshot in
             print("RoomManager:partnerJoinedCallbacks: Partner Changed Observer")
-            if let participantDict = snapshot.value as? [String: Any?], let participant = FBParticipant.from(participantDict)
-                , snapshot.key != uid {
+            if let participantDict = snapshot.value as? [String: Any?], let participant = FBParticipant.from(participantDict),
+               snapshot.key != uid {
                 self.delegate?.updatePartnerAnchorReadiness(partnerReady: participant.readyToSetAnchor, isHost: self.isHost)
 
                 // if host is true, we are pairing (when partner finishes resolving room, they set isPairing to false) and can resolve room
                 // if partner, host still hasn't resolved room, so isPairing is still true
-                if participant.anchorResolved == true && (self.isHost == true) { // || participant.isPairing == true)) {
+                if participant.anchorResolved == true, self.isHost == true { // || participant.isPairing == true)) {
                     self.delegate?.anchorResolved()
                 }
             }
-        }) { _ in
+        } withCancel: { _ in
             print("RoomManager:Partner Changed Observer Cancelled")
         }
 
         // Partner Removed
-        self.partnerRemovedHandle = reference.observe(.childRemoved, with: { snapshot in
+        self.partnerRemovedHandle = reference.observe(.childRemoved) { snapshot in
             print("RoomManager:partnerJoinedCallbacks: Partner Removed Observer")
             if let partnerIndex = self.partners.index(of: snapshot.key) {
                 self.partners.remove(at: partnerIndex)
@@ -570,39 +531,36 @@ class RoomManager: StrokeUploaderDelegate {
                     StateManager.updateState(.CONNECTION_LOST)
                 }
             }
-        }) { _ in
+        } withCancel: { _ in
             print("Partner Removed Observer Cancelled")
-        }
-
-        // Unused
-        self.partnerMovedHandle = reference.child(uid).observe(.childMoved, with: { _ in
-        }) { _ in
-            print("RoomManager:partnerJoinedCallbacks: Partner Moved Observer Cancelled")
         }
     }
 
     // MARK: - Anchor Flow
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func observeAnchor() {
         print("observeAnchor: \(String(describing: roomRef))")
         guard let room = roomRef else {
             return
         }
+
         let anchorUpdateRef = room.child(FBKey.val(.anchor))
         print(String(describing: anchorUpdateRef))
 
         // Clear anchor before adding creation listener, except in global room when not pairing
         #if !JOIN_GLOBAL_ROOM
-        print("NOT JOINING GLOBAL ROOM")
-        anchorUpdateRef.removeValue()
-        #else
-        print("Joining Global Room, pairing: \(pairing)")
-        if pairing == true {
+            print("NOT JOINING GLOBAL ROOM")
             anchorUpdateRef.removeValue()
-        }
+        #else
+            print("Joining Global Room, pairing: \(pairing)")
+            if pairing == true {
+                anchorUpdateRef.removeValue()
+            }
         #endif
         print("Observing Anchor Value Reference: \(anchorUpdateRef)")
-        anchorValueHandle = anchorUpdateRef.observe(.value, with: { dataSnapshot in
+        // swiftlint:disable:next closure_body_length
+        anchorValueHandle = anchorUpdateRef.observe(.value) { dataSnapshot in
             print("Anchor Value Data: \(dataSnapshot)")
 
             if let anchorValue = dataSnapshot.value as? [String: Any?] {
@@ -615,9 +573,9 @@ class RoomManager: StrokeUploaderDelegate {
                         // When Joining a global room, if there is a pre-exisintg anchor error, need to show special error
                         var shouldUseGlobalError = false
                         #if JOIN_GLOBAL_ROOM
-                        if self.pairing == false {
-                            shouldUseGlobalError = true
-                        }
+                            if self.pairing == false {
+                                shouldUseGlobalError = true
+                            }
                         #endif
 
                         // Even in global pairing (not global joining), we want to set state to host or partner errors
@@ -640,9 +598,9 @@ class RoomManager: StrokeUploaderDelegate {
 
                         var state: State = .PARTNER_CONNECTING
                         #if JOIN_GLOBAL_ROOM
-                        if self.pairing == false {
-                            state = .GLOBAL_CONNECTING
-                        }
+                            if self.pairing == false {
+                                state = .GLOBAL_CONNECTING
+                            }
                         #endif
 
                         StateManager.updateState(state)
@@ -655,17 +613,17 @@ class RoomManager: StrokeUploaderDelegate {
             } else {
                 print("Failed to observe anchor")
                 #if JOIN_GLOBAL_ROOM
-                if self.pairing == false {
+                    if self.pairing == false {
 //                    print("No anchor exists in global room, becoming host")
 //                    self.isHost = true
 //                    // Trigger anchor creation directly since there's no partner to wait for
 //                    StateManager.updateState(.HOST_READY_AND_WAITING)
 //                } else {
-                    StateManager.updateState(.GLOBAL_NO_ANCHOR)
-                }
+                        StateManager.updateState(.GLOBAL_NO_ANCHOR)
+                    }
                 #endif
             }
-        }) { _ in
+        } withCancel: { _ in
             print("RoomManager:observeAnchor: Anchor Observe Cancelled")
         }
 
@@ -751,7 +709,9 @@ class RoomManager: StrokeUploaderDelegate {
         guard let room = roomRef, let uid = userUid else {
             return
         }
+
         strokesRef = room.child(FBKey.val(.lines))
+        // swiftlint:disable:next force_unwrapping
         self.strokeUpdateCallbacks(uid: uid, reference: strokesRef!)
     }
 
@@ -768,18 +728,6 @@ class RoomManager: StrokeUploaderDelegate {
         strokeUploader.queueStroke(stroke, remove: shouldRemove)
     }
 
-    private func addStroke(_ stroke: Stroke) {
-        print("RoomManager: addStroke \(String(describing: roomRef)) , \(String(describing: userUid))")
-        guard let room = roomRef, let uid = userUid else {
-            return
-        }
-
-        let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
-        localStrokeUids[strokeRef.key!] = stroke
-        stroke.creatorUid = uid
-        stroke.fbReference = strokeRef
-    }
-
     func clearAllStrokes() {
         guard let room = roomRef else {
             return
@@ -789,15 +737,17 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     // MARK: StrokeUploadManager Delegate methods
+
     func uploadStroke(_ stroke: Stroke, completion: @escaping ((Error?, DatabaseReference) -> Void)) {
         print("RoomManager: uploadStroke")
         guard let fbStrokeRef = stroke.fbReference else {
             return
         }
+
         if stroke.previousPoints == nil {
             let dictValue = stroke.dictionaryValue()
             print("New Stroke dict: \(dictValue)")
-            if dictValue.count == 0 || stroke.node == nil {
+            if dictValue.isEmpty || stroke.node == nil {
                 print("RoomManager: uploadStroke: Stroke new upload cancelled, stroke removed")
                 delegate?.localStrokeRemoved(stroke)
             } else {
@@ -806,7 +756,7 @@ class RoomManager: StrokeUploaderDelegate {
         } else {
             let dictValue = stroke.pointsUpdateDictionaryValue()
             print("Stroke update dict: \(dictValue)")
-            if dictValue.count == 0 || stroke.node == nil {
+            if dictValue.isEmpty || stroke.node == nil {
                 print("RoomManager: uploadStroke: Stroke update upload cancelled, stroke removed")
                 delegate?.localStrokeRemoved(stroke)
             } else {
@@ -820,40 +770,102 @@ class RoomManager: StrokeUploaderDelegate {
         stroke.fbReference?.removeValue()
     }
 
+    /// Login with existing id or create a new one
+    private func firebaseLogin() {
+        if let currentUser = firebaseAuth?.currentUser {
+            userUid = currentUser.uid
+            print("firebaseLogin: user uid \(String(describing: userUid))")
+            // Notify that authentication is complete
+            // swiftlint:disable:next legacy_objc_type
+            NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
+        } else {
+            loginAnonymously()
+        }
+    }
+
+    /// Create new user id with anonymous sign-in
+    private func loginAnonymously() {
+        firebaseAuth?.signInAnonymously(completion: { _, error in
+            // need to handle error states
+            if error == nil {
+                if let currentUser = self.firebaseAuth?.currentUser {
+                    self.userUid = currentUser.uid
+                    print("loginAnonymously: user uid \(String(describing: self.userUid))")
+
+                    // Notify that authentication is complete
+                    // swiftlint:disable:next legacy_objc_type
+                    NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
+                }
+            } else {
+                print("Firebase anonymous login failed: \(error?.localizedDescription ?? "Unknown error")")
+                // Retry authentication after a delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    print("Retrying Firebase authentication with loginAnonymously...")
+                    self.loginAnonymously()
+                }
+                // Notify that authentication failed
+                // swiftlint:disable:next legacy_objc_type
+                NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthFailed"), object: error)
+            }
+        })
+    }
+
+    /// If no room has been created, join, otherwise only choose if my room number is lower
+    private func shouldJoinRoom(_ roomData: RoomData) -> Bool {
+        guard let roomString = self.roomKey else {
+            return true
+        }
+
+        return roomString.compare(roomData.code) == ComparisonResult.orderedDescending
+    }
+
+    private func addStroke(_ stroke: Stroke) {
+        print("RoomManager: addStroke \(String(describing: roomRef)) , \(String(describing: userUid))")
+        guard let room = roomRef, let uid = userUid else {
+            return
+        }
+
+        let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
+        // swiftlint:disable:next force_unwrapping
+        localStrokeUids[strokeRef.key!] = stroke
+        stroke.creatorUid = uid
+        stroke.fbReference = strokeRef
+    }
+
     // MARK: Stroke Callbacks
 
     /// Observers for changes to partner's lines
     private func strokeUpdateCallbacks(uid _: String, reference: DatabaseReference) {
         print("Stroke Update Callbacks Reference: \(reference)")
 
-        self.strokeAddedHandle = reference.observe(.childAdded, with: { snapshot in
-            if  let strokeValue = snapshot.value as? [String: Any?],
-                self.localStrokeUids[snapshot.key] == nil,
-                let stroke = Stroke.from(strokeValue) {
-                    print("RoomManager:strokeUpdateCallbacks: Partner Stroke Added Observer")
-                    stroke.drawnLocally = false
-                    self.delegate?.partnerStrokeUpdated(stroke, id: snapshot.key)
-            } else if let _ = snapshot.value as? [String: Any?], self.localStrokeUids[snapshot.key] != nil {
+        self.strokeAddedHandle = reference.observe(.childAdded) { snapshot in
+            if let strokeValue = snapshot.value as? [String: Any?],
+               self.localStrokeUids[snapshot.key] == nil,
+               let stroke = Stroke.from(strokeValue) {
+                print("RoomManager:strokeUpdateCallbacks: Partner Stroke Added Observer")
+                stroke.drawnLocally = false
+                self.delegate?.partnerStrokeUpdated(stroke, id: snapshot.key)
+            } else if (snapshot.value as? [String: Any?]) != nil, self.localStrokeUids[snapshot.key] != nil {
                 self.hasStrokeData = true
             } else {
                 print("RoomManager:strokeUpdateCallbacks: Added Observer has wrong value: \(String(describing: snapshot.value))")
             }
-        }) { _ in
+        } withCancel: { _ in
             print("Partner Stroke Added Observer Cancelled")
         }
 
-        self.strokeUpdatedHandle = reference.observe(.childChanged, with: { snapshot in
+        self.strokeUpdatedHandle = reference.observe(.childChanged) { snapshot in
             if let strokeValue = snapshot.value as? [String: Any?], self.localStrokeUids[snapshot.key] == nil,
                let stroke = Stroke.from(strokeValue) {
 //                    print("RoomManager:strokeUpdateCallbacks: Partner Stroke Changed Observer")
-                    stroke.drawnLocally = false
-                    self.delegate?.partnerStrokeUpdated(stroke, id: snapshot.key)
+                stroke.drawnLocally = false
+                self.delegate?.partnerStrokeUpdated(stroke, id: snapshot.key)
             }
-        }) { _ in
+        } withCancel: { _ in
             print("Partner Stroke Changed Observer Cancelled")
         }
 
-        self.strokeRemovedHandle = reference.observe(.childRemoved, with: { snapshot in
+        self.strokeRemovedHandle = reference.observe(.childRemoved) { snapshot in
             print("Partner Stroke Removed Observer")
             if let stroke = self.localStrokeUids[snapshot.key] {
                 self.delegate?.localStrokeRemoved(stroke)
@@ -861,13 +873,8 @@ class RoomManager: StrokeUploaderDelegate {
             } else {
                 self.delegate?.partnerStrokeRemoved(id: snapshot.key)
             }
-        }) { _ in
+        } withCancel: { _ in
             print("RoomManager:strokeUpdateCallbacks: Partner Stroke Removed Observer Cancelled")
-        }
-
-        self.strokeMovedHandle = reference.observe(.childMoved, with: { _ in
-        }) { _ in
-            print("Partner Stroke Moved Observer Cancelled")
         }
     }
 }
