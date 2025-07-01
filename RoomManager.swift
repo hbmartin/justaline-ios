@@ -137,9 +137,9 @@ class RoomManager: StrokeUploaderDelegate {
 
             DatabaseReference.goOnline()
         } else {
-            print("RoomManager: Could not connect to Firebase Database!")
             roomsListRef = nil
             globalRoomRef = nil
+            fatalError("RoomManager: Could not connect to Firebase Database!")
         }
     }
 
@@ -278,17 +278,28 @@ class RoomManager: StrokeUploaderDelegate {
 
     /// Add self as a participant in the current room
     func participateInRoom() {
-        if let uid = self.userUid, let partnersRef = roomRef?.child(FBKey.val(.participants)) {
-            participantsRef = partnersRef
-            
-            // Add to participants list with false value until room is resolved for the originating user to discover
-            let participant = FBParticipant(readyToSetAnchor: false)
-            participant.isPairing = pairing
-
-            partnersRef.child(uid).setValue(participant.dictionaryValue())
-            partnersRef.child(uid).onDisconnectSetValue(nil)
-            self.partnerJoinedCallbacks(uid:uid, reference:partnersRef)
+        guard let uid = self.userUid, let partnersRef = roomRef?.child(FBKey.val(.participants)) else {
+            print("RoomManager:participateInRoom: Missing uid or room reference")
+            StateManager.updateState(.UNKNOWN_ERROR)
+            return
         }
+
+        participantsRef = partnersRef
+
+        // Add to participants list with false value until room is resolved for the originating user to discover
+        let participant = FBParticipant(readyToSetAnchor: false)
+        participant.isPairing = pairing
+
+        partnersRef.child(uid).setValue(participant.dictionaryValue()) { error, _ in
+            if let error = error {
+                print("RoomManager:participateInRoom: Error setting participant value: \(error.localizedDescription)")
+                StateManager.updateState(.UNKNOWN_ERROR)
+            } else {
+                print("RoomManager:participateInRoom: Successfully joined room as participant")
+            }
+        }
+        partnersRef.child(uid).onDisconnectSetValue(nil)
+        self.partnerJoinedCallbacks(uid: uid, reference: partnersRef)
     }
 
     /// RoomData conveyed via Nearby
@@ -367,7 +378,17 @@ class RoomManager: StrokeUploaderDelegate {
         if let room = roomsListRef?.child(roomKey) {
             updateRoomReference(room)
             participateInRoom()
-            
+            for stroke in localStrokeUids {
+                let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
+                stroke.value.fbReference = strokeRef
+                uploadStroke(stroke.value) {error, reference in
+                    if error == nil {
+                        print("Uploaded strok: \(String(describing: reference))")
+                    } else {
+                        print("Error uploading stroke: \(String(describing: error))")
+                    }
+                }
+            }
             #if JOIN_GLOBAL_ROOM
             // if pairing with another device, remove anchor to start fresh
             // otherwise try to obtain an existing anchor id
@@ -633,7 +654,12 @@ class RoomManager: StrokeUploaderDelegate {
             } else {
                 print("Failed to observe anchor")
                 #if JOIN_GLOBAL_ROOM
-                if (self.pairing == false) {
+                if self.pairing == false {
+                    print("No anchor exists in global room, becoming host")
+                    self.isHost = true
+                    // Trigger anchor creation directly since there's no partner to wait for
+                    StateManager.updateState(.HOST_READY_AND_WAITING)
+                } else {
                     StateManager.updateState(.GLOBAL_NO_ANCHOR)
                 }
                 #endif
