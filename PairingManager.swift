@@ -620,6 +620,7 @@ extension PairingManager : RoomManagerDelegate {
     }
     
     func updatePartnerAnchorReadiness(partnerReady: Bool, isHost: Bool) {
+        print("PairingManager: updatePartnerAnchorReadiness: partnerReady: \(partnerReady), isHost: \(isHost)")
         partnerReadyToSetAnchor = partnerReady
 
         if partnerReady && isHost {

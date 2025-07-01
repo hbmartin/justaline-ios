@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
-import SceneKit
-import CoreMedia
 import AVFoundation
-import ReplayKit
+import CoreMedia
 import FirebaseAnalytics
+import ReplayKit
+import SceneKit
+import UIKit
 
 extension ViewController: InterfaceViewControllerDelegate {
     
@@ -39,7 +39,7 @@ extension ViewController: InterfaceViewControllerDelegate {
         // begin a new stroke
         let stroke = Stroke()
         print("Touch")
-        if let anchor = makeAnchor(at:touchPoint) {
+        if let anchor = makeAnchor(at: touchPoint) {
             stroke.anchor = anchor
             stroke.points.append(SCNVector3Zero)
             stroke.touchStart = touchPoint
@@ -73,10 +73,10 @@ extension ViewController: InterfaceViewControllerDelegate {
     }
     
     override var shouldAutorotate: Bool {
-        get {
-            if let recorder = screenRecorder, recorder.isRecording { return false }
-            return true
+        if let recorder = screenRecorder, recorder.isRecording {
+            return false
         }
+        return true
     }
 
     
@@ -119,7 +119,7 @@ extension ViewController: InterfaceViewControllerDelegate {
                 previewViewController?.previewControllerDelegate = self
                 previewViewController?.modalPresentationStyle = .overFullScreen
 
-                self.present(preview, animated: true, completion:nil)
+                self.present(preview, animated: true, completion: nil)
                 self.uiWindow?.isHidden = true
             }
         })
@@ -148,7 +148,7 @@ extension ViewController: InterfaceViewControllerDelegate {
         
         var clearMessageKey = "clear_confirmation_message"
         var clearTitleKey = "clear_confirmation_title"
-        if partnerStrokes.count > 0 {
+        if !partnerStrokes.isEmpty {
             clearMessageKey = "clear_confirmation_message_paired"
             clearTitleKey = "clear_confirmation_title_paired"
         }
@@ -156,7 +156,8 @@ extension ViewController: InterfaceViewControllerDelegate {
         let alertController = UIAlertController(
             title: NSLocalizedString(clearTitleKey, comment: "Clear Drawing"),
             message: NSLocalizedString(clearMessageKey, comment: "Clear your drawing?"),
-            preferredStyle: .alert)
+            preferredStyle: .alert
+        )
         let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { (cancelAction) in
             alertController.dismiss(animated: true, completion: nil)
         }
@@ -198,9 +199,12 @@ extension ViewController: InterfaceViewControllerDelegate {
     
     func joinButtonTapped(sender: UIButton?) {
         if pairingManager?.isPairingOrPaired == true {
-            // TODO: This text is incorrect compared to Android
-            let alertController = UIAlertController(title: NSLocalizedString("pair_disconnect_title", comment: "Disconnect"), message: NSLocalizedString("pair_disconnect", comment: "Are you sure you want to disconnect?"), preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment:"Cancel"), style: .cancel) { (cancelAction) in
+            let alertController = UIAlertController(
+                title: NSLocalizedString("pair_disconnect_title", comment: "Disconnect"),
+                message: NSLocalizedString("pair_disconnect", comment: "Are you sure you want to disconnect?"),
+                preferredStyle: .alert
+            )
+            let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { (cancelAction) in
                 alertController.dismiss(animated: true, completion: nil)
             }
 
@@ -223,7 +227,7 @@ extension ViewController: InterfaceViewControllerDelegate {
         }
     }
     
-    func shouldPresentPairingChooser()->Bool {
+    func shouldPresentPairingChooser() -> Bool {
         if let isPaired = pairingManager?.isPairingOrPaired {
             return !isPaired
         }
@@ -235,15 +239,15 @@ extension ViewController: InterfaceViewControllerDelegate {
         mode = .PAIR
     }
     
-    func shouldHideTrashButton()->Bool {
-        if strokes.count > 0 || partnerStrokes.count > 0 {
+    func shouldHideTrashButton() -> Bool {
+        if !strokes.isEmpty || !partnerStrokes.isEmpty {
             return false
         }
         return true
     }
-    
-    func shouldHideUndoButton()->Bool {
-        if (strokes.count > 0) {
+
+    func shouldHideUndoButton() -> Bool {
+        if strokes.isEmpty {
             return false
         }
         return true

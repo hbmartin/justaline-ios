@@ -14,19 +14,19 @@
 
 import UIKit
 
-protocol PairingChooserDelegate {
-    func shouldBeginPartnerSession ()
+protocol PairingChooserDelegate: AnyObject {
+    func shouldBeginPartnerSession()
 }
 
 class PairingChooser: UIViewController {
-    
-    var delegate: PairingChooserDelegate?
-    @IBOutlet weak var overlayButton: UIButton!
-    @IBOutlet weak var buttonContainer: UIView!
-    @IBOutlet weak var joinButton: UIButton!
-    @IBOutlet weak var pairButton: UIButton!
-    @IBOutlet weak var cancelButton: UIButton!
+    weak var delegate: PairingChooserDelegate?
     var offscreenContainerPosition: CGFloat = 0
+
+    @IBOutlet private var overlayButton: UIButton!
+    @IBOutlet private var buttonContainer: UIView!
+    @IBOutlet private var joinButton: UIButton!
+    @IBOutlet private var pairButton: UIButton!
+    @IBOutlet private var cancelButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,39 +37,31 @@ class PairingChooser: UIViewController {
         cancelButton.setTitle(NSLocalizedString("cancel", comment: "Cancel"), for: .normal)
         print(offscreenContainerPosition)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: offscreenContainerPosition)
-        UIView.animate(withDuration: 0.25, animations: {
+        buttonContainer.transform = CGAffineTransform(translationX: 0, y: offscreenContainerPosition)
+        UIView.animate(withDuration: 0.25) {
             self.buttonContainer.transform = .identity
-        }) { (success) in
+        } completion: { _ in
             UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: self.pairButton)
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         UIView.animate(withDuration: 0.35) {
-            self.buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: self.offscreenContainerPosition)
+            self.buttonContainer.transform = CGAffineTransform(translationX: 0, y: self.offscreenContainerPosition)
         }
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func pairButtonTapped(_ sender: UIButton) {
+
+    @IBAction private func pairButtonTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.shouldBeginPartnerSession()
         })
     }
-    
-    @IBAction func cancelTapped(_ sender: UIButton) {
+
+    @IBAction private func cancelTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
-    
 }

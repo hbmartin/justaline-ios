@@ -14,19 +14,18 @@
 
 import UIKit
 
-protocol GlobalPairingChooserDelegate {
+protocol GlobalPairingChooserDelegate: AnyObject {
     func shouldBeginGlobalSession (withPairing: Bool)
 }
 
 class GlobalPairingChooser: UIViewController {
-    
-    var delegate: GlobalPairingChooserDelegate?
-    @IBOutlet weak var overlayButton: UIButton!
-    @IBOutlet weak var buttonContainer: UIView!
-    @IBOutlet weak var joinButton: UIButton!
-    @IBOutlet weak var pairButton: UIButton!
-    @IBOutlet weak var cancelButton: UIButton!
     var offscreenContainerPosition: CGFloat = 0
+    weak var delegate: GlobalPairingChooserDelegate?
+    @IBOutlet private var overlayButton: UIButton!
+    @IBOutlet private var buttonContainer: UIView!
+    @IBOutlet private var joinButton: UIButton!
+    @IBOutlet private var pairButton: UIButton!
+    @IBOutlet private var cancelButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,46 +33,37 @@ class GlobalPairingChooser: UIViewController {
         // Do any additional setup after loading the view.
         offscreenContainerPosition = buttonContainer.frame.size.height
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: offscreenContainerPosition)
+        buttonContainer.transform = CGAffineTransform(translationX: 0, y: offscreenContainerPosition)
         UIView.animate(withDuration: 0.25) {
             self.buttonContainer.transform = .identity
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         UIView.animate(withDuration: 0.35) {
-            self.buttonContainer.transform = CGAffineTransform.init(translationX: 0, y: self.offscreenContainerPosition)
+            self.buttonContainer.transform = CGAffineTransform(translationX: 0, y: self.offscreenContainerPosition)
         }
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func pairButtonTapped(_ sender: UIButton) {
+
+    @IBAction private func pairButtonTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.shouldBeginGlobalSession(withPairing: true)
         })
     }
-    
-    @IBAction func joinButtonTapped(_ sender: UIButton) {
+
+    @IBAction private func joinButtonTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.shouldBeginGlobalSession(withPairing: false)
         })
-        
     }
-    
-    @IBAction func cancelTapped(_ sender: UIButton) {
+
+    @IBAction private func cancelTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: nil)
     }
-    
 
     /*
     // MARK: - Navigation
@@ -84,5 +74,4 @@ class GlobalPairingChooser: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
 }

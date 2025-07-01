@@ -23,31 +23,30 @@ class ProgressView: UIView {
     override init(frame: CGRect) {
         progressCircle = CAShapeLayer()
         circle = UIView(frame: frame)
-        
         circle.layoutIfNeeded()
-        
+
         super.init(frame: frame)
-        
+
         configureCircle()
         self.addSubview(circle)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         progressCircle = CAShapeLayer()
         circle = UIView(frame: CGRect(x: 0, y: 0, width: 120, height: 120))
-        
+
         super.init(coder: aDecoder)
     }
-    
+
     override func awakeFromNib() {
+        super.awakeFromNib()
         configureCircle()
         addSubview(circle)
     }
-    
+
     func configureCircle() {
-        let centerPoint = CGPoint (x: circle.bounds.width / 2, y: circle.bounds.width / 2)
+        let centerPoint = CGPoint(x: circle.bounds.width / 2, y: circle.bounds.width / 2)
         let circleRadius: CGFloat = circle.bounds.width / 2 - (lineWidth / 2)
-        
         let circlePath = UIBezierPath(
             arcCenter: centerPoint,
             radius: circleRadius,
@@ -56,7 +55,7 @@ class ProgressView: UIView {
             clockwise: true
         )
         circlePath.lineCapStyle = .round
-        
+
         progressCircle.path = circlePath.cgPath
         progressCircle.strokeColor = strokeColor.cgColor
         progressCircle.fillColor = UIColor.clear.cgColor
@@ -65,7 +64,7 @@ class ProgressView: UIView {
         progressCircle.strokeEnd = 0.0
         circle.layer.addSublayer(progressCircle)
     }
-    
+
     func play(duration: Double) {
         progressCircle.strokeEnd = 0.0
         progressCircle.speed = 1.0
@@ -78,17 +77,17 @@ class ProgressView: UIView {
         animation.isRemovedOnCompletion = false
         progressCircle.add(animation, forKey: "ani")
     }
-    
+
     func stop() {
         progressCircle.speed = 0.0
     }
-    
+
     func reset() {
         progressCircle.removeAllAnimations()
         progressCircle.speed = 1.0
         progressCircle.strokeEnd = 0.0
     }
-    
+
     /*
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.

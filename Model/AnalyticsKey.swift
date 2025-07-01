@@ -14,9 +14,10 @@
 
 import Foundation
 
+// swiftlint:disable:next identifier_name
 enum AnalyticsKey: String {
     case value_true = "true"
-    
+
     // Permissions
     case camera_permission_granted
     case camera_permission_denied
@@ -24,24 +25,24 @@ enum AnalyticsKey: String {
     case microphone_permission_denied
     case storage_permission_granted
     case storage_permission_denied
-    
+
     // Camera view
     case record
     case record_method
     case record_method_tap = "tap"
     case record_method_hold = "hold"
-    
+
     // User properties
     case user_has_drawn
     case tracking_has_established
     case user_tapped_undo
     case user_tapped_clear
     case tapped_share_app
-    
+
     // Playback
     case tapped_save
     case tapped_share_recording
-    
+
     // Pairing
     case tapped_start_pair
     case pair_error_discovery_timeout
@@ -54,8 +55,6 @@ enum AnalyticsKey: String {
     case user_tapped_pair
     case tapped_exit_pair_flow
     case tapped_disconnect_paired_session
-    
-    static func val(_ key:AnalyticsKey)->String {
-        return key.rawValue
-    }
+
+    static func val(_ key: Self) -> String { key.rawValue }
 }

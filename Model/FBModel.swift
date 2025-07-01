@@ -14,38 +14,35 @@
 
 import Foundation
 
-
 protocol FBModel {
-    static func from(_ dictionary: [String: Any?])->Self?
-    func dictionaryValue()->[String: Any?]
+    static func from(_ dictionary: [String: Any?]) -> Self?
+    func dictionaryValue() -> [String: Any?]
 }
 
 enum FBKey: String {
     case anchor
-    case updated_at_timestamp
+    case updatedAtTimestamp = "updated_at_timestamp"
     case lines
     case participants
     case displayName = "display_name"
-    
+
     // FBAnchor
     case anchorId
     case hostCreatedAnchor
     case anchorProcessing
     case anchorResolutionError
-    
+
     // FBParticipant
     case readyToSetAnchor
     case anchorResolved
     case pairing
     case lastSeen
     case lastSeenTimestamp = "timestamp"
-    
+
     // Lines
     case points
     case lineWidth
     case creator
-    
-    static func val(_ key:FBKey)->String {
-        return key.rawValue
-    }
+
+    static func val(_ key: Self) -> String { key.rawValue }
 }

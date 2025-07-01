@@ -15,7 +15,6 @@
 import Foundation
 
 class RoomData {
-
     var code = ""
 
     var timestamp: Int64 = 0
@@ -46,7 +45,6 @@ class RoomData {
         }
     }
 
-
     // Updated method to return Data instead of GNSMessage
     func getMessageData() -> Data {
         if messageData == nil {
@@ -55,7 +53,6 @@ class RoomData {
         }
         return messageData
     }
-    
 }
 
 enum MalformedDataError: Error {

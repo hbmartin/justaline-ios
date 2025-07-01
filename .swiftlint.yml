@@ -19,6 +19,12 @@ disabled_rules:
   - no_magic_numbers
   - trailing_closure
   - required_deinit
+  - explicit_enum_raw_value
+  - file_types_order
+  - sorted_enum_cases
+  - identifier_name
+  - nslocalizedstring_key
+  - override_in_extension
 
 opt_in_rules:
   - all

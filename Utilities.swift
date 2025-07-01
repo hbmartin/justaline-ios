@@ -25,13 +25,13 @@ import ARKit
 
 // MARK: - AHC Float3 extension
 extension SCNVector3{
-    func distance(to receiver:SCNVector3) -> Float{
+    func distance(to receiver: SCNVector3) -> Float{
         let xd = receiver.x - self.x
         let yd = receiver.y - self.y
         let zd = receiver.z - self.z
         let distance = Float(sqrt(xd * xd + yd * yd + zd * zd))
         
-        if (distance < 0){
+        if distance < 0 {
             return (distance * -1)
         } else {
             return (distance)
@@ -269,8 +269,8 @@ extension UIColor {
     static func colorWithKelvin( kelvin: CGFloat) -> UIColor {
         let k = kelvin < 1000 ? 1000 : ( kelvin > 40000 ? 40000 : kelvin)
         
-        func interpolate( value: CGFloat, a: CGFloat, b:CGFloat, c:CGFloat) -> CGFloat {
-            return a + b*value + c*log(value)
+        func interpolate(value: CGFloat, a: CGFloat, b: CGFloat, c: CGFloat) -> CGFloat {
+            return a + b * value + c * log(value)
         }
         
         var red,green,blue: CGFloat

@@ -20,6 +20,7 @@ import UIKit
 #endif
 import NearbyConnections
 
+// swiftlint:disable:next convenience_type
 class Config {
     static let serviceId = "com.google.location.nearby.apps.helloconnections"
     static let defaultStategy = Strategy.cluster
