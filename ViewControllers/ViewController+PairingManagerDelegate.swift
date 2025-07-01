@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import ARCoreCloudAnchors
+import ARCore
 
 extension ViewController: PairingManagerDelegate {
     func cloudAnchorResolved(_ anchor: GARAnchor) {

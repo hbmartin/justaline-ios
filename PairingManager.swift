@@ -22,7 +22,7 @@ protocol PairingManagerDelegate {
     func localStrokeRemoved(_ stroke: Stroke)
     func partnerStrokeUpdated(_ stroke: Stroke, id key: String)
     func partnerStrokeRemoved(id key: String)
-    func cloudAnchorResolved(_ anchor: ARAnchor)
+    func cloudAnchorResolved(_ anchor: GARAnchor)
     func partnerJoined(isHost: Bool)
     func partnerLost()
     func createAnchor()
@@ -111,6 +111,13 @@ class PairingManager: NSObject {
                 print("Created GoogleAR session: \(String(describing: gSession))")
             } catch let error as NSError {
                 print("PairingManager: Couldn't start GoogleAR session: \(error)")
+            }
+            let configuration = GARSessionConfiguration()
+            configuration.cloudAnchorMode = .enabled
+            var error: NSError? = nil
+            gSession?.setConfiguration(configuration, error: &error)
+            if let error {
+              print("Failed to configure the GARSession: \(error)")
             }
         }
     }
@@ -268,7 +275,7 @@ class PairingManager: NSObject {
         print("PairingManager: setAnchor: Attempting to Host Cloud Anchor")
         do {
             try self.garAnchor = self.gSession?.hostCloudAnchor(anchor)
-            NSLog("Attempting to Host Cloud Anchor: %@ with ARAnchor: %@", String(describing: garAnchor), String(describing: anchor))
+            NSLog("Attempting to Host Cloud Anchor: %@ with ARAnchor: %@", garAnchor?.identifier.uuidString ?? "NO ANCHOR", String(describing: anchor))
         } catch let error as NSError {
             print("PairingManager: setAnchor: Hosting cloud anchor failed: \(error)")
         }
@@ -539,7 +546,7 @@ private extension PairingManager {
 // MARK: - RoomManagerDelegate
 extension PairingManager: RoomManagerDelegate {
     func anchorIdCreated(_ id: String) {
-        print("RoomManagerDelegate: Resolving GARAnchor")
+        print("RoomManagerDelegate: Resolving GARAnchor: \(id)")
         if self.gSession == nil {
             print ("There is a problem with your co-presence session" )
             pairingFailed()
@@ -643,25 +650,25 @@ extension PairingManager: RoomManagerDelegate {
 
 // MARK: - GARSessionDelegate
 extension PairingManager: GARSessionDelegate {
-    func session(_: GARSession, didResolve anchor: GARAnchor) {
-        print("GARAnchor Resolved")
+    func session(_ session: GARSession, didResolve anchor: GARAnchor) {
+        print("GARAnchor Resolved: \(String(describing: session))")
         self.delegate?.cloudAnchorResolved(anchor)
         self.anchorResolved()
     }
 
-    func session(_: GARSession, didHost anchor: GARAnchor) {
-        print("GARSession did host anchor")
+    func session(_ session: GARSession, didHost anchor: GARAnchor) {
+        print("GARSession did host anchor: \(String(describing: session))")
         delegate?.cloudAnchorResolved(anchor)
 
-        if anchor.cloudState == .success, let identifier = anchor.cloudIdentifier {
-            roomManager.setAnchorId(identifier)
+        if anchor.cloudState == .success {
+            roomManager.setAnchorId(anchor.identifier.uuidString)
         } else {
             failHostAnchor(anchor)
         }
     }
 
     func session(_: GARSession, didFailToResolve anchor: GARAnchor) {
-        print("GARSession did fail to resolve anchor: \(anchor.cloudState.rawValue)")
+        print("GARSession did fail to resolve anchor: \(Self.stringFromCloudState(anchor.cloudState))")
         #if JOIN_GLOBAL_ROOM
         StateManager.updateState(.GLOBAL_RESOLVE_ERROR)
         #else
@@ -682,12 +689,11 @@ extension PairingManager: GARSessionDelegate {
     }
 
     func session(_: GARSession, didFailToHost anchor: GARAnchor) {
-        print("GARSession: did fail to host anchor: \(anchor.cloudState.rawValue)")
         failHostAnchor(anchor)
     }
 
     func failHostAnchor(_ anchor: GARAnchor) {
-        print("GARSession did fail to host anchor: \(anchor.cloudState.rawValue)")
+        print("🚨 GARSession did fail to host anchor: \(Self.stringFromCloudState(anchor.cloudState))")
         StateManager.updateState(.HOST_ANCHOR_ERROR)
 
         pairingFailed()
@@ -696,5 +702,33 @@ extension PairingManager: GARSessionDelegate {
 
         let params = [AnalyticsKey.val(.pair_error_sync_reason): String(anchor.cloudState.rawValue)]
         Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
+    }
+    
+    private static func stringFromCloudState(_ cloudState: GARCloudAnchorState) -> String {
+      switch cloudState {
+      case .none:
+        return "None"
+      case .success:
+        return "Success"
+      case .errorInternal:
+        return "ErrorInternal"
+      case .errorNotAuthorized:
+        return "ErrorNotAuthorized"
+      case .errorResourceExhausted:
+        return "ErrorResourceExhausted"
+      case .errorHostingDatasetProcessingFailed:
+        return "ErrorHostingDatasetProcessingFailed"
+      case .errorCloudIdNotFound:
+        return "ErrorCloudIdNotFound"
+      case .errorResolvingSdkVersionTooNew:
+        return "ErrorResolvingSdkVersionTooNew"
+      case .errorResolvingSdkVersionTooOld:
+        return "ErrorResolvingSdkVersionTooOld"
+      case .errorHostingServiceUnavailable:
+        return "ErrorHostingServiceUnavailable"
+      default:
+        // Not handling deprecated enum values that will never be returned.
+        return "Unknown"
+      }
     }
 }

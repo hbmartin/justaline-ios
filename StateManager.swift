@@ -133,6 +133,7 @@ class StateManager: UIViewController {
 
     /// Update state manager
     static func updateState(_ state: State) {
+        print("updateState: \(state)")
         NotificationCenter.default.post(name: .STATE_CHANGED, object: self, userInfo: ["state": state])
     }
 
@@ -286,6 +287,7 @@ class StateManager: UIViewController {
         case .GLOBAL_NO_ANCHOR:
             message = NSLocalizedString("pair_global_no_anchor", comment: "There is no anchor in the global room.")
             image = UIImage(named: "jal_ui_error_icon_sync")
+            readyToSetAnchor()
 
         case .GLOBAL_RESOLVE_ERROR:
             message = NSLocalizedString("pair_global_localization_error", comment: "Couldn\'t find room. Are you in the right spot?")
@@ -425,6 +427,14 @@ class StateManager: UIViewController {
     func hostAnchorDrawn() {
         readyButton?.isHidden = false
     }
+    
+    func readyToSetAnchor() {
+        print("readyToSetAnchor: \(state)")
+        if state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR || state == .GLOBAL_NO_ANCHOR {
+            delegate?.onReadyToSetAnchor()
+        }
+
+    }
 
     // MARK: - Button Methods
 
@@ -433,10 +443,7 @@ class StateManager: UIViewController {
             return
         }
 
-        if state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR {
-            delegate?.onReadyToSetAnchor()
-        }
-
+        readyToSetAnchor()
         readyButton?.isHidden = true
     }
 

@@ -68,6 +68,7 @@ extension ViewController: StateManagerDelegate {
     }
 
     func onReadyToSetAnchor() {
+        print("onReadyToSetAnchor")
         pairingManager?.setReadyToSetAnchor()
         //        Analytics.logEvent(AnalyticsKey.val(.tapped_ready_to_set_anchor), parameters: nil)
     }

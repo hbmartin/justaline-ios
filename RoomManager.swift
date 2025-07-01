@@ -378,17 +378,17 @@ class RoomManager: StrokeUploaderDelegate {
         if let room = roomsListRef?.child(roomKey) {
             updateRoomReference(room)
             participateInRoom()
-            for stroke in localStrokeUids {
-                let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
-                stroke.value.fbReference = strokeRef
-                uploadStroke(stroke.value) {error, reference in
-                    if error == nil {
-                        print("Uploaded strok: \(String(describing: reference))")
-                    } else {
-                        print("Error uploading stroke: \(String(describing: error))")
-                    }
-                }
-            }
+//            for stroke in localStrokeUids {
+//                let strokeRef = room.child(FBKey.val(.lines)).childByAutoId()
+//                stroke.value.fbReference = strokeRef
+//                uploadStroke(stroke.value) {error, reference in
+//                    if error == nil {
+//                        print("Uploaded strok: \(String(describing: reference))")
+//                    } else {
+//                        print("Error uploading stroke: \(String(describing: error))")
+//                    }
+//                }
+//            }
             #if JOIN_GLOBAL_ROOM
             // if pairing with another device, remove anchor to start fresh
             // otherwise try to obtain an existing anchor id
@@ -656,11 +656,11 @@ class RoomManager: StrokeUploaderDelegate {
                 print("Failed to observe anchor")
                 #if JOIN_GLOBAL_ROOM
                 if self.pairing == false {
-                    print("No anchor exists in global room, becoming host")
-                    self.isHost = true
-                    // Trigger anchor creation directly since there's no partner to wait for
-                    StateManager.updateState(.HOST_READY_AND_WAITING)
-                } else {
+//                    print("No anchor exists in global room, becoming host")
+//                    self.isHost = true
+//                    // Trigger anchor creation directly since there's no partner to wait for
+//                    StateManager.updateState(.HOST_READY_AND_WAITING)
+//                } else {
                     StateManager.updateState(.GLOBAL_NO_ANCHOR)
                 }
                 #endif
@@ -727,6 +727,8 @@ class RoomManager: StrokeUploaderDelegate {
         guard let room = roomRef else {
             return
         }
+
+        print("RoomManager: anchorFailedToResolve: isRetrying: \(isRetrying), pairing: \(pairing)")
 
         if !isRetrying {
             // For global rooms, only send failure to Firebase if it is a hosting failure
