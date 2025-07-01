@@ -42,14 +42,14 @@ class DrawPromptView: UIView {
     }
 
     private func growAnimation() {
-        UIView.animate(withDuration: 0.6, delay: 0.2, options: [.curveEaseInOut], animations: {
+        UIView.animate(withDuration: 0.6, delay: 0.2, options: [.curveEaseInOut]) {
             self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.6, delay: 0.25, options: [.curveEaseInOut], animations: {
+        } completion: { _ in
+            UIView.animate(withDuration: 0.6, delay: 0.25, options: [.curveEaseInOut]) {
                 self.transform = .identity
-            }, completion: { _ in
+            } completion: { _ in
                 self.growAnimation()
-             })
-        })
+            }
+        }
     }
 }

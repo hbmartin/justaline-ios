@@ -229,7 +229,7 @@ class StateManager: UIViewController {
                 message = NSLocalizedString("pair_look_at_same_thing", comment: "")
                 accessibleMessage = NSLocalizedString("pair_look_at_same_thing_accessible", comment: "")
                 image = UIImage(named: "jal_ui_illustrations_sync")
-                showReadyButton = true;
+                showReadyButton = true
 
             case .HOST_READY_AND_WAITING: fallthrough
             case .PARTNER_READY_AND_WAITING:
@@ -419,7 +419,7 @@ class StateManager: UIViewController {
         }
 
         if state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR {
-            delegate?.onReadyToSetAnchor();
+            delegate?.onReadyToSetAnchor()
         }
 
         readyButton?.isHidden = true

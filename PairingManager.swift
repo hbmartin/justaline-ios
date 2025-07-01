@@ -14,8 +14,8 @@
 
 import ARCoreCloudAnchors
 import ARCoreGARSession
-import Foundation
 import FirebaseAnalytics
+import Foundation
 import NearbyConnections
 
 protocol PairingManagerDelegate {
@@ -275,7 +275,7 @@ class PairingManager: NSObject {
         roomManager.setReadyToSetAnchor()
 
         if roomManager.isHost && partnerReadyToSetAnchor {
-            sendSetAnchorEvent();
+            sendSetAnchorEvent()
         } else if roomManager.isHost {
             StateManager.updateState(.HOST_READY_AND_WAITING)
         } else if partnerReadyToSetAnchor {
@@ -287,7 +287,7 @@ class PairingManager: NSObject {
     }
 
     func sendSetAnchorEvent() {
-        print("sendSetAnchorEvent");
+        print("sendSetAnchorEvent")
         delegate?.createAnchor()
         StateManager.updateState(.HOST_CONNECTING)
         beginPairingTimeout()

@@ -1,3 +1,4 @@
+// swiftlint:disable type_contents_order private_outlet type_body_length
 // Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
 import FirebaseAnalytics
+import UIKit
 
-protocol InterfaceViewControllerDelegate {
+protocol InterfaceViewControllerDelegate: AnyObject {
     func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
     func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -33,6 +34,7 @@ protocol InterfaceViewControllerDelegate {
     func beginGlobalSession(_ withPairing: Bool)
     func shouldPresentPairingChooser() -> Bool
     func resetTouches()
+
     var shouldAutorotate: Bool { get }
 }
 
@@ -49,7 +51,7 @@ enum TrackingMessageType {
 }
 
 class TouchView: UIView {
-    var touchDelegate: InterfaceViewController?
+    weak var touchDelegate: InterfaceViewController?
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         touchDelegate?.touchesBegan(touches, with: event)
@@ -71,33 +73,33 @@ class TouchView: UIView {
 }
 
 class InterfaceViewController: UIViewController, OverflowViewControllerDelegate, GlobalPairingChooserDelegate, PairingChooserDelegate {
-    @IBOutlet weak var touchView: TouchView!
-    @IBOutlet weak var trackingImage: UIImageView!
-    @IBOutlet weak var trackingImageCenterConstraint: NSLayoutConstraint!
+    @IBOutlet var touchView: TouchView!
+    @IBOutlet private var trackingImage: UIImageView!
+    @IBOutlet private var trackingImageCenterConstraint: NSLayoutConstraint!
 
-    @IBOutlet weak var progressCircle: ProgressView!
-    @IBOutlet weak var recordBackgroundView: UIView!
-    @IBOutlet weak var recordButton: UIButton!
-    @IBOutlet weak var recordIconView: UIView!
-    @IBOutlet weak var clearAllButton: UIButton!
-    @IBOutlet weak var chooseSizeButton: UIButton!
-    @IBOutlet weak var overflowButton: UIButton!
-    @IBOutlet weak var sizeButtonStackView: UIStackView!
-    @IBOutlet weak var sizeStackViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var pairButton: UIButton!
-    @IBOutlet weak var recordButtonBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var undoButton: UIButton!
-    @IBOutlet weak var messagesContainerView: UIView!
-    @IBOutlet weak var drawPromptContainer: UIView!
-    @IBOutlet weak var drawPromptLabel: UILabel!
-    @IBOutlet weak var trackingPromptContainer: UIView!
-    @IBOutlet weak var trackingPromptLabel: UILabel!
-    @IBOutlet weak var pairedStateLabel: UILabel!
-    @IBOutlet weak var largeBrushButton: UIButton!
-    @IBOutlet weak var mediumBrushButton: UIButton!
-    @IBOutlet weak var smallBrushButton: UIButton!
+    @IBOutlet var progressCircle: ProgressView!
+    @IBOutlet var recordBackgroundView: UIView!
+    @IBOutlet private var recordButton: UIButton!
+    @IBOutlet private var recordIconView: UIView!
+    @IBOutlet var clearAllButton: UIButton!
+    @IBOutlet private var chooseSizeButton: UIButton!
+    @IBOutlet private var overflowButton: UIButton!
+    @IBOutlet private var sizeButtonStackView: UIStackView!
+    @IBOutlet private var sizeStackViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var pairButton: UIButton!
+    @IBOutlet private var recordButtonBottomConstraint: NSLayoutConstraint!
+    @IBOutlet var undoButton: UIButton!
+    @IBOutlet var messagesContainerView: UIView!
+    @IBOutlet private var drawPromptContainer: UIView!
+    @IBOutlet private var drawPromptLabel: UILabel!
+    @IBOutlet private var trackingPromptContainer: UIView!
+    @IBOutlet var trackingPromptLabel: UILabel!
+    @IBOutlet private var pairedStateLabel: UILabel!
+    @IBOutlet private var largeBrushButton: UIButton!
+    @IBOutlet private var mediumBrushButton: UIButton!
+    @IBOutlet private var smallBrushButton: UIButton!
 
-    var touchDelegate: InterfaceViewControllerDelegate?
+    weak var touchDelegate: InterfaceViewControllerDelegate?
     var hasDrawnInSession: Bool = false
     var pairButtonState: PairButtonState = .unpaired
     var recordingTimer: Timer?
@@ -128,16 +130,11 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         configureAccessibility()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     override var shouldAutorotate: Bool {
-        get {
-            if let del = touchDelegate, del.shouldAutorotate == false { return false }
-            return true
+        if let touchDelegate, touchDelegate.shouldAutorotate == false {
+            return false
         }
+        return true
     }
 
     func configureAccessibility() {
@@ -160,12 +157,14 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         recordButton.accessibilityAttributedLabel = attributedString
         recordButton.accessibilityHint = NSLocalizedString("content_description_record_accessible", comment: "Tap to record a video for ten seconds.")
 
+        // swiftlint:disable:next legacy_objc_type
         NotificationCenter.default.addObserver(self, selector: #selector(voiceOverStatusChanged), name: NSNotification.Name.STATE_CHANGED, object: nil)
 
         voiceOverStatusChanged()
     }
 
-    @objc func voiceOverStatusChanged() {
+    @objc
+    func voiceOverStatusChanged() {
         sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
     }
 
@@ -197,45 +196,45 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         touchDelegate?.touchesCancelled(touches, with: event)
     }
 
-    @IBAction func recordTapped(_ sender: UIButton) {
+    @IBAction private func recordTapped(_ sender: UIButton) {
         touchDelegate?.recordTapped(sender: sender)
     }
 
-    @IBAction func undoLastStroke(_ sender: UIButton) {
+    @IBAction private func undoLastStroke(_ sender: UIButton) {
         touchDelegate?.undoLastStroke(sender: sender)
     }
 
-    @IBAction func clearAllStrokes(_ sender: UIButton) {
+    @IBAction private func clearAllStrokes(_ sender: UIButton) {
         touchDelegate?.clearStrokesTapped(sender: sender)
     }
 
-    @IBAction func chooseSizeTapped(_: UIButton) {
+    @IBAction private func chooseSizeTapped(_: UIButton) {
         let newAlpha = (sizeButtonStackView.alpha == 0) ? 1 : 0
         UIView.animate(withDuration: 0.25, animations: {
             self.sizeButtonStackView.alpha = CGFloat(newAlpha)
         })
     }
 
-    @IBAction func smallSizeTapped(_: UIButton) {
+    @IBAction private func smallSizeTapped(_: UIButton) {
         selectSize(.small)
     }
 
-    @IBAction func mediumSizeTapped(_: UIButton) {
+    @IBAction private func mediumSizeTapped(_: UIButton) {
         selectSize(.medium)
     }
 
-    @IBAction func largeSizeTapped(_: UIButton) {
+    @IBAction private func largeSizeTapped(_: UIButton) {
         selectSize(.large)
     }
 
     func selectSize(_ size: Radius) {
-        UIView.animate(withDuration: 0.25, animations: {
+        UIView.animate(withDuration: 0.25) {
             self.sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
             if self.sizeButtonStackView.alpha == 0 {
                 self.sizeStackViewBottomConstraint.constant = 10
             }
             self.view.layoutIfNeeded()
-        }) { _ in
+        } completion: { _ in
             self.sizeStackViewBottomConstraint.constant = 18
             switch size {
             case .small:
@@ -331,10 +330,10 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
                 pairedStateLabel.isHidden = false
                 pairedStateLabel.backgroundColor = pairedLabelBlack
                 pairedStateLabel.text = NSLocalizedString("partner_icon_lost_partner", comment: "PARTNER\nLOST")
-                UIView.animate(withDuration: 0.25, delay: 3.0, options: .curveLinear, animations: {
+                UIView.animate(withDuration: 0.25, delay: 3.0, options: .curveLinear) {
                     self.pairedStateLabel.alpha = 0
                     self.pairedStateLabel.isHidden = self.pairButton.isHidden
-                }) { complete in
+                } completion: { complete in
                     if complete && self.pairButtonState != .connected {
                         self.pairedStateLabel.isHidden = true
                         self.pairedStateLabel.alpha = 1
@@ -380,11 +379,11 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     /// When tracking state is .normal, end tracking animation
     func stopTrackingAnimation() {
         // Fade out
-        UIView.animate(withDuration: 0.25, animations: {
+        UIView.animate(withDuration: 0.25) {
             self.trackingPromptContainer.alpha = 0
 
         // Reset state
-        }) { _ in
+        } completion: { _ in
 //            self.trackingPromptContainer.isHidden = true
             self.trackingImageCenterConstraint.constant = -15
             self.trackingPromptContainer.layoutIfNeeded()
@@ -403,16 +402,13 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
             self.recordBackgroundView.alpha = 1
             self.recordBackgroundView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
 
-            UIView.animate(withDuration: 0.25, animations: {
+            UIView.animate(withDuration: 0.25) {
                 self.recordBackgroundView.transform = .identity
                 self.recordIconView.layer.cornerRadius = 0
-            }, completion: { _ in
+            } completion: { _ in
                 self.progressCircle.play(duration: 10.0)
-            })
+            }
         }
-    }
-
-    func recordingHasUpdated() {
     }
 
     func recordingHasEnded() {
@@ -422,15 +418,14 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         recordingTimer = nil
 
         DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.25, animations: {
+            UIView.animate(withDuration: 0.25) {
                 self.recordIconView.layer.cornerRadius = 6
                 self.recordBackgroundView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-            }, completion: { _ in
-            })
+            }
         }
     }
 
-    @IBAction func joinButtonTapped(_ sender: UIButton) {
+    @IBAction private func joinButtonTapped(_ sender: UIButton) {
         #if JOIN_GLOBAL_ROOM
         if let presentChooser = self.touchDelegate?.shouldPresentPairingChooser(), presentChooser == true {
             self.performSegue(withIdentifier: "globalPairingChooserSegue", sender: self)
@@ -451,6 +446,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         self.touchDelegate?.resetTouches()
 
         if segue.identifier == "stateMessageSegue" {
+            // swiftlint:disable:next force_cast
             self.touchDelegate?.stateViewLoaded(segue.destination as! StateManager)
         }
 
@@ -473,10 +469,12 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         }
     }
 
-    @IBAction func unwindAboutSegue(_: UIStoryboardSegue) {
+    // swiftlint:disable:next no_empty_block
+    @IBAction private func unwindAboutSegue(_: UIStoryboardSegue) {
     }
 
     func shareButtonTapped(_: UIButton) {
+        // swiftlint:disable:next force_unwrapping
         let url = URL(string: NSLocalizedString("share_app_message", comment: "https://g.co/justaline"))!
         let activity = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         present(activity, animated: true, completion: nil)

@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
 import Firebase
+import FirebaseAnalytics
 import FirebaseAuth
 import FirebaseDatabase
-import FirebaseAnalytics
+import Foundation
 
 protocol RoomManagerDelegate {
     func localStrokeRemoved(_ stroke: Stroke)
@@ -135,7 +135,7 @@ class RoomManager: StrokeUploaderDelegate {
             roomsListRef = rootRef.child(ROOT_FIREBASE_ROOMS)
             globalRoomRef = rootRef.child(ROOT_GLOBAL_ROOM)
 
-            DatabaseReference.goOnline();
+            DatabaseReference.goOnline()
         } else {
             print("RoomManager: Could not connect to Firebase Database!")
             roomsListRef = nil
@@ -158,7 +158,7 @@ class RoomManager: StrokeUploaderDelegate {
             // Notify that authentication is complete
             NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
         } else {
-            loginAnonymously();
+            loginAnonymously()
         }
     }
 

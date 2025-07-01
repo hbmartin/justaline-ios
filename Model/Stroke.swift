@@ -1,3 +1,4 @@
+// swiftlint:disable legacy_objc_type
 // Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +21,9 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     var drawnLocally = true
 
-    public var mTaperLookup = [Float]()
+    var mTaperLookup = [Float]()
 
-    public var mTapperPoints = Int(0)
+    var mTapperPoints = Int(0)
 
     var mTapperSlope = Float(0)
 
@@ -30,7 +31,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     var anchor: ARAnchor?
     var node: SCNNode?
-    var touchStart: CGPoint = CGPoint.zero
+    var touchStart = CGPoint.zero
 
     var mLineWidth: Float = 0
 
@@ -46,14 +47,15 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     var fbReference: DatabaseReference?
     var creatorUid: String?
-    var previousPoints: [String: [String: NSNumber]]? = nil
+    // swiftlint:disable:next discouraged_optional_collection
+    var previousPoints: [String: [String: NSNumber]]?
 
-    public func size() -> Int {
+    func size() -> Int {
         return points.count
     }
 
     func updateAnimatedStroke() -> Bool {
-        var renderNeedsUpdate = false;
+        var renderNeedsUpdate = false
         if !drawnLocally {
             let previousLength = animatedLength
             animatedLength = animationFilter.update(totalLength)
@@ -66,11 +68,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         return renderNeedsUpdate
     }
 
-    deinit {
-        print("Stroke deinit")
-    }
-
-    public func add( point: SCNVector3) -> Bool {
+    func add(point: SCNVector3) -> Bool {
         let s = points.count
 
         // Filter the point
@@ -78,7 +76,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
         // Check distance, and only add if moved far enough
         if s > 0 {
-            let lastPoint = points[s - 1];
+            let lastPoint = points[s - 1]
 
             let result = point.distance(to: lastPoint)
 
@@ -87,11 +85,11 @@ final class Stroke: NSObject, NSCopying, FBModel {
             }
         }
 
-//        if(points.count <= 1){
-//            for _ in 0..<smoothingCount {
-//                p = biquadFilter.update(point)
-//            }
-//        }
+        //        if(points.count <= 1){
+        //            for _ in 0..<smoothingCount {
+        //                p = biquadFilter.update(point)
+        //            }
+        //        }
 
         totalLength += points[points.count - 1].distance(to: p)
 
@@ -105,7 +103,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
             if angle < 0.05 {
                 points.remove(at: (s - 2))
             } else {
-                subdivideSection(s: s - 3, maxAngle: 0.3, iteration: 0);
+                subdivideSection(s: s - 3, maxAngle: 0.3, iteration: 0)
             }
         }
 
@@ -143,16 +141,16 @@ final class Stroke: NSObject, NSCopying, FBModel {
     }
 
     func subVecs(lhs: SCNVector3, rhs: SCNVector3) -> SCNVector3 {
-        let x = lhs.x - rhs.x;
-        let y = lhs.y - rhs.y;
-        let z = lhs.z - rhs.z;
-        return SCNVector3(x, y, z);
+        let x = lhs.x - rhs.x
+        let y = lhs.y - rhs.y
+        let z = lhs.z - rhs.z
+        return SCNVector3(x, y, z)
     }
 
     func calcAngle(n1: SCNVector3, n2: SCNVector3) -> Float {
-        let xx = n1.y * n2.z - n1.z * n2.y;
-        let yy = n1.z * n2.x - n1.x * n2.z;
-        let zz = n1.x * n2.y - n1.y * n2.x;
+        let xx = n1.y * n2.z - n1.z * n2.y
+        let yy = n1.z * n2.x - n1.x * n2.z
+        let zz = n1.x * n2.y - n1.y * n2.x
         let cross = Float(xx * xx + yy * yy + zz * zz).squareRoot()
 
         let dot = n1.x * n2.x + n1.y * n2.y + n1.z * n2.z
@@ -165,19 +163,19 @@ final class Stroke: NSObject, NSCopying, FBModel {
         let p2 = points[index]
         let p3 = points[index + 1]
 
-        var x = p2.x - p1.x;
-        var y = p2.y - p1.y;
-        var z = p2.z - p1.z;
-        let n1 = SCNVector3(x, y, z);
+        var x = p2.x - p1.x
+        var y = p2.y - p1.y
+        var z = p2.z - p1.z
+        let n1 = SCNVector3(x, y, z)
 
-        x = p3.x - p2.x;
-        y = p3.y - p2.y;
-        z = p3.z - p2.z;
-        let n2 = SCNVector3(x, y, z);
+        x = p3.x - p2.x
+        y = p3.y - p2.y
+        z = p3.z - p2.z
+        let n2 = SCNVector3(x, y, z)
 
-        let xx = n1.y * n2.z - n1.z * n2.y;
-        let yy = n1.z * n2.x - n1.x * n2.z;
-        let zz = n1.x * n2.y - n1.y * n2.x;
+        let xx = n1.y * n2.z - n1.z * n2.y
+        let yy = n1.z * n2.x - n1.x * n2.z
+        let zz = n1.x * n2.y - n1.y * n2.x
         let cross = Float(xx * xx + yy * yy + zz * zz).squareRoot()
 
         let dot = n1.x * n2.x + n1.y * n2.y + n1.z * n2.z
@@ -214,7 +212,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         }
     }
 
-    public func get(i: Int) -> SCNVector3 {
+    func get(i: Int) -> SCNVector3 {
         return points[i]
     }
 
@@ -225,20 +223,20 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
             var v = Float(1.0)
             for i in (0 ... numPoints - 1).reversed() {
-                v *= mTapperSlope;
-                mTaperLookup[i] = v;
+                v *= mTapperSlope
+                mTaperLookup[i] = v
             }
         }
     }
 
-    public func getLineWidth() -> Float {
+    func getLineWidth() -> Float {
         return lineWidth
     }
 
     func prepareLine() {
         resetMemory()
 
-        let lineSize = size();
+        let lineSize = size()
         let mLineWidthMax = getLineWidth()
 
         var lengthAtPoint: Float = 0
@@ -273,7 +271,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
             }
 
             lengthAtPoint += previous.distance(to: current)
-//            print("Length so far: \(lengthAtPoint)")
+            //            print("Length so far: \(lengthAtPoint)")
 
             mLineWidth = max(0, min(mLineWidthMax, mLineWidth))
 
@@ -296,10 +294,10 @@ final class Stroke: NSObject, NSCopying, FBModel {
         positionsVec3.append(pos)
         mLength.append(length)
 
-//        mNext.append(float3(next.x, next.y, next.z))
-//        mPrevious.append(float3(prev.x, prev.y, prev.z))
+        //        mNext.append(float3(next.x, next.y, next.z))
+        //        mPrevious.append(float3(prev.x, prev.y, prev.z))
 
-//        mCounters.append(counter)
+        //        mCounters.append(counter)
         mSide.append(side)
     }
 
@@ -345,16 +343,14 @@ final class Stroke: NSObject, NSCopying, FBModel {
     static func from(_ dictionary: [String: Any?]) -> Stroke? {
         var newStroke: Stroke?
         if let fbPoints = dictionary[FBKey.val(.points)] as? [[String: NSNumber]],
-            let lineWidth = dictionary[FBKey.val(.lineWidth)] as? NSNumber,
-            let creator = dictionary[FBKey.val(.creator)] as? String {
+           let lineWidth = dictionary[FBKey.val(.lineWidth)] as? NSNumber,
+           let creator = dictionary[FBKey.val(.creator)] as? String {
             let stroke = Stroke()
 
             var anchorTransform = matrix_float4x4(1)
 
-            if let firstPoint = fbPoints.first {
-                let firstPointCoord = SCNVector3Make((firstPoint["x"]?.floatValue)!,
-                                                     (firstPoint["y"]?.floatValue)!,
-                                                     (firstPoint["z"]?.floatValue)!)
+            if let firstPoint = fbPoints.first, let x = firstPoint["x"], let y = firstPoint["y"], let z = firstPoint["z"] {
+                let firstPointCoord = SCNVector3Make(x.floatValue, y.floatValue, z.floatValue)
 
                 anchorTransform.columns.3.x = firstPointCoord.x
                 anchorTransform.columns.3.y = firstPointCoord.y
@@ -363,9 +359,11 @@ final class Stroke: NSObject, NSCopying, FBModel {
                 var points = [SCNVector3]()
                 for point in fbPoints {
                     if let x = point["x"], let y = point["y"], let z = point["z"] {
-                        let vector = SCNVector3Make(x.floatValue - firstPointCoord.x,
-                                                    y.floatValue - firstPointCoord.y,
-                                                    z.floatValue - firstPointCoord.z)
+                        let vector = SCNVector3Make(
+                            x.floatValue - firstPointCoord.x,
+                            y.floatValue - firstPointCoord.y,
+                            z.floatValue - firstPointCoord.z
+                        )
                         points.append(vector)
                     }
                 }
@@ -382,7 +380,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
     }
 
     func dictionaryValue() -> [String: Any?] {
-        guard let node = node else {
+        guard let node else {
             print("Stroke:dictionaryValue: There was a problem converting stroke \(self) into dictionary values")
             return [String: Any?]()
         }
@@ -390,7 +388,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         var dictionary = [String: Any?]()
         var pointsDictionary = [String: [String: NSNumber]]()
 
-//        print("Transform for stroke: \(String(describing: anchor?.transform))")
+        //        print("Transform for stroke: \(String(describing: anchor?.transform))")
 
         // world space math should be incorporated into the loop below
         var pointObj = [String: NSNumber]()
@@ -413,7 +411,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     /// Dictionary only containing the points that changed since last call
     func pointsUpdateDictionaryValue() -> [String: [String: NSNumber]] {
-        guard let node = node else {
+        guard let node else {
             print("Stroke:pointsUpdateDictionaryValue: There was a problem converting stroke \(self) into dictionary values")
             return [String: [String: NSNumber]]()
         }
@@ -429,20 +427,23 @@ final class Stroke: NSObject, NSCopying, FBModel {
             pointObj["y"] = NSNumber(value: point.y + node.position.y)
             pointObj["z"] = NSNumber(value: point.z + node.position.z)
 
-            if let previousPoints = previousPoints, previousPoints.count > i, let previousPoint = previousPoints[String(i)] {
+            if let previousPoints, previousPoints.count > i, let previousPoint = previousPoints[String(i)] {
                 if pointObj["x"] != previousPoint["x"]
                     || pointObj["y"] != previousPoint["y"]
                     || pointObj["z"] != previousPoint["z"] {
                     pointsArray[ String(i) ] = pointObj
                 }
             } else {
-                pointsArray[ String(i) ] = pointObj
+                pointsArray[String(i)] = pointObj
             }
-            fullPointsArray[ String(i) ] = pointObj
+            fullPointsArray[String(i)] = pointObj
         }
 
         previousPoints = fullPointsArray
         return pointsArray
     }
-}
 
+    deinit {
+        print("Stroke deinit")
+    }
+}
