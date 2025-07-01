@@ -16,20 +16,27 @@
 import SceneKit
 
 class BiquadFilter {
+    // MARK: Properties
+
     var val = SCNVector3()
     var inst = [BiquadFilterInstance]()
 
-    init (_ Fc: Double, dimensions: Int) {
-        for _ in 0..<dimensions {
+    // MARK: Lifecycle
+
+    init(_ Fc: Double, dimensions: Int) {
+        for _ in 0 ..< dimensions {
             inst.append(BiquadFilterInstance(Fc))
         }
     }
+
+    // MARK: Functions
 
     func update(_ floatIn: Float) -> Float {
         guard inst.count == 1 else {
             print("Animation BiquadFilter set up incorrectly")
             return 0
         }
+
         return inst[0].process(Double(floatIn))
     }
 
@@ -38,6 +45,7 @@ class BiquadFilter {
             print("BiquadFilter set up incorrectly")
             return SCNVector3Zero
         }
+
         var val = SCNVector3()
         val.x = inst[0].process(Double(vectorIn.x))
         val.y = inst[1].process(Double(vectorIn.y))
@@ -48,11 +56,15 @@ class BiquadFilter {
 }
 
 class BiquadFilterInstance {
+    // MARK: Properties
+
     var a0, a1, a2, b1, b2: Double
     var Fc = 0.5, Q = 0.707
     var z1: Double = 0.0, z2: Double = 0.0
 
-    init (_ fc: Double) {
+    // MARK: Lifecycle
+
+    init(_ fc: Double) {
         Fc = fc
 
         // calcBiquad (in Swift, can't call from init unless all vars are defined first)
@@ -64,6 +76,8 @@ class BiquadFilterInstance {
         b1 = 2 * (K * K - 1) * norm
         b2 = (1 - K / Q + K * K) * norm
     }
+
+    // MARK: Functions
 
     func process(_ valueIn: Double) -> Float {
         let out = valueIn * a0 + z1

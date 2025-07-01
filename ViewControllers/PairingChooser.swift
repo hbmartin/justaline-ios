@@ -19,6 +19,8 @@ protocol PairingChooserDelegate: AnyObject {
 }
 
 class PairingChooser: UIViewController {
+    // MARK: Properties
+
     weak var delegate: PairingChooserDelegate?
     var offscreenContainerPosition: CGFloat = 0
 
@@ -27,6 +29,8 @@ class PairingChooser: UIViewController {
     @IBOutlet private var joinButton: UIButton!
     @IBOutlet private var pairButton: UIButton!
     @IBOutlet private var cancelButton: UIButton!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +58,8 @@ class PairingChooser: UIViewController {
             self.buttonContainer.transform = CGAffineTransform(translationX: 0, y: self.offscreenContainerPosition)
         }
     }
+
+    // MARK: Functions
 
     @IBAction private func pairButtonTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: {

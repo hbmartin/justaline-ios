@@ -17,7 +17,10 @@ import UIKit
 protocol OverflowViewControllerDelegate: AnyObject {
     func aboutButtonTapped(_ sender: UIButton)
 }
+
 class OverflowViewController: UIViewController {
+    // MARK: Properties
+
     weak var delegate: OverflowViewControllerDelegate?
     var offscreenContainerPosition: CGFloat = 0
 
@@ -25,6 +28,8 @@ class OverflowViewController: UIViewController {
     @IBOutlet private var buttonContainer: UIView!
     @IBOutlet private var aboutButton: UIButton!
     @IBOutlet private var cancelButton: UIButton!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +58,8 @@ class OverflowViewController: UIViewController {
         }
     }
 
+    // MARK: Functions
+
     @IBAction private func aboutButtonTapped(_ sender: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.aboutButtonTapped(sender)
@@ -64,12 +71,12 @@ class OverflowViewController: UIViewController {
     }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destinationViewController.
+         // Pass the selected object to the new view controller.
+     }
+     */
 }

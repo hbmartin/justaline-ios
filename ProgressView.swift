@@ -15,10 +15,23 @@
 import UIKit
 
 class ProgressView: UIView {
+    // MARK: Properties
+
     let circle: UIView
     let progressCircle: CAShapeLayer
     let lineWidth: CGFloat = 5.0
     let strokeColor = UIColor.red
+
+    // MARK: Overridden Functions
+
+    // swiftlint:disable:next type_contents_order
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        configureCircle()
+        addSubview(circle)
+    }
+
+    // MARK: Lifecycle
 
     override init(frame: CGRect) {
         progressCircle = CAShapeLayer()
@@ -38,11 +51,7 @@ class ProgressView: UIView {
         super.init(coder: aDecoder)
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        configureCircle()
-        addSubview(circle)
-    }
+    // MARK: Functions
 
     func configureCircle() {
         let centerPoint = CGPoint(x: circle.bounds.width / 2, y: circle.bounds.width / 2)
@@ -89,10 +98,10 @@ class ProgressView: UIView {
     }
 
     /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
+     // Only override draw() if you perform custom drawing.
+     // An empty implementation adversely affects performance during animation.
+     override func draw(_ rect: CGRect) {
+         // Drawing code
+     }
+     */
 }

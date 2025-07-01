@@ -18,12 +18,22 @@ import Foundation
 import NearbyConnections
 
 struct Payload: Identifiable {
+    // MARK: Nested Types
+
     enum PayloadType {
-        case bytes, stream, file
+        case bytes
+        case stream
+        case file
     }
+
     enum Status {
-        case inProgress(Progress), success, failure, canceled
+        case inProgress(Progress)
+        case success
+        case failure
+        case canceled
     }
+
+    // MARK: Properties
 
     let id: PayloadID
     let isIncoming: Bool
@@ -32,9 +42,11 @@ struct Payload: Identifiable {
     var type: PayloadType
     var status: Status
 
+    // MARK: Lifecycle
+
     // Convenience initializer for creating outgoing data payloads
     init(data: Data) {
-        self.id = PayloadID(Int64.random(in: 1...Int64.max))
+        self.id = PayloadID(Int64.random(in: 1 ... Int64.max))
         self.type = .bytes
         self.status = .success
         self.isIncoming = false

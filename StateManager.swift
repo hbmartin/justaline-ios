@@ -48,7 +48,7 @@ enum State: String {
     case UNKNOWN_ERROR
 }
 
-protocol StateManagerDelegate {
+protocol StateManagerDelegate: AnyObject {
     func stateChangeCompleted(_ state: State)
     func attemptPartnerDiscovery()
     func anchorDrawingTryAgain()
@@ -58,40 +58,20 @@ protocol StateManagerDelegate {
     func retryResolvingAnchor()
 }
 
-/// TODO: Ultimately need to refactor to StateViewController with singleton StateManager for storing and publishing state changes
-/// In the meantime, AppDelegate stores changes, and static StateManager method publishes
+// TODO: Ultimately need to refactor to StateViewController with singleton StateManager for storing and publishing state changes
+// In the meantime, AppDelegate stores changes, and static StateManager method publishes
+// swiftlint:disable:next type_body_length
 class StateManager: UIViewController {
-    /// When using an image instead of an animation
-    @IBOutlet private var imageView: UIImageView!
-
-    /// Holds Lottie view, managing constraints
-    @IBOutlet private var animationContainer: UIView!
-    @IBOutlet private var animationWidthConstraint: NSLayoutConstraint!
-    @IBOutlet private var animationHeightConstraint: NSLayoutConstraint!
+    // MARK: Properties
 
     /// Lottie animation view
     var animationView: LottieAnimationView?
 
     /// Primary message for pairing
-    @IBOutlet var centerMessageLabel: UILabel! // swiftlint:disable:this private_outlet
-
-    /// Smaller additional line for detail
-    @IBOutlet private var secondaryMessageLabel: UILabel!
+    @IBOutlet var centerMessageLabel: UILabel! // swiftlint:disable:this private_outlet type_contents_order
 
     /// Modal background, also container for rest of interface
-    @IBOutlet var fullBackground: UIView! // swiftlint:disable:this private_outlet
-
-    /// Try again button for failed pairing
-    @IBOutlet private var tryAgainButton: UIButton!
-
-    /// Progress Bar
-    @IBOutlet private var progressView: UIProgressView!
-
-    /// Ready button
-    @IBOutlet private var readyButton: UIButton!
-
-    /// Cancel button
-    @IBOutlet private var closeButton: UIButton!
+    @IBOutlet var fullBackground: UIView! // swiftlint:disable:this private_outlet type_contents_order
 
     /// Constant for time delay between automatic sequential states
     let SEQUENTIAL_STATE_DELAY: Double = 2.0
@@ -108,18 +88,34 @@ class StateManager: UIViewController {
     /// Current state
     var state: State?
 
-    var delegate: StateManagerDelegate?
+    weak var delegate: StateManagerDelegate?
 
-    /// Update state manager
-    static func updateState(_ state: State) {
-        NotificationCenter.default.post(name: .STATE_CHANGED, object: self, userInfo: ["state": state])
-    }
+    /// When using an image instead of an animation
+    @IBOutlet private var imageView: UIImageView!
 
-    /// determines when to allow tracking state to override pairing state
-    static func shouldShowTracking(for pairState: State) -> Bool {
-        return pairState == .SYNCED
-    }
+    /// Holds Lottie view, managing constraints
+    @IBOutlet private var animationContainer: UIView!
+    @IBOutlet private var animationWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private var animationHeightConstraint: NSLayoutConstraint!
 
+    /// Smaller additional line for detail
+    @IBOutlet private var secondaryMessageLabel: UILabel!
+
+    /// Try again button for failed pairing
+    @IBOutlet private var tryAgainButton: UIButton!
+
+    /// Progress Bar
+    @IBOutlet private var progressView: UIProgressView!
+
+    /// Ready button
+    @IBOutlet private var readyButton: UIButton!
+
+    /// Cancel button
+    @IBOutlet private var closeButton: UIButton!
+
+    // MARK: Overridden Functions
+
+    // swiftlint:disable:next type_contents_order
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -132,6 +128,20 @@ class StateManager: UIViewController {
 
         configureAccessibility()
     }
+
+    // MARK: Static Functions
+
+    /// Update state manager
+    static func updateState(_ state: State) {
+        NotificationCenter.default.post(name: .STATE_CHANGED, object: self, userInfo: ["state": state])
+    }
+
+    /// determines when to allow tracking state to override pairing state
+    static func shouldShowTracking(for pairState: State) -> Bool {
+        pairState == .SYNCED
+    }
+
+    // MARK: Functions
 
     func configureAccessibility() {
         closeButton.accessibilityLabel = NSLocalizedString("menu_close", comment: "Close")
@@ -151,6 +161,7 @@ class StateManager: UIViewController {
         guard let state = self.state else {
             return
         }
+
         var nextState: State?
 
         switch state {
@@ -206,105 +217,109 @@ class StateManager: UIViewController {
         var accessibleMessage: String?
 
         switch newState {
-            case .LOOKING:
-                message = NSLocalizedString("pair_looking_for_partner", comment: "Looking for your drawing partner...")
+        case .LOOKING:
+            message = NSLocalizedString("pair_looking_for_partner", comment: "Looking for your drawing partner...")
 //                secondMessage = NSLocalizedString("Ask them to tap the partner icon", comment: "Ask them to tap the partner icon")
-                animationName = "looking_partner"
+            animationName = "looking_partner"
 //                image = UIImage(named: "jal_looking_for_partner")
 
-            case .DISCOVERY_TIMEOUT:
-                message = NSLocalizedString("pair_discovery_timeout", comment: "Hmm… we didn\'t find anyone nearby.")
-                image = UIImage(named: "jal_ui_error_icon_partner")
-                showTryAgain = true
+        case .DISCOVERY_TIMEOUT:
+            message = NSLocalizedString("pair_discovery_timeout", comment: "Hmm… we didn\'t find anyone nearby.")
+            image = UIImage(named: "jal_ui_error_icon_partner")
+            showTryAgain = true
 
-            case .HOST_CONNECTED: fallthrough
-            case .PARTNER_CONNECTED:
-                message = NSLocalizedString("pair_connected", comment: "Partner found!")
-                animationName = "partner_found"
+        case .HOST_CONNECTED: fallthrough
+
+        case .PARTNER_CONNECTED:
+            message = NSLocalizedString("pair_connected", comment: "Partner found!")
+            animationName = "partner_found"
 //                image = UIImage(named: "jal_partner_found")
-                delayedStateTransition = true
+            delayedStateTransition = true
 
-            case .HOST_SET_ANCHOR: fallthrough
-            case .PARTNER_SET_ANCHOR:
-                message = NSLocalizedString("pair_look_at_same_thing", comment: "")
-                accessibleMessage = NSLocalizedString("pair_look_at_same_thing_accessible", comment: "")
-                image = UIImage(named: "jal_ui_illustrations_sync")
-                showReadyButton = true
+        case .HOST_SET_ANCHOR: fallthrough
 
-            case .HOST_READY_AND_WAITING: fallthrough
-            case .PARTNER_READY_AND_WAITING:
-                message = NSLocalizedString("pair_look_at_same_thing", comment: "")
-                accessibleMessage = NSLocalizedString("pair_look_at_same_thing_accessible", comment: "")
-                secondMessage = NSLocalizedString("Waiting for partner", comment: "Waiting for partner")
-                image = UIImage(named: "jal_ui_illustrations_sync")
+        case .PARTNER_SET_ANCHOR:
+            message = NSLocalizedString("pair_look_at_same_thing", comment: "")
+            accessibleMessage = NSLocalizedString("pair_look_at_same_thing_accessible", comment: "")
+            image = UIImage(named: "jal_ui_illustrations_sync")
+            showReadyButton = true
 
-            case .HOST_ANCHOR_ERROR:
-                message = NSLocalizedString(
-                    "pair_anchor_error",
-                    comment: "Something went wrong syncronizing with your partner. Try again, drawing in a new area."
-                )
-                showTryAgain = true
+        case .HOST_READY_AND_WAITING: fallthrough
 
-            case .HOST_CONNECTING: fallthrough
-            case .PARTNER_CONNECTING:
-                message = NSLocalizedString("pair_connect_phones", comment: "")
-                animationName = "stay_put"
-                showProgress = true
+        case .PARTNER_READY_AND_WAITING:
+            message = NSLocalizedString("pair_look_at_same_thing", comment: "")
+            accessibleMessage = NSLocalizedString("pair_look_at_same_thing_accessible", comment: "")
+            secondMessage = NSLocalizedString("Waiting for partner", comment: "Waiting for partner")
+            image = UIImage(named: "jal_ui_illustrations_sync")
+
+        case .HOST_ANCHOR_ERROR:
+            message = NSLocalizedString(
+                "pair_anchor_error",
+                comment: "Something went wrong syncronizing with your partner. Try again, drawing in a new area."
+            )
+            showTryAgain = true
+
+        case .HOST_CONNECTING: fallthrough
+
+        case .PARTNER_CONNECTING:
+            message = NSLocalizedString("pair_connect_phones", comment: "")
+            animationName = "stay_put"
+            showProgress = true
 //                animation = true
 //                looping = true
 
-            case .GLOBAL_CONNECTING:
-                message = NSLocalizedString("pair_global_connecting", comment: "Connecting to global room")
+        case .GLOBAL_CONNECTING:
+            message = NSLocalizedString("pair_global_connecting", comment: "Connecting to global room")
 
-            case .HOST_RESOLVE_ERROR:
-                message = NSLocalizedString("pair_anchor_error", comment: "Something went wrong during the sync.")
-                secondMessage = NSLocalizedString("pair_anchor_error_line2", comment: "Try again in a more distinct spot.")
-                image = UIImage(named: "jal_ui_error_icon_sync")
-                showTryAgain = true
+        case .HOST_RESOLVE_ERROR:
+            message = NSLocalizedString("pair_anchor_error", comment: "Something went wrong during the sync.")
+            secondMessage = NSLocalizedString("pair_anchor_error_line2", comment: "Try again in a more distinct spot.")
+            image = UIImage(named: "jal_ui_error_icon_sync")
+            showTryAgain = true
 
-            case .PARTNER_RESOLVE_ERROR:
-                message = NSLocalizedString("pair_anchor_error", comment: "Something went wrong during the sync.\n\nTry again in a more distinct spot.")
-                image = UIImage(named: "jal_ui_error_icon_sync")
-                showTryAgain = true
-                delegate?.retryResolvingAnchor()
+        case .PARTNER_RESOLVE_ERROR:
+            message = NSLocalizedString("pair_anchor_error", comment: "Something went wrong during the sync.\n\nTry again in a more distinct spot.")
+            image = UIImage(named: "jal_ui_error_icon_sync")
+            showTryAgain = true
+            delegate?.retryResolvingAnchor()
 
-            case .GLOBAL_NO_ANCHOR:
-                message = NSLocalizedString("pair_global_no_anchor", comment: "There is no anchor in the global room.")
-                image = UIImage(named: "jal_ui_error_icon_sync")
+        case .GLOBAL_NO_ANCHOR:
+            message = NSLocalizedString("pair_global_no_anchor", comment: "There is no anchor in the global room.")
+            image = UIImage(named: "jal_ui_error_icon_sync")
 
-            case .GLOBAL_RESOLVE_ERROR:
-                message = NSLocalizedString("pair_global_localization_error", comment: "Couldn\'t find room. Are you in the right spot?")
-                image = UIImage(named: "jal_ui_error_icon_sync")
-                showTryAgain = true
+        case .GLOBAL_RESOLVE_ERROR:
+            message = NSLocalizedString("pair_global_localization_error", comment: "Couldn\'t find room. Are you in the right spot?")
+            image = UIImage(named: "jal_ui_error_icon_sync")
+            showTryAgain = true
 
-            case .SYNCED:
-                message = NSLocalizedString("pair_synced", comment: "Paired!")
-                image = UIImage(named: "paired_check_icon")
-                showProgress = true
-                completeProgress = true
-                delayedStateTransition = true
+        case .SYNCED:
+            message = NSLocalizedString("pair_synced", comment: "Paired!")
+            image = UIImage(named: "paired_check_icon")
+            showProgress = true
+            completeProgress = true
+            delayedStateTransition = true
 
-            case .FINISHED:
-                delegate?.pairingFinished()
-                return
+        case .FINISHED:
+            delegate?.pairingFinished()
+            return
 
-            case .CONNECTION_LOST:
-                image = UIImage(named: "jal_ui_error_icon_partner")
-                message = NSLocalizedString("pair_lost_connection", comment: "Lost connection\nto partner")
-                showTryAgain = true
-                tryAgainButton.setTitle(NSLocalizedString("ok", comment: "OK"), for: .normal)
+        case .CONNECTION_LOST:
+            image = UIImage(named: "jal_ui_error_icon_partner")
+            message = NSLocalizedString("pair_lost_connection", comment: "Lost connection\nto partner")
+            showTryAgain = true
+            tryAgainButton.setTitle(NSLocalizedString("ok", comment: "OK"), for: .normal)
 
-            case .OFFLINE:
-                message = NSLocalizedString("pair_no_data_connection", comment: "Can\'t sync without internet connection")
-                image = UIImage(named: "jal_ui_error_icon_partner")
+        case .OFFLINE:
+            message = NSLocalizedString("pair_no_data_connection", comment: "Can\'t sync without internet connection")
+            image = UIImage(named: "jal_ui_error_icon_partner")
 
-            case .UNKNOWN_ERROR:
-                message = NSLocalizedString("Unknown error", comment: "Something unexpected happened")
-                secondMessage = NSLocalizedString("pair_unknown_error", comment: "We're not sure what happened...but it did")
-                image = UIImage(named: "jal_ui_error_icon_partner")
+        case .UNKNOWN_ERROR:
+            message = NSLocalizedString("Unknown error", comment: "Something unexpected happened")
+            secondMessage = NSLocalizedString("pair_unknown_error", comment: "We're not sure what happened...but it did")
+            image = UIImage(named: "jal_ui_error_icon_partner")
 
-            default:
-                break
+        default:
+            break
         }
 
         // Set image, animation, and text values
@@ -325,13 +340,13 @@ class StateManager: UIViewController {
         // Set visibility states
         fullBackground.isHidden = false
         centerMessageLabel.isHidden = false
-        progressView.isHidden = (showProgress) ? false : true
+        progressView.isHidden = showProgress ? false : true
         secondaryMessageLabel.isHidden = (secondMessage == nil) ? true : false
-        readyButton?.isHidden = (showReadyButton) ? false : true
-        tryAgainButton?.isHidden = (showTryAgain) ? false : true
+        readyButton?.isHidden = showReadyButton ? false : true
+        tryAgainButton?.isHidden = showTryAgain ? false : true
         delegate?.stateChangeCompleted(newState)
 
-        if showProgress && progressTimer == nil {
+        if showProgress, progressTimer == nil {
             self.progressView.progress = 0
             progressTimer = Timer(timeInterval: 0.1, repeats: true, block: { timer in
                 let elapsedTime = Date().timeIntervalSince(timer.fireDate)
@@ -440,26 +455,27 @@ class StateManager: UIViewController {
         }
 
         switch state {
-            case .DISCOVERY_TIMEOUT:
-                delegate?.attemptPartnerDiscovery()
+        case .DISCOVERY_TIMEOUT:
+            delegate?.attemptPartnerDiscovery()
 
-            case .HOST_ANCHOR_ERROR: fallthrough
-            case .HOST_RESOLVE_ERROR:
-                Self.updateState(.HOST_SET_ANCHOR)
+        case .HOST_ANCHOR_ERROR: fallthrough
 
-            case .PARTNER_RESOLVE_ERROR:
-                Self.updateState(.PARTNER_SET_ANCHOR)
+        case .HOST_RESOLVE_ERROR:
+            Self.updateState(.HOST_SET_ANCHOR)
 
-            case .GLOBAL_RESOLVE_ERROR:
-                Self.updateState(.GLOBAL_CONNECTING)
-                delegate?.retryResolvingAnchor()
+        case .PARTNER_RESOLVE_ERROR:
+            Self.updateState(.PARTNER_SET_ANCHOR)
 
-            // try again button is used as an ok button on connection lost
-            case .CONNECTION_LOST:
-                closeTapped(sender)
+        case .GLOBAL_RESOLVE_ERROR:
+            Self.updateState(.GLOBAL_CONNECTING)
+            delegate?.retryResolvingAnchor()
 
-            default:
-                break
+        // try again button is used as an ok button on connection lost
+        case .CONNECTION_LOST:
+            closeTapped(sender)
+
+        default:
+            break
         }
     }
 }

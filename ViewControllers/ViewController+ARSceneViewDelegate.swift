@@ -34,8 +34,8 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         if let stroke = getStroke(for: anchor) {
             print("Renderer did update node transform: \(node.transform) and anchorTranform: \(anchor.transform)")
             stroke.node = node
-            if (stateManager?.state == .HOST_CONNECTING || stateManager?.state == .SYNCED || stateManager?.state == .FINISHED)
-                        && strokes.contains(stroke) {
+            if stateManager?.state == .HOST_CONNECTING || stateManager?.state == .SYNCED || stateManager?.state == .FINISHED,
+               strokes.contains(stroke) {
                 pairingManager?.updateStroke(stroke)
 
                 DispatchQueue.main.async {
@@ -66,7 +66,9 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
             DispatchQueue.main.async {
                 self.uiViewController?.undoButton.isHidden = self.shouldHideUndoButton()
                 self.uiViewController?.clearAllButton.isHidden = self.shouldHideTrashButton()
-                if self.mode == .DRAW && self.strokes.isEmpty { self.uiViewController?.showDrawingPrompt() }
+                if self.mode == .DRAW, self.strokes.isEmpty {
+                    self.uiViewController?.showDrawingPrompt()
+                }
                 UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
             }
         }
@@ -98,14 +100,14 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                 enterTrackingState()
             }
 
-        case .limited(let reason):
+        case let .limited(reason):
             print("Limited tracking")
             if shouldShowTrackingIndicator() {
                 if reason == .relocalizing {
                     NSLog("Relocalizing...")
 
                     // while relocalizing after interruption, only attempt for 5 seconds, then reset, and only when not paired
-                    if !strokes.isEmpty && resumeFromInterruptionTimer == nil && pairingManager?.isPairingOrPaired == false {
+                    if !strokes.isEmpty, resumeFromInterruptionTimer == nil, pairingManager?.isPairingOrPaired == false {
                         resumeFromInterruptionTimer = Timer(timeInterval: 5, repeats: false) { _ in
                             NSLog("Resetting ARSession because relocalizing took too long")
                             DispatchQueue.main.async {
@@ -175,7 +177,9 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
     func exitTrackingState() {
         print("ViewController: exitTrackingState")
 
-        if resumeFromInterruptionTimer != nil { print("Relocalizing successful.") }
+        if resumeFromInterruptionTimer != nil {
+            print("Relocalizing successful.")
+        }
 
         trackingMessageTimer?.invalidate()
         trackingMessageTimer = nil
@@ -208,7 +212,9 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
             }
         }
         // when rejoining after background, continue to show tracking message even when no longer tracking until cloud anchor is re-resolved
-        if shouldRetryAnchorResolve { shouldShow = true }
+        if shouldRetryAnchorResolve {
+            shouldShow = true
+        }
 
         return shouldShow
     }
@@ -263,30 +269,30 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         NSLog("Session resuming after interruption")
 
         #if JOIN_GLOBAL_ROOM
-        if pairingManager?.isPairingOrPaired == true {
-            pairingManager?.resumeSession(fromDate: Date())
-        }
+            if pairingManager?.isPairingOrPaired == true {
+                pairingManager?.resumeSession(fromDate: Date())
+            }
         #else
-        if let backgroundDate = UserDefaults.standard.object(forKey: DefaultsKeys.backgroundDate.rawValue) as? Date {
-            if backgroundDate.addingTimeInterval(180).compare(Date()) == ComparisonResult.orderedAscending {
-                // if it has been too long since last session, reset tracking and remove anchors
-                configureARSession(runOptions: [.resetTracking, .removeExistingAnchors])
-                self.pairCancelled()
-            } else {
-                if pairingManager?.isPairingOrPaired == true {
-                    if pairingManager?.garAnchor != nil {
+            if let backgroundDate = UserDefaults.standard.object(forKey: DefaultsKeys.backgroundDate.rawValue) as? Date {
+                if backgroundDate.addingTimeInterval(180).compare(Date()) == ComparisonResult.orderedAscending {
+                    // if it has been too long since last session, reset tracking and remove anchors
+                    configureARSession(runOptions: [.resetTracking, .removeExistingAnchors])
+                    self.pairCancelled()
+                } else {
+                    if pairingManager?.isPairingOrPaired == true {
+                        if pairingManager?.garAnchor != nil {
 //                        sceneView.session.setWorldOrigin(relativeTransform: garAnchor.transform)
-                    }
+                        }
 
-                    pairingManager?.resumeSession(fromDate: backgroundDate)
+                        pairingManager?.resumeSession(fromDate: backgroundDate)
+                    }
                 }
             }
-        }
         #endif
     }
 
     func sessionShouldAttemptRelocalization(_: ARSession) -> Bool {
-        return true
+        true
     }
 
     func session(_: ARSession, didUpdate frame: ARFrame) {

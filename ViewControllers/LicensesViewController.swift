@@ -16,23 +16,30 @@ import UIKit
 import WebKit
 
 class LicensesViewController: UIViewController, WKNavigationDelegate {
-    var homeUrl: URL?
+    // MARK: Properties
+
+    var homeURL: URL?
+
     @IBOutlet private var webView: WKWebView!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         if let path = Bundle.main.path(forResource: "thirdPartyLicenses.html", ofType: "") {
-            homeUrl = URL(fileURLWithPath: path)
+            homeURL = URL(fileURLWithPath: path)
             // swiftlint:disable:next force_unwrapping
-            webView.loadFileURL(homeUrl!, allowingReadAccessTo: homeUrl!)
+            webView.loadFileURL(homeURL!, allowingReadAccessTo: homeURL!)
             webView.navigationDelegate = self
         }
     }
 
+    // MARK: Functions
+
     func webView(_ _: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if let url = navigationAction.request.url, url != homeUrl {
+        if let url = navigationAction.request.url, url != homeURL {
             decisionHandler(.cancel)
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
@@ -41,12 +48,12 @@ class LicensesViewController: UIViewController, WKNavigationDelegate {
     }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destinationViewController.
+         // Pass the selected object to the new view controller.
+     }
+     */
 }

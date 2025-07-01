@@ -1,9 +1,6 @@
 excluded:
   - Pods
   - vendor
-  - JumpKit/External
-  - JumpKit/JumpDesignSystem/Core/DSConstants/DSConstantConfigurations.swift
-  - JumpKit/SDK/Generated
 
 disabled_rules:
   - contrasted_opening_brace
@@ -30,6 +27,9 @@ disabled_rules:
   - fallthrough
   - no_fallthrough_only
   - object_literal
+  - blanket_disable_command
+  - switch_case_on_newline
+  - todo
 
 opt_in_rules:
   - all
@@ -37,14 +37,14 @@ opt_in_rules:
 analyzer_rules:
   - all
 
-# Custom rule parameters
-
 line_length:
   warning: 160
-  # ignores_function_declarations: false
-  # ignores_comments: true
-  # ignores_interpolated_strings: true
-  # ignores_urls: true
 
 file_length:
   warning: 500
+
+trailing_comma:
+  mandatory_comma: true
+
+type_contents_order:
+  order: [[case], [type_alias, associated_type], [subtype], [type_property], [instance_property], [ib_inspectable], [ib_outlet], [initializer], [type_method], [view_life_cycle_method], [deinitializer], [other_method], [ib_action, ib_segue_action], [subscript]]

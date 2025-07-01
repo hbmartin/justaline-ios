@@ -67,6 +67,7 @@ extension ViewController: PairingManagerDelegate {
             print("ViewController:addPartnerStroke: Could not add stroke anchor")
             return
         }
+
         sceneView.session.add(anchor: anchor)
     }
 
@@ -95,6 +96,6 @@ extension ViewController: PairingManagerDelegate {
     }
 
     func isTracking() -> Bool {
-        return mode == .TRACKING
+        mode == .TRACKING
     }
 }

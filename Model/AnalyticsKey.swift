@@ -56,5 +56,7 @@ enum AnalyticsKey: String {
     case tapped_exit_pair_flow
     case tapped_disconnect_paired_session
 
+    // MARK: Static Functions
+
     static func val(_ key: Self) -> String { key.rawValue }
 }

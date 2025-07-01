@@ -33,6 +33,7 @@ extension ViewController: InterfaceViewControllerDelegate {
     }
 
     // MARK: - Handle Touch
+
     override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touchInView = touches.first?.location(in: sceneView), mode == .DRAW else {
             return
@@ -99,6 +100,7 @@ extension ViewController: InterfaceViewControllerDelegate {
             guard error == nil else {
                 return
             }
+
             self.uiViewController?.recordingWillStart()
         })
     }
@@ -110,6 +112,7 @@ extension ViewController: InterfaceViewControllerDelegate {
                 guard error == nil, let preview = previewViewController else {
                     return
                 }
+
                 self.uiViewController?.recordingHasEnded()
                 previewViewController?.previewControllerDelegate = self
                 previewViewController?.modalPresentationStyle = .overFullScreen

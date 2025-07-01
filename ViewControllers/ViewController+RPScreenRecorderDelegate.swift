@@ -32,12 +32,12 @@ extension ViewController: RPPreviewViewControllerDelegate {
         if activityTypes.contains(UIActivity.ActivityType.saveToCameraRoll.rawValue) {
             Analytics.logEvent(AnalyticsKey.val(.tapped_save), parameters: nil)
         } else if activityTypes.contains(UIActivity.ActivityType.postToVimeo.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToFlickr.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToWeibo.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToTwitter.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.postToFacebook.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.mail.rawValue)
-                    || activityTypes.contains(UIActivity.ActivityType.message.rawValue) {
+            || activityTypes.contains(UIActivity.ActivityType.postToFlickr.rawValue)
+            || activityTypes.contains(UIActivity.ActivityType.postToWeibo.rawValue)
+            || activityTypes.contains(UIActivity.ActivityType.postToTwitter.rawValue)
+            || activityTypes.contains(UIActivity.ActivityType.postToFacebook.rawValue)
+            || activityTypes.contains(UIActivity.ActivityType.mail.rawValue)
+            || activityTypes.contains(UIActivity.ActivityType.message.rawValue) {
             Analytics.logEvent(AnalyticsKey.val(.tapped_share_recording), parameters: nil)
         }
 

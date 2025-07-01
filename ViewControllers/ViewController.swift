@@ -25,6 +25,8 @@ enum ViewMode {
 }
 
 class ViewController: UIViewController {
+    // MARK: Properties
+
     /// store current touch location in view
     var touchPoint: CGPoint = .zero
 
@@ -35,7 +37,7 @@ class ViewController: UIViewController {
     var strokes = [Stroke]()
 
     /// array of strokes a user has drawn in current session
-    var partnerStrokes: [String: Stroke] = [String: Stroke]()
+    var partnerStrokes: [String: Stroke] = .init()
 
     /// Anchor created for pairing flow to host via cloud anchors
     var sharedAnchor: ARAnchor?
@@ -81,9 +83,9 @@ class ViewController: UIViewController {
                 UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: uiViewController?.touchView)
 
                 #if DEBUG
-                sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
+                    sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
                 #else
-                sceneView.debugOptions = []
+                    sceneView.debugOptions = []
                 #endif
 
             case .PAIR:
@@ -96,9 +98,9 @@ class ViewController: UIViewController {
                 UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: stateManager?.centerMessageLabel)
 
                 #if DEBUG
-                sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+                    sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
                 #else
-                sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+                    sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
                 #endif
 
             case .TRACKING:
@@ -113,7 +115,7 @@ class ViewController: UIViewController {
             }
 
             // if we're tracking and the mode changes, update our previous mode state
-            if modeBeforeTracking != nil && mode != .TRACKING {
+            if modeBeforeTracking != nil, mode != .TRACKING {
                 print("Updating mode to return to after tracking: \(mode)")
                 modeBeforeTracking = mode
             }
@@ -128,6 +130,7 @@ class ViewController: UIViewController {
     var stateManager: StateManager?
 
     // MARK: UI
+
     /// window with UI elements to keep them out of screen recording
     var uiWindow: UIWindow?
 
@@ -148,10 +151,12 @@ class ViewController: UIViewController {
     /// temporary bool for toggling recording state
     var isRecording: Bool = false
 
+    // swiftlint:disable:next private_outlet type_contents_order
+    @IBOutlet var sceneView: ARSCNView!
+
     private var appDidBecomeActiveObserver: NSObjectProtocol?
 
-    // swiftlint:disable:next private_outlet
-    @IBOutlet internal var sceneView: ARSCNView!
+    // MARK: Overridden Functions
 
     // MARK: - View State
 
@@ -203,27 +208,28 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
 
         #if JOIN_GLOBAL_ROOM
-        let globalRoomBase = GLOBAL_ROOM_ROOT + "/global_room"
-        let alert = UIAlertController(title: "Global room session", message: "Please Choose Your Session", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "0 Sandbox A", style: .default, handler: { _ in
-            self.pairingManager?.setGlobalRoomName(globalRoomBase + "_0")
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "1 Sandbox B", style: .default, handler: { _ in
-            self.pairingManager?.setGlobalRoomName(globalRoomBase + "_1")
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "2 Dev", style: .default, handler: { _ in
-            self.pairingManager?.setGlobalRoomName(globalRoomBase + "_2")
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "3 QA", style: .default, handler: { _ in
-            self.pairingManager?.setGlobalRoomName(globalRoomBase + "_3")
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        self.uiViewController?.present(alert, animated: true, completion: nil)
+            let globalRoomBase = GLOBAL_ROOM_ROOT + "/global_room"
+            let alert = UIAlertController(title: "Global room session", message: "Please Choose Your Session", preferredStyle: .actionSheet)
+            alert.addAction(UIAlertAction(title: "0 Sandbox A", style: .default, handler: { _ in
+                self.pairingManager?.setGlobalRoomName(globalRoomBase + "_0")
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "1 Sandbox B", style: .default, handler: { _ in
+                self.pairingManager?.setGlobalRoomName(globalRoomBase + "_1")
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "2 Dev", style: .default, handler: { _ in
+                self.pairingManager?.setGlobalRoomName(globalRoomBase + "_2")
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "3 QA", style: .default, handler: { _ in
+                self.pairingManager?.setGlobalRoomName(globalRoomBase + "_3")
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.uiViewController?.present(alert, animated: true, completion: nil)
         #endif
     }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
@@ -231,15 +237,28 @@ class ViewController: UIViewController {
         sceneView.session.pause()
     }
 
+    // swiftlint:disable:next type_contents_order
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
         resetTouches()
     }
 
+    // swiftlint:disable:next type_contents_order
     override func viewWillTransition(to _: CGSize, with _: UIViewControllerTransitionCoordinator) {
         touchPoint = .zero
     }
+
+    // MARK: Lifecycle
+
+    deinit {
+        // Remove the observer
+        if let observer = appDidBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    // MARK: Functions
 
     // MARK: - View Configuration
 
@@ -250,7 +269,7 @@ class ViewController: UIViewController {
 //        configuration.isAutoFocusEnabled = false
 
         #if DEBUG
-        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
+            sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
         #endif
 
         // Run the view's session
@@ -276,6 +295,7 @@ class ViewController: UIViewController {
         guard let hitNode else {
             return nil
         }
+
         let projectedOrigin = sceneView.projectPoint(hitNode.worldPosition)
         let offset = sceneView.unprojectPoint(SCNVector3Make(Float(point.x), Float(point.y), projectedOrigin.z))
 
@@ -293,6 +313,7 @@ class ViewController: UIViewController {
         guard stroke.points.last != nil, let strokeNode = stroke.node else {
             return
         }
+
         let offset = unprojectedPosition(for: stroke, at: touchPoint)
         let newPoint = strokeNode.convertPosition(offset, from: sceneView.scene.rootNode)
 
@@ -372,13 +393,6 @@ class ViewController: UIViewController {
         }
         partnerStrokes.forEach { _, partnerStroke in
             partnerStroke.node?.isHidden = isHidden
-        }
-    }
-
-    deinit {
-        // Remove the observer
-        if let observer = appDidBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
         }
     }
 }

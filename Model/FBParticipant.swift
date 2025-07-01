@@ -15,6 +15,8 @@
 import Foundation
 
 final class FBParticipant: FBModel {
+    // MARK: Properties
+
     var readyToSetAnchor: Bool = false
 
     var anchorResolved: Bool = false
@@ -22,6 +24,9 @@ final class FBParticipant: FBModel {
     var isPairing: Bool = false
 
     var lastSeen = [String: Any?]()
+
+    // MARK: Static Functions
+
     // swiftlint:disable:next type_contents_order
     static func from(_ dictionary: [String: Any?]) -> FBParticipant? {
         let participant = FBParticipant()
@@ -37,6 +42,8 @@ final class FBParticipant: FBModel {
 
         return participant
     }
+
+    // MARK: Lifecycle
 
     convenience init(anchorResolved: Bool, isPairing: Bool) {
         self.init()
@@ -55,6 +62,8 @@ final class FBParticipant: FBModel {
         self.isPairing = true
     }
 
+    // MARK: Functions
+
     func dictionaryValue() -> [String: Any?] {
         var dictionary = [String: Any?]()
         dictionary[FBKey.val(.readyToSetAnchor)] = readyToSetAnchor
@@ -65,7 +74,7 @@ final class FBParticipant: FBModel {
         return dictionary
     }
 
-    func newTimestamp () -> Int64 {
-        return Int64(Date().timeIntervalSince1970 * 1_000)
+    func newTimestamp() -> Int64 {
+        Int64(Date().timeIntervalSince1970 * 1_000)
     }
 }

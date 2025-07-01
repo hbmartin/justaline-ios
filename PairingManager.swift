@@ -93,7 +93,7 @@ class PairingManager: NSObject {
 
     private func setupNearbyConnections() {
         // Initialize Nearby Connections components
-        connectionManager = ConnectionManager(serviceID: Config.serviceId, strategy: .cluster)
+        connectionManager = ConnectionManager(serviceID: Config.serviceID, strategy: .cluster)
         advertiser = Advertiser(connectionManager: connectionManager!)
         discoverer = Discoverer(connectionManager: connectionManager!)
 
@@ -354,8 +354,8 @@ class PairingManager: NSObject {
     private func stopNearbyConnections() {
         advertiser?.stopAdvertising()
         discoverer?.stopDiscovery()
-        connectionManager?.disconnectFromAllEndpoints()
-        
+//        connectionManager?.disconnect(from: EndpointID, )
+
         connectedEndpoints.removeAll()
         pendingConnections.removeAll()
     }

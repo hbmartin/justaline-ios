@@ -23,11 +23,15 @@ enum Radius: Float {
 }
 
 class LineGeometry: SCNGeometry {
+    // MARK: Properties
+
     var vectors = [SCNVector3]()
     var sides = [Float]()
     var width: Float = 0
     var lengths = [Float]()
     var endCapPosition: Float = 0
+
+    // MARK: Lifecycle
 
     /// Code currently all happens in init because I can't call init'ed functions until super.init is called and you can
     /// only call one super.init. I am relying on the built-in init(sources:elements:) convenience method for drawing the geometry
@@ -99,12 +103,14 @@ class LineGeometry: SCNGeometry {
         }
     }
 
+    // MARK: Functions
+
     func generateVertexData() -> [MyVertex] {
         var vertexArray = [MyVertex]()
         var vertex = MyVertex()
 
         // swiftlint:disable:next identifier_name
-        for i in 0..<vectors.count {
+        for i in 0 ..< vectors.count {
             vertex.position = float3(x: vectors[i].x, y: vectors[i].y, z: vectors[i].z)
             vertex.vertexCount = Int32(vectors.count)
 //            vertex.previous = stroke.mPrevious[i]

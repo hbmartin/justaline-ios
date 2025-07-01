@@ -15,15 +15,19 @@
 import UIKit
 
 class DrawPromptView: UIView {
+    // MARK: Properties
+
     let circleWidth: CGFloat = 25
     let circleHeight: CGFloat = 25
 
+    // MARK: Overridden Functions
+
     /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-    }
-    */
+     // Only override draw() if you perform custom drawing.
+     // An empty implementation adversely affects performance during animation.
+     override func draw(_ rect: CGRect) {
+     }
+     */
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -40,6 +44,8 @@ class DrawPromptView: UIView {
 
         growAnimation()
     }
+
+    // MARK: Functions
 
     private func growAnimation() {
         UIView.animate(withDuration: 0.6, delay: 0.2, options: [.curveEaseInOut]) {

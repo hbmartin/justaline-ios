@@ -15,11 +15,15 @@
 import Foundation
 
 class RoomData {
+    // MARK: Properties
+
     var code = ""
 
     var timestamp: Int64 = 0
 
     private var messageData: Data! // swiftlint:disable:this implicitly_unwrapped_optional
+
+    // MARK: Lifecycle
 
     convenience init(code: String, timestamp: Int64) {
         let messageString = String("\(code),\(timestamp)")
@@ -44,6 +48,8 @@ class RoomData {
             }
         }
     }
+
+    // MARK: Functions
 
     // Updated method to return Data instead of GNSMessage
     func getMessageData() -> Data {

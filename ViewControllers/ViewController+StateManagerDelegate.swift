@@ -25,9 +25,9 @@ extension ViewController: StateManagerDelegate {
 
     func attemptPartnerDiscovery() {
         #if JOIN_GLOBAL_ROOM
-        pairingManager?.beginGlobalSession(true)
+            pairingManager?.beginGlobalSession(true)
         #else
-        pairingManager?.beginPairing()
+            pairingManager?.beginPairing()
         #endif
     }
 

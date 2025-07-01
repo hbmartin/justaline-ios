@@ -44,5 +44,7 @@ enum FBKey: String {
     case lineWidth
     case creator
 
+    // MARK: Static Functions
+
     static func val(_ key: Self) -> String { key.rawValue }
 }

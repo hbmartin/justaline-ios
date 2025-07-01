@@ -19,10 +19,14 @@ enum DefaultsKeys: String {
     case backgroundDate
 }
 
-@UIApplicationMain
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    // MARK: Properties
+
     var window: UIWindow?
     var pairingState: State?
+
+    // MARK: Functions
 
     // swiftlint:disable:next discouraged_optional_collection
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

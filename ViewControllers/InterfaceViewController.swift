@@ -1,4 +1,4 @@
-// swiftlint:disable type_contents_order private_outlet type_body_length
+// swiftlint:disable type_contents_order private_outlet type_body_length file_length
 // Copyright 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,11 @@ enum TrackingMessageType {
 }
 
 class TouchView: UIView {
+    // MARK: Properties
+
     weak var touchDelegate: InterfaceViewController?
+
+    // MARK: Overridden Functions
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         touchDelegate?.touchesBegan(touches, with: event)
@@ -73,32 +77,25 @@ class TouchView: UIView {
 }
 
 class InterfaceViewController: UIViewController, OverflowViewControllerDelegate, GlobalPairingChooserDelegate, PairingChooserDelegate {
-    @IBOutlet var touchView: TouchView!
-    @IBOutlet private var trackingImage: UIImageView!
-    @IBOutlet private var trackingImageCenterConstraint: NSLayoutConstraint!
+    // MARK: Overridden Properties
 
+    override var shouldAutorotate: Bool {
+        if let touchDelegate, touchDelegate.shouldAutorotate == false {
+            return false
+        }
+        return true
+    }
+
+    // MARK: Properties
+
+    @IBOutlet var touchView: TouchView!
     @IBOutlet var progressCircle: ProgressView!
     @IBOutlet var recordBackgroundView: UIView!
-    @IBOutlet private var recordButton: UIButton!
-    @IBOutlet private var recordIconView: UIView!
     @IBOutlet var clearAllButton: UIButton!
-    @IBOutlet private var chooseSizeButton: UIButton!
-    @IBOutlet private var overflowButton: UIButton!
-    @IBOutlet private var sizeButtonStackView: UIStackView!
-    @IBOutlet private var sizeStackViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet var pairButton: UIButton!
-    @IBOutlet private var recordButtonBottomConstraint: NSLayoutConstraint!
     @IBOutlet var undoButton: UIButton!
     @IBOutlet var messagesContainerView: UIView!
-    @IBOutlet private var drawPromptContainer: UIView!
-    @IBOutlet private var drawPromptLabel: UILabel!
-    @IBOutlet private var trackingPromptContainer: UIView!
     @IBOutlet var trackingPromptLabel: UILabel!
-    @IBOutlet private var pairedStateLabel: UILabel!
-    @IBOutlet private var largeBrushButton: UIButton!
-    @IBOutlet private var mediumBrushButton: UIButton!
-    @IBOutlet private var smallBrushButton: UIButton!
-
     weak var touchDelegate: InterfaceViewControllerDelegate?
     var hasDrawnInSession: Bool = false
     var pairButtonState: PairButtonState = .unpaired
@@ -106,6 +103,26 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
 
     let pairedLabelBlue = UIColor(red: 37 / 255, green: 85 / 255, blue: 255 / 255, alpha: 1.0)
     let pairedLabelBlack = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.5)
+
+    @IBOutlet private var trackingImage: UIImageView!
+    @IBOutlet private var trackingImageCenterConstraint: NSLayoutConstraint!
+
+    @IBOutlet private var recordButton: UIButton!
+    @IBOutlet private var recordIconView: UIView!
+    @IBOutlet private var chooseSizeButton: UIButton!
+    @IBOutlet private var overflowButton: UIButton!
+    @IBOutlet private var sizeButtonStackView: UIStackView!
+    @IBOutlet private var sizeStackViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private var recordButtonBottomConstraint: NSLayoutConstraint!
+    @IBOutlet private var drawPromptContainer: UIView!
+    @IBOutlet private var drawPromptLabel: UILabel!
+    @IBOutlet private var trackingPromptContainer: UIView!
+    @IBOutlet private var pairedStateLabel: UILabel!
+    @IBOutlet private var largeBrushButton: UIButton!
+    @IBOutlet private var mediumBrushButton: UIButton!
+    @IBOutlet private var smallBrushButton: UIButton!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -120,9 +137,9 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         drawingUIHidden(false)
 
         #if JOIN_GLOBAL_ROOM
-        recordButtonBottomConstraint.constant = 0
+            recordButtonBottomConstraint.constant = 0
         #else
-        recordButtonBottomConstraint.constant = 20
+            recordButtonBottomConstraint.constant = 20
         #endif
 
         selectSize(.medium)
@@ -130,12 +147,62 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         configureAccessibility()
     }
 
-    override var shouldAutorotate: Bool {
-        if let touchDelegate, touchDelegate.shouldAutorotate == false {
-            return false
-        }
-        return true
+    /*
+     // MARK: - Navigation
+
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destinationViewController.
+         // Pass the selected object to the new view controller.
+     }
+     */
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchDelegate?.touchesBegan(touches, with: event)
     }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchDelegate?.touchesMoved(touches, with: event)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let delegate = touchDelegate {
+            delegate.touchesEnded(touches, with: event)
+        }
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        touchDelegate?.touchesCancelled(touches, with: event)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender _: Any?) {
+        self.touchDelegate?.resetTouches()
+
+        if segue.identifier == "stateMessageSegue" {
+            // swiftlint:disable:next force_cast
+            self.touchDelegate?.stateViewLoaded(segue.destination as! StateManager)
+        }
+
+        if segue.identifier == "overflowSegue" {
+            if let overflow = segue.destination as? OverflowViewController {
+                overflow.delegate = self
+            }
+        }
+
+        if segue.identifier == "globalPairingChooserSegue" {
+            if let chooser = segue.destination as? GlobalPairingChooser {
+                chooser.delegate = self
+            }
+        }
+
+        if segue.identifier == "pairingChooserSegue" {
+            if let chooser = segue.destination as? PairingChooser {
+                chooser.delegate = self
+            }
+        }
+    }
+
+    // MARK: Functions
 
     func configureAccessibility() {
         undoButton.accessibilityLabel = NSLocalizedString("content_description_undo", comment: "Undo")
@@ -168,65 +235,6 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchDelegate?.touchesBegan(touches, with: event)
-    }
-
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchDelegate?.touchesMoved(touches, with: event)
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let delegate = touchDelegate {
-            delegate.touchesEnded(touches, with: event)
-        }
-    }
-
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchDelegate?.touchesCancelled(touches, with: event)
-    }
-
-    @IBAction private func recordTapped(_ sender: UIButton) {
-        touchDelegate?.recordTapped(sender: sender)
-    }
-
-    @IBAction private func undoLastStroke(_ sender: UIButton) {
-        touchDelegate?.undoLastStroke(sender: sender)
-    }
-
-    @IBAction private func clearAllStrokes(_ sender: UIButton) {
-        touchDelegate?.clearStrokesTapped(sender: sender)
-    }
-
-    @IBAction private func chooseSizeTapped(_: UIButton) {
-        let newAlpha = (sizeButtonStackView.alpha == 0) ? 1 : 0
-        UIView.animate(withDuration: 0.25, animations: {
-            self.sizeButtonStackView.alpha = CGFloat(newAlpha)
-        })
-    }
-
-    @IBAction private func smallSizeTapped(_: UIButton) {
-        selectSize(.small)
-    }
-
-    @IBAction private func mediumSizeTapped(_: UIButton) {
-        selectSize(.medium)
-    }
-
-    @IBAction private func largeSizeTapped(_: UIButton) {
-        selectSize(.large)
-    }
-
     func selectSize(_ size: Radius) {
         UIView.animate(withDuration: 0.25) {
             self.sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
@@ -251,16 +259,16 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     }
 
     func drawingUIHidden(_ isHidden: Bool) {
-        var forceHidden: Bool = false
+        var forceHidden = false
         #if JOIN_GLOBAL_ROOM
             forceHidden = true
         #endif
 
         // hide record from stage version only
-        progressCircle.isHidden = (forceHidden) ? true : isHidden
-        recordBackgroundView.isHidden = (forceHidden) ? true : isHidden
-        recordButton.isHidden = (forceHidden) ? true : isHidden
-        recordIconView.isHidden = (forceHidden) ? true : isHidden
+        progressCircle.isHidden = forceHidden ? true : isHidden
+        recordBackgroundView.isHidden = forceHidden ? true : isHidden
+        recordButton.isHidden = forceHidden ? true : isHidden
+        recordIconView.isHidden = forceHidden ? true : isHidden
         touchView.isHidden = isHidden
         overflowButton.isHidden = isHidden
         chooseSizeButton.isHidden = isHidden
@@ -334,7 +342,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
                     self.pairedStateLabel.alpha = 0
                     self.pairedStateLabel.isHidden = self.pairButton.isHidden
                 } completion: { complete in
-                    if complete && self.pairButtonState != .connected {
+                    if complete, self.pairButtonState != .connected {
                         self.pairedStateLabel.isHidden = true
                         self.pairedStateLabel.alpha = 1
                     }
@@ -382,7 +390,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         UIView.animate(withDuration: 0.25) {
             self.trackingPromptContainer.alpha = 0
 
-        // Reset state
+            // Reset state
         } completion: { _ in
 //            self.trackingPromptContainer.isHidden = true
             self.trackingImageCenterConstraint.constant = -15
@@ -425,54 +433,6 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         }
     }
 
-    @IBAction private func joinButtonTapped(_ sender: UIButton) {
-        #if JOIN_GLOBAL_ROOM
-        if let presentChooser = self.touchDelegate?.shouldPresentPairingChooser(), presentChooser == true {
-            self.performSegue(withIdentifier: "globalPairingChooserSegue", sender: self)
-        } else {
-            self.touchDelegate?.joinButtonTapped(sender: sender)
-        }
-        #else
-//        self.touchDelegate?.joinButtonTapped(sender: sender)
-        if let presentChooser = self.touchDelegate?.shouldPresentPairingChooser(), presentChooser == true {
-            self.performSegue(withIdentifier: "pairingChooserSegue", sender: self)
-        } else {
-            self.touchDelegate?.joinButtonTapped(sender: sender)
-        }
-        #endif
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender _: Any?) {
-        self.touchDelegate?.resetTouches()
-
-        if segue.identifier == "stateMessageSegue" {
-            // swiftlint:disable:next force_cast
-            self.touchDelegate?.stateViewLoaded(segue.destination as! StateManager)
-        }
-
-        if segue.identifier == "overflowSegue" {
-            if let overflow = segue.destination as? OverflowViewController {
-                overflow.delegate = self
-            }
-        }
-
-        if segue.identifier == "globalPairingChooserSegue" {
-            if let chooser = segue.destination as? GlobalPairingChooser {
-                chooser.delegate = self
-            }
-        }
-
-        if segue.identifier == "pairingChooserSegue" {
-            if let chooser = segue.destination as? PairingChooser {
-                chooser.delegate = self
-            }
-        }
-    }
-
-    // swiftlint:disable:next no_empty_block
-    @IBAction private func unwindAboutSegue(_: UIStoryboardSegue) {
-    }
-
     func shareButtonTapped(_: UIButton) {
         // swiftlint:disable:next force_unwrapping
         let url = URL(string: NSLocalizedString("share_app_message", comment: "https://g.co/justaline"))!
@@ -486,11 +446,62 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         performSegue(withIdentifier: "aboutSegue", sender: nil)
     }
 
-    func shouldBeginGlobalSession (withPairing: Bool) {
+    func shouldBeginGlobalSession(withPairing: Bool) {
         self.touchDelegate?.beginGlobalSession(withPairing)
     }
 
     func shouldBeginPartnerSession() {
         self.touchDelegate?.joinButtonTapped(sender: nil)
     }
+
+    @IBAction private func recordTapped(_ sender: UIButton) {
+        touchDelegate?.recordTapped(sender: sender)
+    }
+
+    @IBAction private func undoLastStroke(_ sender: UIButton) {
+        touchDelegate?.undoLastStroke(sender: sender)
+    }
+
+    @IBAction private func clearAllStrokes(_ sender: UIButton) {
+        touchDelegate?.clearStrokesTapped(sender: sender)
+    }
+
+    @IBAction private func chooseSizeTapped(_: UIButton) {
+        let newAlpha = (sizeButtonStackView.alpha == 0) ? 1 : 0
+        UIView.animate(withDuration: 0.25, animations: {
+            self.sizeButtonStackView.alpha = CGFloat(newAlpha)
+        })
+    }
+
+    @IBAction private func smallSizeTapped(_: UIButton) {
+        selectSize(.small)
+    }
+
+    @IBAction private func mediumSizeTapped(_: UIButton) {
+        selectSize(.medium)
+    }
+
+    @IBAction private func largeSizeTapped(_: UIButton) {
+        selectSize(.large)
+    }
+
+    @IBAction private func joinButtonTapped(_ sender: UIButton) {
+        #if JOIN_GLOBAL_ROOM
+            if let presentChooser = self.touchDelegate?.shouldPresentPairingChooser(), presentChooser == true {
+                self.performSegue(withIdentifier: "globalPairingChooserSegue", sender: self)
+            } else {
+                self.touchDelegate?.joinButtonTapped(sender: sender)
+            }
+        #else
+//        self.touchDelegate?.joinButtonTapped(sender: sender)
+            if let presentChooser = self.touchDelegate?.shouldPresentPairingChooser(), presentChooser == true {
+                self.performSegue(withIdentifier: "pairingChooserSegue", sender: self)
+            } else {
+                self.touchDelegate?.joinButtonTapped(sender: sender)
+            }
+        #endif
+    }
+
+    // swiftlint:disable:next no_empty_block
+    @IBAction private func unwindAboutSegue(_: UIStoryboardSegue) {}
 }

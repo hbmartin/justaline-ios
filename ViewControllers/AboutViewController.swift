@@ -16,11 +16,15 @@
 import UIKit
 
 class AboutViewController: UIViewController, UITextViewDelegate {
+    // MARK: Properties
+
     @IBOutlet private var learnMoreTextView: UITextView!
     @IBOutlet private var privacyButton: UIButton!
     @IBOutlet private var thirdPartyButton: UIButton!
     @IBOutlet private var termsButton: UIButton!
     @IBOutlet private var buildLabel: UILabel!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,18 +44,7 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         buildLabel.text = "\(versionString)(\(buildString))"
     }
 
-    @IBAction private func buttonTapped(_ sender: UIButton) {
-        var urlString: String?
-        if sender == termsButton {
-            urlString = "terms_url"
-        } else if sender == privacyButton {
-            urlString = "privacy_policy_url"
-        }
-
-        if let urlKey = urlString {
-            UIApplication.shared.open(URL(string: NSLocalizedString(urlKey, comment: ""))!, options: [:], completionHandler: nil)
-        }
-    }
+    // MARK: Functions
 
     @objc
     func closeTapped(_: UIButton) {
@@ -64,7 +57,7 @@ class AboutViewController: UIViewController, UITextViewDelegate {
             attributes: [
                 .underlineStyle: NSUnderlineStyle.single.rawValue,
                 .foregroundColor: UIColor.white,
-                .underlineColor: UIColor.white
+                .underlineColor: UIColor.white,
             ]
         )
         button.setAttributedTitle(attributedString, for: .normal)
@@ -100,16 +93,29 @@ class AboutViewController: UIViewController, UITextViewDelegate {
     }
 
     func textView(_: UITextView, shouldInteractWith _: URL, in _: NSRange, interaction _: UITextItemInteraction) -> Bool {
-        return true
+        true
     }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destinationViewController.
+         // Pass the selected object to the new view controller.
+     }
+     */
+
+    @IBAction private func buttonTapped(_ sender: UIButton) {
+        var urlString: String?
+        if sender == termsButton {
+            urlString = "terms_url"
+        } else if sender == privacyButton {
+            urlString = "privacy_policy_url"
+        }
+
+        if let urlKey = urlString {
+            UIApplication.shared.open(URL(string: NSLocalizedString(urlKey, comment: ""))!, options: [:], completionHandler: nil)
+        }
     }
-    */
 }

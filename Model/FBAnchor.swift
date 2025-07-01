@@ -15,9 +15,30 @@
 import Foundation
 
 final class FBAnchor: FBModel {
+    // MARK: Properties
+
     var anchorId: String?
 
     var anchorResolutionError: Bool = false
+
+    // MARK: Static Functions
+
+    // swiftlint:disable:next type_contents_order
+    static func from(_ dictionary: [String: Any?]) -> FBAnchor? {
+        var anchor: FBAnchor?
+
+        if let anchorId = dictionary[FBKey.val(.anchorId)] as? String {
+            anchor = FBAnchor(anchorId: anchorId)
+        } else {
+            if let anchorError = dictionary[FBKey.val(.anchorResolutionError)] as? Bool {
+                anchor = FBAnchor(anchorResolutionError: anchorError)
+            }
+        }
+
+        return anchor
+    }
+
+    // MARK: Lifecycle
 
     convenience init(anchorId: String) {
         self.init()
@@ -32,19 +53,7 @@ final class FBAnchor: FBModel {
         self.anchorResolutionError = anchorResolutionError
     }
 
-    static func from(_ dictionary: [String: Any?]) -> FBAnchor? {
-        var anchor: FBAnchor?
-
-        if let anchorId = dictionary[FBKey.val(.anchorId)] as? String {
-            anchor = FBAnchor(anchorId: anchorId)
-        } else {
-            if let anchorError = dictionary[FBKey.val(.anchorResolutionError)] as? Bool {
-                anchor = FBAnchor(anchorResolutionError: anchorError)
-            }
-        }
-
-        return anchor
-    }
+    // MARK: Functions
 
     func dictionaryValue() -> [String: Any?] {
         var dictionary = [String: Any?]()

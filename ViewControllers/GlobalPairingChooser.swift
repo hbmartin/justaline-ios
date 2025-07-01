@@ -15,17 +15,22 @@
 import UIKit
 
 protocol GlobalPairingChooserDelegate: AnyObject {
-    func shouldBeginGlobalSession (withPairing: Bool)
+    func shouldBeginGlobalSession(withPairing: Bool)
 }
 
 class GlobalPairingChooser: UIViewController {
+    // MARK: Properties
+
     var offscreenContainerPosition: CGFloat = 0
     weak var delegate: GlobalPairingChooserDelegate?
+
     @IBOutlet private var overlayButton: UIButton!
     @IBOutlet private var buttonContainer: UIView!
     @IBOutlet private var joinButton: UIButton!
     @IBOutlet private var pairButton: UIButton!
     @IBOutlet private var cancelButton: UIButton!
+
+    // MARK: Overridden Functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +54,8 @@ class GlobalPairingChooser: UIViewController {
         }
     }
 
+    // MARK: Functions
+
     @IBAction private func pairButtonTapped(_ _: UIButton) {
         self.dismiss(animated: true, completion: {
             self.delegate?.shouldBeginGlobalSession(withPairing: true)
@@ -66,12 +73,12 @@ class GlobalPairingChooser: UIViewController {
     }
 
     /*
-    // MARK: - Navigation
+     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+         // Get the new view controller using segue.destinationViewController.
+         // Pass the selected object to the new view controller.
+     }
+     */
 }
