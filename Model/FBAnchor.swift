@@ -15,20 +15,6 @@
 import Foundation
 
 final class FBAnchor: FBModel {
-    static func from(_ dictionary: [String: Any?]) -> FBAnchor? {
-        var anchor: FBAnchor?
-
-        if let anchorId = dictionary[FBKey.val(.anchorId)] as? String {
-            anchor = FBAnchor(anchorId: anchorId)
-        } else {
-            if let anchorError = dictionary[FBKey.val(.anchorResolutionError)] as? Bool {
-                anchor = FBAnchor(anchorResolutionError: anchorError)
-            }
-        }
-
-        return anchor
-    }
-
     var anchorId: String?
 
     var anchorResolutionError: Bool = false
@@ -46,7 +32,21 @@ final class FBAnchor: FBModel {
         self.anchorResolutionError = anchorResolutionError
     }
 
-    func dictionaryValue()->[String: Any?] {
+    static func from(_ dictionary: [String: Any?]) -> FBAnchor? {
+        var anchor: FBAnchor?
+
+        if let anchorId = dictionary[FBKey.val(.anchorId)] as? String {
+            anchor = FBAnchor(anchorId: anchorId)
+        } else {
+            if let anchorError = dictionary[FBKey.val(.anchorResolutionError)] as? Bool {
+                anchor = FBAnchor(anchorResolutionError: anchorError)
+            }
+        }
+
+        return anchor
+    }
+
+    func dictionaryValue() -> [String: Any?] {
         var dictionary = [String: Any?]()
         dictionary[FBKey.val(.anchorId)] = anchorId
         dictionary[FBKey.val(.anchorResolutionError)] = anchorResolutionError

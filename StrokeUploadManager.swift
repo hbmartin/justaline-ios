@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Foundation
 import FirebaseDatabase
+import Foundation
 
-struct StrokeUpdate {
+struct StrokeUpdate: AnyObject {
     var stroke: Stroke
     var shouldRemove: Bool
 }
@@ -30,7 +30,7 @@ class StrokeUploadManager {
 
     var queuedUpdates: [String: StrokeUpdate]
 
-    var delegate: StrokeUploaderDelegate?
+    weak var delegate: StrokeUploaderDelegate?
 
     let queue: DispatchQueue
 
@@ -47,7 +47,8 @@ class StrokeUploadManager {
         }
         let update = StrokeUpdate(stroke: stroke, shouldRemove: remove)
         queue.sync {
-            if (uploadingStrokeKeys.count == 0) {
+            if uploadingStrokeKeys.isEmpty {
+                // swiftlint:disable:next line_length
                 print("StrokeUploadManager: queueStroke: uploading stroke \(String(describing: update.stroke.fbReference?.key)) with \(uploadingStrokeKeys.count) keys")
                 upload(update)
             } else {
@@ -75,7 +76,7 @@ class StrokeUploadManager {
                         print("StrokeUploadManager: upload: successfully removed stroke key at \(strokeIndex)")
                         self.uploadingStrokeKeys.remove(at: strokeIndex)
                     }
-                    if (error == nil) {
+                    if error == nil {
                         for (_, update) in self.queuedUpdates {
                             self.queueStroke(update.stroke, remove: update.shouldRemove)
                         }

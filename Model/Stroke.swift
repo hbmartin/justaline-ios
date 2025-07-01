@@ -38,7 +38,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
     var mSide = [Float]()
     var mLength = [Float]()
 
-    let smoothingCount = 1500
+    let smoothingCount = 1_500
     let biquadFilter = BiquadFilter(0.07, dimensions: 3)
     let animationFilter = BiquadFilter(0.025, dimensions: 1)
     var totalLength: Float = 0
@@ -46,7 +46,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     var fbReference: DatabaseReference?
     var creatorUid: String?
-    var previousPoints:  [String: [String: NSNumber]]? = nil
+    var previousPoints: [String: [String: NSNumber]]? = nil
 
     public func size() -> Int {
         return points.count
@@ -54,11 +54,11 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
     func updateAnimatedStroke() -> Bool {
         var renderNeedsUpdate = false;
-        if(!drawnLocally) {
+        if !drawnLocally {
             let previousLength = animatedLength
             animatedLength = animationFilter.update(totalLength)
 
-            if(abs(animatedLength - previousLength) > 0.001) {
+            if abs(animatedLength - previousLength) > 0.001 {
                 renderNeedsUpdate = true
             }
         }
@@ -70,14 +70,14 @@ final class Stroke: NSObject, NSCopying, FBModel {
         print("Stroke deinit")
     }
 
-    public func add( point: SCNVector3)->Bool {
+    public func add( point: SCNVector3) -> Bool {
         let s = points.count
 
         // Filter the point
         let p = biquadFilter.update(point)
 
         // Check distance, and only add if moved far enough
-        if(s > 0) {
+        if s > 0 {
             let lastPoint = points[s - 1];
 
             let result = point.distance(to: lastPoint)
@@ -99,10 +99,10 @@ final class Stroke: NSObject, NSCopying, FBModel {
         points.append(p)
 
         // Cleanup vertices that are redundant
-        if(s > 3) {
+        if s > 3 {
             let angle = calculateAngle(index: s - 2)
             // Remove points that have very low angle change
-            if (angle < 0.05) {
+            if angle < 0.05 {
                 points.remove(at: (s - 2))
             } else {
                 subdivideSection(s: s - 3, maxAngle: 0.3, iteration: 0);
@@ -150,7 +150,6 @@ final class Stroke: NSObject, NSCopying, FBModel {
     }
 
     func calcAngle(n1: SCNVector3, n2: SCNVector3) -> Float {
-
         let xx = n1.y * n2.z - n1.z * n2.y;
         let yy = n1.z * n2.x - n1.x * n2.z;
         let zz = n1.x * n2.y - n1.y * n2.x;
@@ -161,7 +160,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         return abs(atan2(cross, dot))
     }
 
-    func calculateAngle(index : Int) -> Float {
+    func calculateAngle(index: Int) -> Float {
         let p1 = points[index - 1]
         let p2 = points[index]
         let p3 = points[index + 1]
@@ -186,8 +185,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         return abs(atan2(cross, dot))
     }
 
-    func subdivideSection(s: Int, maxAngle: Float, iteration : Int) {
-
+    func subdivideSection(s: Int, maxAngle: Float, iteration: Int) {
         if iteration == 6 {
             return
         }
@@ -202,8 +200,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         let angle = calcAngle(n1: n1, n2: n2)
 
         // If angle is too big, add points
-        if(angle > maxAngle) {
-
+        if angle > maxAngle {
             n1 = scaleVec(vec: n1, factor: 0.5)
             n2 = scaleVec(vec: n2, factor: 0.5)
             n1 = addVecs(lhs: n1, rhs: p1)
@@ -254,7 +251,6 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
         var ii = 0
         for i in 0...lineSize {
-
             var iGood = i
             if iGood < 0 {
                 iGood = 0
@@ -265,12 +261,12 @@ final class Stroke: NSObject, NSCopying, FBModel {
 
             let i_m_1 = (iGood - 1) < 0 ? iGood : iGood - 1
 
-            let current = get(i:iGood)
-            let previous = get(i:i_m_1)
+            let current = get(i: iGood)
+            let previous = get(i: i_m_1)
 
-            if (i < mTapperPoints) {
+            if i < mTapperPoints {
                 mLineWidth = mLineWidthMax * mTaperLookup[i]
-            } else if (i > lineSize - mTapperPoints) {
+            } else if i > lineSize - mTapperPoints {
                 mLineWidth = mLineWidthMax * mTaperLookup[lineSize - i]
             } else {
                 mLineWidth = getLineWidth()
@@ -282,9 +278,9 @@ final class Stroke: NSObject, NSCopying, FBModel {
             mLineWidth = max(0, min(mLineWidthMax, mLineWidth))
 
             ii += 1
-            setMemory(index:ii, pos:current, side:1.0, length: lengthAtPoint)
+            setMemory(index: ii, pos: current, side: 1.0, length: lengthAtPoint)
             ii += 1
-            setMemory(index:ii, pos:current, side:-1.0, length: lengthAtPoint)
+            setMemory(index: ii, pos: current, side: -1.0, length: lengthAtPoint)
         }
     }
 
@@ -351,7 +347,6 @@ final class Stroke: NSObject, NSCopying, FBModel {
         if let fbPoints = dictionary[FBKey.val(.points)] as? [[String: NSNumber]],
             let lineWidth = dictionary[FBKey.val(.lineWidth)] as? NSNumber,
             let creator = dictionary[FBKey.val(.creator)] as? String {
-
             let stroke = Stroke()
 
             var anchorTransform = matrix_float4x4(1)
@@ -386,7 +381,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         return newStroke
     }
 
-    func dictionaryValue() -> [String : Any?] {
+    func dictionaryValue() -> [String: Any?] {
         guard let node = node else {
             print("Stroke:dictionaryValue: There was a problem converting stroke \(self) into dictionary values")
             return [String: Any?]()
@@ -409,7 +404,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
         }
         dictionary[FBKey.val(.creator)] = creatorUid
         dictionary[FBKey.val(.points)] = pointsDictionary
-        dictionary[FBKey.val(.lineWidth)] = NSNumber(value:lineWidth)
+        dictionary[FBKey.val(.lineWidth)] = NSNumber(value: lineWidth)
 
         previousPoints = pointsDictionary
 
@@ -417,7 +412,7 @@ final class Stroke: NSObject, NSCopying, FBModel {
     }
 
     /// Dictionary only containing the points that changed since last call
-    func pointsUpdateDictionaryValue() -> [String : [String: NSNumber]] {
+    func pointsUpdateDictionaryValue() -> [String: [String: NSNumber]] {
         guard let node = node else {
             print("Stroke:pointsUpdateDictionaryValue: There was a problem converting stroke \(self) into dictionary values")
             return [String: [String: NSNumber]]()
@@ -435,10 +430,9 @@ final class Stroke: NSObject, NSCopying, FBModel {
             pointObj["z"] = NSNumber(value: point.z + node.position.z)
 
             if let previousPoints = previousPoints, previousPoints.count > i, let previousPoint = previousPoints[String(i)] {
-                if( pointObj["x"] != previousPoint["x"]
+                if pointObj["x"] != previousPoint["x"]
                     || pointObj["y"] != previousPoint["y"]
-                    || pointObj["z"] != previousPoint["z"]) {
-
+                    || pointObj["z"] != previousPoint["z"] {
                     pointsArray[ String(i) ] = pointObj
                 }
             } else {

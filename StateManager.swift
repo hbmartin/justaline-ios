@@ -16,7 +16,9 @@ import Foundation
 import Lottie
 import FirebaseAnalytics
 
+// swiftlint:disable:next legacy_objc_type
 extension NSNotification.Name {
+    // swiftlint:disable:next legacy_objc_type
     static var STATE_CHANGED = NSNotification.Name("stateChanged")
 }
 
@@ -47,7 +49,7 @@ enum State: String {
 }
 
 protocol StateManagerDelegate {
-    func stateChangeCompleted(_ state:State)
+    func stateChangeCompleted(_ state: State)
     func attemptPartnerDiscovery()
     func anchorDrawingTryAgain()
     func pairingFinished()
@@ -59,7 +61,6 @@ protocol StateManagerDelegate {
 /// TODO: Ultimately need to refactor to StateViewController with singleton StateManager for storing and publishing state changes
 /// In the meantime, AppDelegate stores changes, and static StateManager method publishes
 class StateManager: UIViewController {
-
     /// When using an image instead of an animation
     @IBOutlet weak var imageView: UIImageView!
 
@@ -115,7 +116,7 @@ class StateManager: UIViewController {
     }
 
     /// determines when to allow tracking state to override pairing state
-    static func shouldShowTracking(for pairState:State)->Bool {
+    static func shouldShowTracking(for pairState: State) -> Bool {
         var shouldShow = true
         switch pairState {
         case .NO_STATE: fallthrough
@@ -188,6 +189,7 @@ class StateManager: UIViewController {
         }
     }
 
+    // swiftlint:disable:next function_body_length
     func setState(_ newState: State) {
         print("StateManager: setState - Setting state to \(newState.rawValue)")
         if newState == .NO_STATE {
@@ -210,7 +212,7 @@ class StateManager: UIViewController {
 
         var message: String?
         var secondMessage: String?
-        var image:UIImage?
+        var image: UIImage?
         var animationName: String?
         var showProgress = false
         var showTryAgain = false
@@ -219,7 +221,7 @@ class StateManager: UIViewController {
         var delayedStateTransition = false
         var accessibleMessage: String?
 
-        switch (newState) {
+        switch newState {
             case .LOOKING:
                 message = NSLocalizedString("pair_looking_for_partner", comment: "Looking for your drawing partner...")
 //                secondMessage = NSLocalizedString("Ask them to tap the partner icon", comment: "Ask them to tap the partner icon")
@@ -319,14 +321,14 @@ class StateManager: UIViewController {
         }
 
         // Set image, animation, and text values
-        if (image != nil) {
+        if image != nil {
             imageView?.image = image
         } else {
             imageView?.image = nil
         }
 
         if let animation = animationName {
-            configureAnimation(name:animation)
+            configureAnimation(name: animation)
         }
 
         centerMessageLabel?.text = message
@@ -364,7 +366,7 @@ class StateManager: UIViewController {
             progressTimer = nil
         }
 
-        if (delayedStateTransition) {
+        if delayedStateTransition {
             DispatchQueue.main.asyncAfter(deadline: .now() + SEQUENTIAL_STATE_DELAY) {
                 self.handleSequentialStates()
             }
@@ -427,7 +429,7 @@ class StateManager: UIViewController {
             return
         }
 
-        if (state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR) {
+        if state == .HOST_SET_ANCHOR || state == .PARTNER_SET_ANCHOR {
             delegate?.onReadyToSetAnchor();
         }
 
@@ -435,7 +437,7 @@ class StateManager: UIViewController {
     }
 
     @IBAction func closeTapped(_: UIButton) {
-        if (state == .SYNCED || state == .FINISHED) {
+        if state == .SYNCED || state == .FINISHED {
             delegate?.stateChangeCompleted(.SYNCED)
             return
         }

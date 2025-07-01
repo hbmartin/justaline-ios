@@ -20,8 +20,8 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         node.simdTransform = anchor.transform
 
         if let stroke = getStroke(for: anchor) {
-            print ("did add: \(node.position)")
-            print ("stroke first position: \(stroke.points[0])")
+            print("did add: \(node.position)")
+            print("stroke first position: \(stroke.points[0])")
             stroke.node = node
 
             DispatchQueue.main.async {
@@ -34,9 +34,8 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         if let stroke = getStroke(for: anchor) {
             print("Renderer did update node transform: \(node.transform) and anchorTranform: \(anchor.transform)")
             stroke.node = node
-            if ((stateManager?.state == .HOST_CONNECTING || stateManager?.state == .SYNCED || stateManager?.state == .FINISHED)
-                        && strokes.contains(stroke)) {
-
+            if (stateManager?.state == .HOST_CONNECTING || stateManager?.state == .SYNCED || stateManager?.state == .FINISHED)
+                        && strokes.contains(stroke) {
                 pairingManager?.updateStroke(stroke)
 
                 DispatchQueue.main.async {
@@ -48,8 +47,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
 
     func renderer(_: SCNSceneRenderer, didRemove node: SCNNode, for _: ARAnchor) {
         if let stroke = getStroke(for: node) {
-
-            if (strokes.contains(stroke)) {
+            if strokes.contains(stroke) {
                 if let index = strokes.firstIndex(of: stroke) {
                     strokes.remove(at: index)
                 }
@@ -68,14 +66,14 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
             DispatchQueue.main.async {
                 self.uiViewController?.undoButton.isHidden = self.shouldHideUndoButton()
                 self.uiViewController?.clearAllButton.isHidden = self.shouldHideTrashButton()
-                if (self.mode == .DRAW && self.strokes.count == 0) { self.uiViewController?.showDrawingPrompt() }
+                if self.mode == .DRAW && self.strokes.isEmpty { self.uiViewController?.showDrawingPrompt() }
                 UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
             }
         }
     }
 
     func renderer(_: SCNSceneRenderer, updateAtTime _: TimeInterval) {
-        if (touchPoint != .zero) {
+        if touchPoint != .zero {
             if let stroke = strokes.last {
                 DispatchQueue.main.async {
                     self.updateLine(for: stroke)
@@ -107,7 +105,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                     NSLog("Relocalizing...")
 
                     // while relocalizing after interruption, only attempt for 5 seconds, then reset, and only when not paired
-                    if strokes.count > 0 && resumeFromInterruptionTimer == nil && pairingManager?.isPairingOrPaired == false {
+                    if !strokes.isEmpty && resumeFromInterruptionTimer == nil && pairingManager?.isPairingOrPaired == false {
                         resumeFromInterruptionTimer = Timer(timeInterval: 5, repeats: false) { _ in
                             NSLog("Resetting ARSession because relocalizing took too long")
                             DispatchQueue.main.async {
@@ -116,6 +114,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                                 self.configureARSession(runOptions: [ARSession.RunOptions.resetTracking])
                             }
                         }
+                        // swiftlint:disable:next force_unwrapping
                         RunLoop.main.add(resumeFromInterruptionTimer!, forMode: RunLoop.Mode.default)
                     } else { // if strokes.count == 0 {
                         // only do the timer if user has drawn strokes
@@ -126,7 +125,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
             }
 
         case .normal:
-            if (!hasInitialTracking) {
+            if !hasInitialTracking {
                 hasInitialTracking = true
                 Analytics.setUserProperty(AnalyticsKey.val(.value_true), forName: AnalyticsKey.val(.tracking_has_established))
             }
@@ -147,7 +146,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
 
         trackingMessage = .looking
 
-        if let pairingMgr = pairingManager, pairingMgr.isPairingOrPaired == true, (mode == .DRAW || (mode == .TRACKING && modeBeforeTracking == .DRAW)) {
+        if let pairingMgr = pairingManager, pairingMgr.isPairingOrPaired == true, mode == .DRAW || (mode == .TRACKING && modeBeforeTracking == .DRAW) {
             trackingMessage = .anchorLost
         } else if trackingMessageTimer == nil {
             trackingMessage = .looking
@@ -161,6 +160,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                 self.trackingMessageTimer?.invalidate()
                 self.trackingMessageTimer = nil
             }
+            // swiftlint:disable:next force_unwrapping
             RunLoop.main.add(trackingMessageTimer!, forMode: RunLoop.Mode.default)
         }
 
@@ -191,16 +191,18 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
     }
 
     /// In pair mode, only show tracking indicator in certain states
-    func shouldShowTrackingIndicator()->Bool {
+    func shouldShowTrackingIndicator() -> Bool {
         var shouldShow = false
         if let trackingState = sceneView.session.currentFrame?.camera.trackingState {
             switch trackingState {
             case .limited:
-                if let pairState = (UIApplication.shared.delegate as! AppDelegate).pairingState, (mode == .PAIR || modeBeforeTracking == .PAIR) {
-                    shouldShow = StateManager.shouldShowTracking(for:pairState)
+                // swiftlint:disable:next force_cast
+                if let pairState = (UIApplication.shared.delegate as! AppDelegate).pairingState, mode == .PAIR || modeBeforeTracking == .PAIR {
+                    shouldShow = StateManager.shouldShowTracking(for: pairState)
                 } else {
                     shouldShow = true
                 }
+
             default:
                 break
             }
@@ -212,7 +214,9 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
     }
 
     func session(_: ARSession, didFailWithError error: Error) {
-        guard let arError = error as? ARError else { return }
+        guard let arError = error as? ARError else {
+            return
+        }
 
         let nsError = error as NSError
         var sessionErrorMsg = "\(nsError.localizedDescription) \(nsError.localizedFailureReason ?? "")"
@@ -226,12 +230,16 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
         if isRecoverable {
             sessionErrorMsg += "\nYou can try resetting the session or quit the application."
         } else {
-            sessionErrorMsg += "\nThis is an unrecoverable error that requires to quit the application."
+            sessionErrorMsg += "\nThis is an unrecoverable error, quit the application."
         }
 
-        if (arError.code == .cameraUnauthorized) {
+        if arError.code == .cameraUnauthorized {
             Analytics.logEvent(AnalyticsKey.val(.camera_permission_denied), parameters: nil)
-            let alertController = UIAlertController(title: NSLocalizedString("error_resuming_session", comment: "Sorry something went wrong"), message: NSLocalizedString("error_camera_not_available", comment: "Sorry, something went wrong. Please try again."), preferredStyle: .alert)
+            let alertController = UIAlertController(
+                title: NSLocalizedString("error_resuming_session", comment: "Sorry something went wrong"),
+                message: NSLocalizedString("error_camera_not_available", comment: "Sorry, something went wrong. Please try again."),
+                preferredStyle: .alert
+            )
             let okAction = UIAlertAction(title: NSLocalizedString("ok", comment: "OK"), style: .default) { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }
@@ -244,7 +252,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
 
     func sessionWasInterrupted(_: ARSession) {
         // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        if let _ = pairingManager?.garAnchor {
+        if pairingManager?.garAnchor != nil {
             shouldRetryAnchorResolve = true
 //            sceneView.session.setWorldOrigin(relativeTransform: float4x4(SCNMatrix4Identity))
         }
@@ -266,7 +274,7 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
                 self.pairCancelled()
             } else {
                 if pairingManager?.isPairingOrPaired == true {
-                    if let _ = pairingManager?.garAnchor {
+                    if pairingManager?.garAnchor != nil {
 //                        sceneView.session.setWorldOrigin(relativeTransform: garAnchor.transform)
                     }
 

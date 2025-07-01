@@ -26,6 +26,8 @@ disabled_rules:
   - nslocalizedstring_key
   - override_in_extension
   - implicit_return
+  - indentation_width
+  - fallthrough
 
 opt_in_rules:
   - all

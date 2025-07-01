@@ -38,7 +38,7 @@ class RoomData {
             let parts = messageString.split(separator: ",")
 
             // Missing error state handling which got complicated
-            if (parts.count == 2) {
+            if parts.count == 2 {
                 code = String(parts[0])
                 timestamp = Int64(parts[1])!
             }

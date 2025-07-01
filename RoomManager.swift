@@ -113,7 +113,7 @@ class RoomManager: StrokeUploaderDelegate {
     /// Current room data for sharing via Nearby Connections
     var currentRoomData: RoomData? {
         guard let roomKey = roomKey else { return nil }
-        let timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        let timestamp = Int64(Date().timeIntervalSince1970 * 1_000)
         return RoomData(code: roomKey, timestamp: timestamp)
     }
 
@@ -130,7 +130,7 @@ class RoomManager: StrokeUploaderDelegate {
         firebaseLogin()
 
         app = FirebaseApp.app()
-        if (app != nil) {
+        if app != nil {
             let rootRef = Database.database().reference()
             roomsListRef = rootRef.child(ROOT_FIREBASE_ROOMS)
             globalRoomRef = rootRef.child(ROOT_GLOBAL_ROOM)
@@ -154,7 +154,7 @@ class RoomManager: StrokeUploaderDelegate {
     private func firebaseLogin() {
         if let currentUser = firebaseAuth?.currentUser {
             userUid = currentUser.uid
-            print("firebaseLogin: user uid \(String(describing:userUid))")
+            print("firebaseLogin: user uid \(String(describing: userUid))")
             // Notify that authentication is complete
             NotificationCenter.default.post(name: NSNotification.Name("FirebaseAuthCompleted"), object: nil)
         } else {
@@ -166,7 +166,7 @@ class RoomManager: StrokeUploaderDelegate {
     private func loginAnonymously() {
         firebaseAuth?.signInAnonymously(completion: { _, error in
             // need to handle error states
-            if (error == nil) {
+            if error == nil {
                 if let currentUser = self.firebaseAuth?.currentUser {
                     self.userUid = currentUser.uid
                     print("loginAnonymously: user uid \(String(describing: self.userUid))")
@@ -250,9 +250,9 @@ class RoomManager: StrokeUploaderDelegate {
             updateRoomReference(room)
         }
 
-        print("RoomManager:createRoom: Trying Room Number: \(String(describing:(roomRef?.key)))")
+        print("RoomManager:createRoom: Trying Room Number: \(String(describing: (roomRef?.key)))")
 
-        let timestamp = Int64(Date().timeIntervalSince1970 * 1000)
+        let timestamp = Int64(Date().timeIntervalSince1970 * 1_000)
         self.roomRef?.child(FBKey.val(.updatedAtTimestamp)).setValue(timestamp)
         self.roomRef?.child(FBKey.val(.displayName)).setValue(self.DISPLAY_NAME_VALUE)
 
@@ -275,8 +275,7 @@ class RoomManager: StrokeUploaderDelegate {
         roomRef = room
         roomKey = room.key
     }
-    
-    
+
     /// Add self as a participant in the current room
     func participateInRoom() {
         if let uid = self.userUid, let partnersRef = roomRef?.child(FBKey.val(.participants)) {
@@ -291,11 +290,10 @@ class RoomManager: StrokeUploaderDelegate {
             self.partnerJoinedCallbacks(uid:uid, reference:partnersRef)
         }
     }
-    
 
     /// RoomData conveyed via Nearby
     func roomFound(_ roomData: RoomData) {
-        if (shouldJoinRoom(roomData)) {
+        if shouldJoinRoom(roomData) {
             self.delegate?.leaveRoom()
 
             joinRoom(roomKey: roomData.code)
@@ -322,7 +320,7 @@ class RoomManager: StrokeUploaderDelegate {
         print("globalRoom reference URL: \(globalRoom.url)")
         globalRoom.observeSingleEvent(of: .value) { snapshot in
           print("Reference path: \(snapshot.ref.url)")
-            if (!snapshot.exists()) {
+            if !snapshot.exists() {
                 let parts = globalRoom.url.split(separator: "/")
                 globalRoom.setValue(parts.last) { error, _ in
                     if let error = error {
@@ -348,7 +346,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     /// If no room has been created, join, otherwise only choose if my room number is lower
-    private func shouldJoinRoom(_ roomData: RoomData)->Bool {
+    private func shouldJoinRoom(_ roomData: RoomData) -> Bool {
         guard let roomString = self.roomKey else {
             return true
         }
@@ -507,7 +505,7 @@ class RoomManager: StrokeUploaderDelegate {
                         self.isHost = (keyComparison == ComparisonResult.orderedDescending) ? false : true
 
                         #if JOIN_GLOBAL_ROOM
-                        let state:State = (self.isHost) ? .HOST_CONNECTED : .PARTNER_CONNECTED
+                        let state: State = (self.isHost) ? .HOST_CONNECTED : .PARTNER_CONNECTED
                         StateManager.updateState(state)
                         #endif
                     }
@@ -523,12 +521,11 @@ class RoomManager: StrokeUploaderDelegate {
             print("RoomManager:partnerJoinedCallbacks: Partner Changed Observer")
             if let participantDict = snapshot.value as? [String: Any?], let participant = FBParticipant.from(participantDict)
                 , snapshot.key != uid {
-
                 self.delegate?.updatePartnerAnchorReadiness(partnerReady: participant.readyToSetAnchor, isHost: self.isHost)
 
                 // if host is true, we are pairing (when partner finishes resolving room, they set isPairing to false) and can resolve room
                 // if partner, host still hasn't resolved room, so isPairing is still true
-                if (participant.anchorResolved == true && (self.isHost == true)) { // || participant.isPairing == true)) {
+                if participant.anchorResolved == true && (self.isHost == true) { // || participant.isPairing == true)) {
                     self.delegate?.anchorResolved()
                 }
             }
@@ -591,14 +588,12 @@ class RoomManager: StrokeUploaderDelegate {
 
                 // Create anchor object from Firebase model
                 if let anchor = FBAnchor.from(anchorValue) {
-
                     // Return anchor
                     if anchor.anchorResolutionError == true {
-
                         // When Joining a global room, if there is a pre-exisintg anchor error, need to show special error
                         var shouldUseGlobalError = false
                         #if JOIN_GLOBAL_ROOM
-                        if (self.pairing == false) {
+                        if self.pairing == false {
                             shouldUseGlobalError = true
                         }
                         #endif
@@ -618,7 +613,7 @@ class RoomManager: StrokeUploaderDelegate {
                             self.participantsRef?.child(uid).child(FBKey.val(.readyToSetAnchor)).setValue(false)
                         }
                     } else if let anchorId = anchor.anchorId, self.isHost == false, self.anchorId != anchorId {
-                        print("RoomManager:observeAnchor: Anchor ID found: \(String(describing:anchor.anchorId))")
+                        print("RoomManager:observeAnchor: Anchor ID found: \(String(describing: anchor.anchorId))")
                         self.anchorId = anchorId
 
                         var state: State = .PARTNER_CONNECTING
@@ -693,7 +688,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     func anchorResolved() {
-        if (isRoomResolved == false) {
+        if isRoomResolved == false {
             self.resolveRoom()
             self.observeLines()
             isHost = false
@@ -707,11 +702,10 @@ class RoomManager: StrokeUploaderDelegate {
 
         print("RoomManager: anchorFailedToResolve")
 
-        if (!isRetrying) {
-
+        if !isRetrying {
             // For global rooms, only send failure to Firebase if it is a hosting failure
             #if JOIN_GLOBAL_ROOM
-                if (pairing) {
+                if pairing {
                     let fbAnchor = FBAnchor(anchorResolutionError: true)
                     room.child(FBKey.val(.anchor)).setValue(fbAnchor.dictionaryValue())
                 }
@@ -772,10 +766,10 @@ class RoomManager: StrokeUploaderDelegate {
         guard let fbStrokeRef = stroke.fbReference else {
             return
         }
-        if(stroke.previousPoints == nil) {
+        if stroke.previousPoints == nil {
             let dictValue = stroke.dictionaryValue()
             print("New Stroke dict: \(dictValue)")
-            if (dictValue.count == 0 || stroke.node == nil) {
+            if dictValue.count == 0 || stroke.node == nil {
                 print("RoomManager: uploadStroke: Stroke new upload cancelled, stroke removed")
                 delegate?.localStrokeRemoved(stroke)
             } else {
@@ -784,7 +778,7 @@ class RoomManager: StrokeUploaderDelegate {
         } else {
             let dictValue = stroke.pointsUpdateDictionaryValue()
             print("Stroke update dict: \(dictValue)")
-            if (dictValue.count == 0 || stroke.node == nil) {
+            if dictValue.count == 0 || stroke.node == nil {
                 print("RoomManager: uploadStroke: Stroke update upload cancelled, stroke removed")
                 delegate?.localStrokeRemoved(stroke)
             } else {

@@ -15,9 +15,8 @@
 import UIKit
 
 class DrawPromptView: UIView {
-
-    let circleWidth:CGFloat = 25
-    let circleHeight:CGFloat = 25
+    let circleWidth: CGFloat = 25
+    let circleHeight: CGFloat = 25
 
     /*
     // Only override draw() if you perform custom drawing.

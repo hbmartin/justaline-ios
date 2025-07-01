@@ -22,6 +22,21 @@ final class FBParticipant: FBModel {
     var isPairing: Bool = false
 
     var lastSeen = [String: Any?]()
+    // swiftlint:disable:next type_contents_order
+    static func from(_ dictionary: [String: Any?]) -> FBParticipant? {
+        let participant = FBParticipant()
+        if let readyToSetAnchor = dictionary[FBKey.val(.readyToSetAnchor)] as? Bool {
+            participant.readyToSetAnchor = readyToSetAnchor
+        }
+        if let anchorResolved = dictionary[FBKey.val(.anchorResolved)] as? Bool {
+            participant.anchorResolved = anchorResolved
+        }
+        if let isPairing = dictionary[FBKey.val(.pairing)] as? Bool {
+            participant.isPairing = isPairing
+        }
+
+        return participant
+    }
 
     convenience init(anchorResolved: Bool, isPairing: Bool) {
         self.init()
@@ -52,20 +67,5 @@ final class FBParticipant: FBModel {
 
     func newTimestamp () -> Int64 {
         return Int64(Date().timeIntervalSince1970 * 1_000)
-    }
-
-    static func from(_ dictionary: [String: Any?]) -> FBParticipant? {
-        let participant = FBParticipant()
-        if let readyToSetAnchor = dictionary[FBKey.val(.readyToSetAnchor)] as? Bool {
-            participant.readyToSetAnchor = readyToSetAnchor
-        }
-        if let anchorResolved = dictionary[FBKey.val(.anchorResolved)] as? Bool {
-            participant.anchorResolved = anchorResolved
-        }
-        if let isPairing = dictionary[FBKey.val(.pairing)] as? Bool {
-            participant.isPairing = isPairing
-        }
-
-        return participant
     }
 }

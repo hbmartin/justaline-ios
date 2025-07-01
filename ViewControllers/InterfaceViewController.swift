@@ -24,14 +24,14 @@ protocol InterfaceViewControllerDelegate {
     func recordTapped(sender: UIButton?)
     func undoLastStroke(sender: UIButton?)
     func clearStrokesTapped(sender: UIButton?)
-    func strokeSizeChanged(_ radius:Radius)
+    func strokeSizeChanged(_ radius: Radius)
     func stopRecording()
     func joinButtonTapped(sender: UIButton?)
     func stateViewLoaded(_ stateManager: StateManager)
-    func shouldHideTrashButton()->Bool
-    func shouldHideUndoButton()->Bool
+    func shouldHideTrashButton() -> Bool
+    func shouldHideUndoButton() -> Bool
     func beginGlobalSession(_ withPairing: Bool)
-    func shouldPresentPairingChooser()->Bool
+    func shouldPresentPairingChooser() -> Bool
     func resetTouches()
     var shouldAutorotate: Bool { get }
 }
@@ -71,7 +71,6 @@ class TouchView: UIView {
 }
 
 class InterfaceViewController: UIViewController, OverflowViewControllerDelegate, GlobalPairingChooserDelegate, PairingChooserDelegate {
-
     @IBOutlet weak var touchView: TouchView!
     @IBOutlet weak var trackingImage: UIImageView!
     @IBOutlet weak var trackingImageCenterConstraint: NSLayoutConstraint!
@@ -232,7 +231,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     func selectSize(_ size: Radius) {
         UIView.animate(withDuration: 0.25, animations: {
             self.sizeButtonStackView.alpha = (UIAccessibility.isVoiceOverRunning) ? 1 : 0
-            if (self.sizeButtonStackView.alpha == 0) {
+            if self.sizeButtonStackView.alpha == 0 {
                 self.sizeStackViewBottomConstraint.constant = 10
             }
             self.view.layoutIfNeeded()
@@ -240,13 +239,13 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
             self.sizeStackViewBottomConstraint.constant = 18
             switch size {
             case .small:
-                self.chooseSizeButton.setImage(UIImage(named:"brushSmall"), for: .normal)
+                self.chooseSizeButton.setImage(UIImage(named: "brushSmall"), for: .normal)
 
             case .medium:
-                self.chooseSizeButton.setImage(UIImage(named:"brushMedium"), for: .normal)
+                self.chooseSizeButton.setImage(UIImage(named: "brushMedium"), for: .normal)
 
             case .large:
-                self.chooseSizeButton.setImage(UIImage(named:"brushLarge"), for: .normal)
+                self.chooseSizeButton.setImage(UIImage(named: "brushLarge"), for: .normal)
             }
             self.touchDelegate?.strokeSizeChanged(size)
         }
@@ -276,7 +275,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
         }
 
         // Pair button label needs to maintain its visibility state across UI hide/show
-        if (isHidden == true) {
+        if isHidden == true {
             pairedStateLabel.isHidden = true
         } else {
             updatePairButtonState(pairButtonState)
@@ -310,7 +309,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
 
     func updatePairButtonState(_ pairState: PairButtonState) {
         // only visually change the state label if the pair button is currently showing
-        if (pairButton.isHidden == false) {
+        if pairButton.isHidden == false {
             switch pairState {
             case .unpaired:
                 pairButton.setImage(UIImage(named: "partner_icon_default"), for: .normal)
@@ -336,7 +335,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
                     self.pairedStateLabel.alpha = 0
                     self.pairedStateLabel.isHidden = self.pairButton.isHidden
                 }) { complete in
-                    if (complete && self.pairButtonState != .connected) {
+                    if complete && self.pairButtonState != .connected {
                         self.pairedStateLabel.isHidden = true
                         self.pairedStateLabel.alpha = 1
                     }
@@ -394,7 +393,6 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     }
 
     func recordingWillStart() {
-
         DispatchQueue.main.async {
             self.recordingTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { _ in
                 DispatchQueue.main.async {
@@ -479,7 +477,7 @@ class InterfaceViewController: UIViewController, OverflowViewControllerDelegate,
     }
 
     func shareButtonTapped(_: UIButton) {
-        let url = URL(string:NSLocalizedString("share_app_message", comment: "https://g.co/justaline"))!
+        let url = URL(string: NSLocalizedString("share_app_message", comment: "https://g.co/justaline"))!
         let activity = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         present(activity, animated: true, completion: nil)
 

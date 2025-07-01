@@ -19,8 +19,8 @@ Abstract:
 Utility functions and type extensions used throughout the projects.
 */
 
-import Foundation
 import ARKit
+import Foundation
 
 // MARK: - AHC Float3 extension
 extension SCNVector3 {
@@ -32,9 +32,8 @@ extension SCNVector3 {
 
         if distance < 0 {
             return (distance * -1)
-        } else {
-            return (distance)
         }
+        return (distance)
     }
 }
 
@@ -89,7 +88,6 @@ extension RangeReplaceableCollection {
 // MARK: - SCNNode extension
 
 extension SCNNode {
-
 	func setUniformScale(_ scale: Float) {
 		self.simdScale = SIMD3<Float>(scale, scale, scale)
 	}
@@ -121,7 +119,6 @@ extension float4x4 {
 // MARK: - CGPoint extensions
 
 extension CGPoint {
-
 	init(_ size: CGSize) {
         self.init()
         self.x = size.width
@@ -134,17 +131,6 @@ extension CGPoint {
 		self.y = CGFloat(vector.y)
 	}
 
-	func distanceTo(_ point: CGPoint) -> CGFloat {
-		return (self - point).length()
-	}
-
-	func length() -> CGFloat {
-		return sqrt(self.x * self.x + self.y * self.y)
-	}
-
-	func midpoint(_ point: CGPoint) -> CGPoint {
-		return (self + point) / 2
-	}
     static func + (left: CGPoint, right: CGPoint) -> CGPoint {
         return CGPoint(x: left.x + right.x, y: left.y + right.y)
     }
@@ -175,6 +161,18 @@ extension CGPoint {
 
     static func *= (left: inout CGPoint, right: CGFloat) {
         left = left * right
+    }
+
+    func distanceTo(_ point: CGPoint) -> CGFloat {
+        return (self - point).length()
+    }
+
+    func length() -> CGFloat {
+        return sqrt(self.x * self.x + self.y * self.y)
+    }
+
+    func midpoint(_ point: CGPoint) -> CGPoint {
+        return (self + point) / 2
     }
 }
 
@@ -229,7 +227,6 @@ extension CGRect {
 }
 
 func rayIntersectionWithHorizontalPlane(rayOrigin: float3, direction: float3, planeY: Float) -> float3? {
-
     let direction = simd_normalize(direction)
 
     // Special case handling: Check if the ray is horizontal as well.
@@ -238,10 +235,9 @@ func rayIntersectionWithHorizontalPlane(rayOrigin: float3, direction: float3, pl
 			// The ray is horizontal and on the plane, thus all points on the ray intersect with the plane.
 			// Therefore we simply return the ray origin.
 			return rayOrigin
-		} else {
-			// The ray is parallel to the plane and never intersects.
-			return nil
 		}
+        // The ray is parallel to the plane and never intersects.
+        return nil
 	}
 
 	// The distance from the ray's origin to the intersection point on the plane is:
@@ -262,10 +258,9 @@ func rayIntersectionWithHorizontalPlane(rayOrigin: float3, direction: float3, pl
 }
 
 extension UIColor {
-
     // based on  http://www.zombieprototypes.com/?p=210 who looked at some data and did a bunch of curve fitting
     static func colorWithKelvin( kelvin: CGFloat) -> UIColor {
-        let k = kelvin < 1000 ? 1000 : ( kelvin > 40000 ? 40000 : kelvin)
+        let k = kelvin < 1_000 ? 1_000 : ( kelvin > 40_000 ? 40_000 : kelvin)
 
         func interpolate(value: CGFloat, a: CGFloat, b: CGFloat, c: CGFloat) -> CGFloat {
             return a + b * value + c * log(value)
@@ -273,10 +268,10 @@ extension UIColor {
 
         var red, green, blue: CGFloat
 
-        if k < 6600 {
+        if k < 6_600 {
             red = 255
             green = interpolate(value: k / 100 - 2, a: -155.25485562709179, b: -0.44596950469579133, c: 104.49216199393888)
-            if k < 2000 {
+            if k < 2_000 {
                 blue = 0
             } else {
                 blue = interpolate(value: k / 100 - 10, a: -254.76935184120902, b: 0.8274096064007395, c: 115.67994401066147)
@@ -304,9 +299,8 @@ extension UIColor {
         if a.getRed(&ar, green: &ag, blue: &ab, alpha: &aa) &&
             b.getRed(&br, green: &bg, blue: &bb, alpha: &ba) {
             return UIColor(red: ar * br, green: ag * bg, blue: ab * bb, alpha: aa * ba)
-        } else {
-            // Couldn't work.
-            return a
         }
+        // Couldn't work.
+        return a
     }
 }

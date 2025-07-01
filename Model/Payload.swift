@@ -18,19 +18,19 @@ import Foundation
 import NearbyConnections
 
 struct Payload: Identifiable {
-    let id: PayloadID
-    var type: PayloadType
-    var status: Status
-    let isIncoming: Bool
-    let cancellationToken: CancellationToken?
-    let data: Data?
-
     enum PayloadType {
         case bytes, stream, file
     }
     enum Status {
         case inProgress(Progress), success, failure, canceled
     }
+
+    let id: PayloadID
+    let isIncoming: Bool
+    let cancellationToken: CancellationToken?
+    let data: Data?
+    var type: PayloadType
+    var status: Status
 
     // Convenience initializer for creating outgoing data payloads
     init(data: Data) {

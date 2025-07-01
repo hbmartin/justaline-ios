@@ -20,19 +20,18 @@ import NearbyConnections
 
 protocol PairingManagerDelegate {
     func localStrokeRemoved(_ stroke: Stroke)
-    func partnerStrokeUpdated(_ stroke: Stroke, id key:String)
-    func partnerStrokeRemoved(id key:String)
+    func partnerStrokeUpdated(_ stroke: Stroke, id key: String)
+    func partnerStrokeRemoved(id key: String)
     func cloudAnchorResolved(_ anchor: GARAnchor)
     func partnerJoined(isHost: Bool)
     func partnerLost()
     func createAnchor()
     func anchorWasReset()
     func offlineDetected()
-    func isTracking()->Bool
+    func isTracking() -> Bool
 }
 
 class PairingManager: NSObject {
-
     // MARK: Properties
     /// Delegate property for ViewController
     var delegate: PairingManagerDelegate?
@@ -136,7 +135,7 @@ class PairingManager: NSObject {
 
         if reachability?.currentReachabilityStatus() == .NotReachable {
             StateManager.updateState(.OFFLINE)
-        } else if (withPairing == true) {
+        } else if withPairing == true {
             StateManager.updateState(.LOOKING)
         }
         roomManager.findGlobalRoom(withPairing)
@@ -265,7 +264,7 @@ class PairingManager: NSObject {
     func setAnchor(_ anchor: ARAnchor) {
         do {
             try self.garAnchor = self.gSession?.hostCloudAnchor(anchor)
-            NSLog("Attempting to Host Cloud Anchor: %@ with ARAnchor: %@", String(describing:garAnchor), String(describing:anchor))
+            NSLog("Attempting to Host Cloud Anchor: %@ with ARAnchor: %@", String(describing: garAnchor), String(describing: anchor))
         } catch let error as NSError {
             print("PairingManager: setAnchor: Hosting cloud anchor failed: \(error)")
         }
@@ -275,11 +274,11 @@ class PairingManager: NSObject {
         readyToSetAnchor = true
         roomManager.setReadyToSetAnchor()
 
-        if (roomManager.isHost && partnerReadyToSetAnchor) {
+        if roomManager.isHost && partnerReadyToSetAnchor {
             sendSetAnchorEvent();
-        } else if (roomManager.isHost) {
+        } else if roomManager.isHost {
             StateManager.updateState(.HOST_READY_AND_WAITING)
-        } else if (partnerReadyToSetAnchor) {
+        } else if partnerReadyToSetAnchor {
             StateManager.updateState(.PARTNER_CONNECTING)
             beginPairingTimeout()
         } else {
@@ -327,14 +326,14 @@ class PairingManager: NSObject {
         if pairingTimeout == nil {
             pairingTimeout = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { _ in
                 print("PairingManager: beginPairingTimeout - Pairing Timed Out")
-                if (self.gSession != nil) {
+                if self.gSession != nil {
                     self.gSession = nil
                     self.createGSession()
                 }
                 self.roomManager.isRetrying = false
                 self.roomManager.anchorFailedToResolve()
 
-                let params = [AnalyticsKey.val(.pair_error_sync_reason):AnalyticsKey.val(.pair_error_sync_reason_timeout)]
+                let params = [AnalyticsKey.val(.pair_error_sync_reason): AnalyticsKey.val(.pair_error_sync_reason_timeout)]
                 Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
             })
         }
@@ -532,7 +531,7 @@ private extension PairingManager {
 }
 
 // MARK: - RoomManagerDelegate
-extension PairingManager : RoomManagerDelegate {
+extension PairingManager: RoomManagerDelegate {
     func anchorIdCreated(_ id: String) {
         print("RoomManagerDelegate: Resolving GARAnchor")
         if self.gSession == nil {
@@ -579,12 +578,12 @@ extension PairingManager : RoomManagerDelegate {
         delegate?.localStrokeRemoved(stroke)
     }
 
-    func partnerStrokeUpdated(_ stroke: Stroke, id key:String) {
-        delegate?.partnerStrokeUpdated(stroke, id:key)
+    func partnerStrokeUpdated(_ stroke: Stroke, id key: String) {
+        delegate?.partnerStrokeUpdated(stroke, id: key)
     }
 
-    func partnerStrokeRemoved(id key:String) {
-        delegate?.partnerStrokeRemoved(id:key)
+    func partnerStrokeRemoved(id key: String) {
+        delegate?.partnerStrokeRemoved(id: key)
     }
 
     func partnerJoined(isHost: Bool, isPairing: Bool?) {
@@ -594,7 +593,7 @@ extension PairingManager : RoomManagerDelegate {
 
         #else
         if let pairing = isPairing, pairing == true {
-            if (isHost) {
+            if isHost {
                 StateManager.updateState(.HOST_CONNECTED)
             } else {
                 StateManager.updateState(.PARTNER_CONNECTED)
@@ -605,7 +604,7 @@ extension PairingManager : RoomManagerDelegate {
     }
 
     func partnerLost() {
-        if (isPairingOrPaired == true) {
+        if isPairingOrPaired == true {
             self.delegate?.partnerLost()
         }
     }
@@ -621,11 +620,11 @@ extension PairingManager : RoomManagerDelegate {
         partnerReadyToSetAnchor = partnerReady
 
         if partnerReady && isHost {
-            if (readyToSetAnchor) {
+            if readyToSetAnchor {
                 sendSetAnchorEvent()
             }
         } else if partnerReady {
-            if (readyToSetAnchor) {
+            if readyToSetAnchor {
                 StateManager.updateState(.PARTNER_CONNECTING)
                 beginPairingTimeout()
             }
@@ -671,7 +670,7 @@ extension PairingManager: GARSessionDelegate {
         } else {
             reason = AnalyticsKey.val(.pair_error_sync_reason_not_tracking)
         }
-        let params = [AnalyticsKey.val(.pair_error_sync_reason) : reason]
+        let params = [AnalyticsKey.val(.pair_error_sync_reason): reason]
         Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
     }
 
@@ -687,7 +686,7 @@ extension PairingManager: GARSessionDelegate {
         roomManager.anchorFailedToResolve()
         cancelPairingTimeout()
 
-        let params = [AnalyticsKey.val(.pair_error_sync_reason):String(anchor.cloudState.rawValue)]
+        let params = [AnalyticsKey.val(.pair_error_sync_reason): String(anchor.cloudState.rawValue)]
         Analytics.logEvent(AnalyticsKey.val(.pair_error_sync), parameters: params)
     }
 }

@@ -21,7 +21,6 @@ enum DefaultsKeys: String {
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
     var pairingState: State?
 
@@ -43,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        UserDefaults.standard.set(NSDate(), forKey:DefaultsKeys.backgroundDate.rawValue)
+        UserDefaults.standard.set(NSDate(), forKey: DefaultsKeys.backgroundDate.rawValue)
     }
 
     func applicationWillEnterForeground(_: UIApplication) {

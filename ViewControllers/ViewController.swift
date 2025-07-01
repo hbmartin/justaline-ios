@@ -26,7 +26,6 @@ enum ViewMode {
 }
 
 class ViewController: UIViewController {
-
     // MARK: Variables
     @IBOutlet var sceneView: ARSCNView!
 
@@ -72,7 +71,7 @@ class ViewController: UIViewController {
                 // make sure we are not coming out of tracking, and that we are in a paired state
                 if modeBeforeTracking != .DRAW, let isPaired = pairingManager?.isPairingOrPaired, isPaired == true {
                     uiViewController?.showDrawingPrompt(isPaired: true)
-                } else if (strokes.count > 0) {
+                } else if strokes.count > 0 {
                     uiViewController?.hideDrawingPrompt()
                 } else {
                     uiViewController?.showDrawingPrompt()
@@ -118,7 +117,7 @@ class ViewController: UIViewController {
             }
 
             // if we're tracking and the mode changes, update our previous mode state
-            if (modeBeforeTracking != nil && mode != .TRACKING) {
+            if modeBeforeTracking != nil && mode != .TRACKING {
                 print("Updating mode to return to after tracking: \(mode)")
                 modeBeforeTracking = mode
             }
@@ -267,7 +266,6 @@ class ViewController: UIViewController {
 
     /// Places anchor on hitNode plane at point
     func makeAnchor(at point: CGPoint) -> ARAnchor? {
-
         guard let hitNode = hitNode else {
             return nil
         }
@@ -292,14 +290,14 @@ class ViewController: UIViewController {
         let newPoint = strokeNode.convertPosition(offset, from: sceneView.scene.rootNode)
 
         stroke.lineWidth = strokeSize.rawValue
-        if (stroke.add(point: newPoint)) {
+        if stroke.add(point: newPoint) {
             pairingManager?.updateStroke(stroke)
             updateGeometry(stroke)
         }
         print("Total Points: \(stroke.points.count)")
     }
 
-    func updateGeometry(_ stroke:Stroke) {
+    func updateGeometry(_ stroke: Stroke) {
         if stroke.positionsVec3.count > 4 {
             let vectors = stroke.positionsVec3
             let sides = stroke.mSide
@@ -377,7 +375,7 @@ class ViewController: UIViewController {
 // MARK: - Extensions
 
 // MARK: PairingManagerDelegate
-extension ViewController : PairingManagerDelegate {
+extension ViewController: PairingManagerDelegate {
     func cloudAnchorResolved(_ anchor: GARAnchor) {
         print("World Origin Updated")
         shouldRetryAnchorResolve = false
@@ -425,7 +423,7 @@ extension ViewController : PairingManagerDelegate {
         sceneView.session.add(anchor: stroke.anchor!)
     }
 
-    func partnerStrokeUpdated(_ stroke: Stroke, id key:String) {
+    func partnerStrokeUpdated(_ stroke: Stroke, id key: String) {
         if partnerStrokes[key] == nil {
             addPartnerStroke(stroke, key: key)
         } else {
@@ -442,7 +440,7 @@ extension ViewController : PairingManagerDelegate {
         uiViewController?.updatePairButtonState(.lost)
     }
 
-    func partnerStrokeRemoved(id key:String) {
+    func partnerStrokeRemoved(id key: String) {
         if let partnerAnchor = partnerStrokes[key]?.anchor {
             sceneView.session.remove(anchor: partnerAnchor)
             print("Partner stroke removed: \(String(describing: partnerStrokes[key]))")
@@ -455,7 +453,7 @@ extension ViewController : PairingManagerDelegate {
 }
 
 // MARK: - StateManagerDelegate
-extension ViewController : StateManagerDelegate {
+extension ViewController: StateManagerDelegate {
     func stateChangeCompleted(_: State) {
         if shouldShowTrackingIndicator() {
             enterTrackingState()
@@ -541,8 +539,7 @@ extension ViewController : StateManagerDelegate {
  }*/
 
 // MARK: - ReplayKit Preview Delegate
-extension ViewController : RPPreviewViewControllerDelegate {
-
+extension ViewController: RPPreviewViewControllerDelegate {
     func previewController(_ previewController: RPPreviewViewController, didFinishWithActivityTypes activityTypes: Set<String>) {
         if activityTypes.contains(UIActivity.ActivityType.saveToCameraRoll.rawValue) {
             Analytics.logEvent(AnalyticsKey.val(.tapped_save), parameters: nil)
@@ -553,7 +550,6 @@ extension ViewController : RPPreviewViewControllerDelegate {
                     || activityTypes.contains(UIActivity.ActivityType.postToFacebook.rawValue)
                     || activityTypes.contains(UIActivity.ActivityType.mail.rawValue)
                     || activityTypes.contains(UIActivity.ActivityType.message.rawValue) {
-
             Analytics.logEvent(AnalyticsKey.val(.tapped_share_recording), parameters: nil)
         }
 
@@ -561,7 +557,6 @@ extension ViewController : RPPreviewViewControllerDelegate {
         uiViewController?.recordBackgroundView.alpha = 0
 
         previewController.dismiss(animated: true) {
-
             self.uiWindow?.isHidden = false
         }
     }
