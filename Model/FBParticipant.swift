@@ -15,6 +15,45 @@
 import Foundation
 
 final class FBParticipant: FBModel {
+    var readyToSetAnchor: Bool = false
+
+    var anchorResolved: Bool = false
+
+    var isPairing: Bool = false
+
+    var lastSeen = [String: Any?]()
+
+    convenience init(anchorResolved: Bool, isPairing: Bool) {
+        self.init()
+
+        self.anchorResolved = anchorResolved
+        self.isPairing = isPairing
+
+        self.lastSeen[FBKey.val(.lastSeenTimestamp)] = newTimestamp()
+    }
+
+    convenience init(readyToSetAnchor: Bool) {
+        self.init()
+
+        self.readyToSetAnchor = readyToSetAnchor
+        self.lastSeen[FBKey.val(.lastSeenTimestamp)] = newTimestamp()
+        self.isPairing = true
+    }
+
+    func dictionaryValue() -> [String: Any?] {
+        var dictionary = [String: Any?]()
+        dictionary[FBKey.val(.readyToSetAnchor)] = readyToSetAnchor
+        dictionary[FBKey.val(.anchorResolved)] = anchorResolved
+        dictionary[FBKey.val(.pairing)] = isPairing
+        dictionary[FBKey.val(.lastSeen)] = lastSeen
+
+        return dictionary
+    }
+
+    func newTimestamp () -> Int64 {
+        return Int64(Date().timeIntervalSince1970 * 1_000)
+    }
+
     static func from(_ dictionary: [String: Any?]) -> FBParticipant? {
         let participant = FBParticipant()
         if let readyToSetAnchor = dictionary[FBKey.val(.readyToSetAnchor)] as? Bool {
@@ -27,47 +66,6 @@ final class FBParticipant: FBModel {
             participant.isPairing = isPairing
         }
 
-        return participant        
-    }
-    
-    var readyToSetAnchor: Bool = false
-    
-    var anchorResolved: Bool = false
-    
-    var isPairing: Bool = false
-    
-    var lastSeen = [String: Any?]()
-    
-    convenience init(anchorResolved: Bool, isPairing: Bool) {
-        self.init()
-        
-        self.anchorResolved = anchorResolved
-        self.isPairing = isPairing
-        
-        self.lastSeen[FBKey.val(.lastSeenTimestamp)] = newTimestamp()
-    }
-    
-    convenience init(readyToSetAnchor: Bool) {
-        self.init()
-        
-        self.readyToSetAnchor = readyToSetAnchor
-        self.lastSeen[FBKey.val(.lastSeenTimestamp)] = newTimestamp()
-        self.isPairing = true
-    }
-    
-    
-    func dictionaryValue()->[String: Any?] {
-        var dictionary = [String: Any?]()
-        dictionary[FBKey.val(.readyToSetAnchor)] = readyToSetAnchor
-        dictionary[FBKey.val(.anchorResolved)] = anchorResolved
-        dictionary[FBKey.val(.pairing)] = isPairing
-        dictionary[FBKey.val(.lastSeen)] = lastSeen
-        
-        return dictionary
-    }
-    
-    func newTimestamp ()->Int64 {
-        let timestampInteger = Int64(Date().timeIntervalSince1970 * 1000)
-        return timestampInteger
+        return participant
     }
 }

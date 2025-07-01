@@ -31,7 +31,7 @@ struct Payload: Identifiable {
     enum Status {
         case inProgress(Progress), success, failure, canceled
     }
-    
+
     // Convenience initializer for creating outgoing data payloads
     init(data: Data) {
         self.id = PayloadID(Int64.random(in: 1...Int64.max))
@@ -41,7 +41,7 @@ struct Payload: Identifiable {
         self.cancellationToken = nil
         self.data = data
     }
-    
+
     // Full initializer for incoming payloads from NearbyConnections
     init(id: PayloadID, type: PayloadType, status: Status, isIncoming: Bool, cancellationToken: CancellationToken?, data: Data?) {
         self.id = id

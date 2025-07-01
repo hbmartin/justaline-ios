@@ -20,22 +20,27 @@ import SceneKit
 import UIKit
 
 extension ViewController: InterfaceViewControllerDelegate {
-    
+    override var shouldAutorotate: Bool {
+        if let recorder = screenRecorder, recorder.isRecording {
+            return false
+        }
+        return true
+    }
+
     func stateViewLoaded(_ stateManager: StateManager) {
         self.stateManager = stateManager
         stateManager.delegate = self
     }
-    
 
     // MARK: - Handle Touch
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touchInView = touches.first?.location(in: sceneView), mode == .DRAW else {
             return
         }
-        
+
         // hold onto touch location for projection
         touchPoint = touchInView
-        
+
         // begin a new stroke
         let stroke = Stroke()
         print("Touch")
@@ -49,68 +54,58 @@ extension ViewController: InterfaceViewControllerDelegate {
             self.uiViewController?.undoButton.isHidden = shouldHideUndoButton()
             self.uiViewController?.clearAllButton.isHidden = shouldHideTrashButton()
             sceneView.session.add(anchor: anchor)
-            
+
             Analytics.setUserProperty(AnalyticsKey.val(.value_true), forName: AnalyticsKey.val(.user_has_drawn))
         }
     }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touchInView = touches.first?.location(in: sceneView), mode == .DRAW, touchPoint != .zero else {
             return
         }
-        
+
         // hold onto touch location for projection
         touchPoint = touchInView
     }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+
+    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         touchPoint = CGPoint.zero
         strokes.last?.resetMemory()
-        
+
         // for some reason putting this in the touchesBegan does not trigger
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: nil)
-        
-    }
-    
-    override var shouldAutorotate: Bool {
-        if let recorder = screenRecorder, recorder.isRecording {
-            return false
-        }
-        return true
     }
 
-    
     // MARK: - UI Methods
-    
+
     func recordTapped(sender: UIButton?) {
         resetTouches()
-        
+
         if screenRecorder?.isRecording == true {
             // Reset record button accessibility label to original value
             uiViewController?.configureAccessibility()
-            
+
             stopRecording()
         } else {
             sender?.accessibilityLabel = NSLocalizedString("content_description_record_stop", comment: "Stop Recording")
             startRecording()
-            
+
             Analytics.logEvent(AnalyticsKey.val(.record), parameters: nil)
         }
     }
 
     func startRecording() {
-        screenRecorder?.startRecording(handler: { (error) in
+        screenRecorder?.startRecording(handler: { error in
             guard error == nil else {
                 return
             }
             self.uiViewController?.recordingWillStart()
-            
         })
     }
-    
+
     func stopRecording() {
         uiViewController?.progressCircle.stop()
-        screenRecorder?.stopRecording(handler: { (previewViewController, error) in
+        screenRecorder?.stopRecording(handler: { previewViewController, error in
             DispatchQueue.main.async {
                 guard error == nil, let preview = previewViewController else {
                     return
@@ -124,95 +119,95 @@ extension ViewController: InterfaceViewControllerDelegate {
             }
         })
     }
-    
+
     /// Remove anchor for last stroke.
     /// Stroke cleanup in renderer(renderer:didRemove:for:) delegate call
-    func undoLastStroke(sender: UIButton?) {
+    func undoLastStroke(sender _: UIButton?) {
         resetTouches()
-        
+
         if let lastStroke = strokes.last {
             pairingManager?.removeStroke(lastStroke)
 
             if let anchor = lastStroke.anchor {
                 sceneView.session.remove(anchor: anchor)
             }
-            
+
             Analytics.setUserProperty(AnalyticsKey.val(.value_true), forName: AnalyticsKey.val(.user_tapped_undo))
         }
     }
 
     /// Loops through strokes removing anchor for each stroke.
     /// Stroke cleanup in renderer(renderer:didRemove:for:) delegate call
-    func clearStrokesTapped(sender: UIButton?) {
+    func clearStrokesTapped(sender _: UIButton?) {
         resetTouches()
-        
+
         var clearMessageKey = "clear_confirmation_message"
         var clearTitleKey = "clear_confirmation_title"
         if !partnerStrokes.isEmpty {
             clearMessageKey = "clear_confirmation_message_paired"
             clearTitleKey = "clear_confirmation_title_paired"
         }
-        
+
         let alertController = UIAlertController(
             title: NSLocalizedString(clearTitleKey, comment: "Clear Drawing"),
             message: NSLocalizedString(clearMessageKey, comment: "Clear your drawing?"),
             preferredStyle: .alert
         )
-        let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { (cancelAction) in
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { _ in
             alertController.dismiss(animated: true, completion: nil)
         }
-        
-        let okAction = UIAlertAction(title: NSLocalizedString("clear", comment: "Clear"), style: .destructive) { (okAction) in
+
+        let okAction = UIAlertAction(title: NSLocalizedString("clear", comment: "Clear"), style: .destructive) { _ in
             alertController.dismiss(animated: true, completion: nil)
             self.clearAllStrokes()
-            
+
             if self.mode == .DRAW {
                 self.uiViewController?.showDrawingPrompt()
             }
-            
+
             Analytics.setUserProperty(AnalyticsKey.val(.value_true), forName: AnalyticsKey.val(.user_tapped_clear))
         }
         alertController.addAction(cancelAction)
         alertController.addAction(okAction)
         self.uiViewController?.present(alertController, animated: true, completion: nil)
     }
-    
+
     func clearAllStrokes() {
         for stroke in self.strokes {
             if let anchor = stroke.anchor {
                 self.sceneView.session.remove(anchor: anchor)
             }
         }
-        
+
         for (_, partnerStroke) in self.partnerStrokes {
             if let anchor = partnerStroke.anchor {
                 self.sceneView.session.remove(anchor: anchor)
             }
         }
-        
+
         self.pairingManager?.clearAllStrokes()
     }
-    
+
     func strokeSizeChanged(_ radius: Radius) {
         strokeSize = radius
     }
-    
-    func joinButtonTapped(sender: UIButton?) {
+
+    func joinButtonTapped(sender _: UIButton?) {
         if pairingManager?.isPairingOrPaired == true {
             let alertController = UIAlertController(
                 title: NSLocalizedString("pair_disconnect_title", comment: "Disconnect"),
                 message: NSLocalizedString("pair_disconnect", comment: "Are you sure you want to disconnect?"),
                 preferredStyle: .alert
             )
-            let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { (cancelAction) in
+            let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "Cancel"), style: .cancel) { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }
 
-            let okAction = UIAlertAction(title: NSLocalizedString("ok", comment: "OK"), style: .destructive) { (okAction) in
+            let okAction = UIAlertAction(title: NSLocalizedString("ok", comment: "OK"), style: .destructive) { _ in
                 alertController.dismiss(animated: true, completion: nil)
                 self.pairCancelled()
                 self.configureARSession(runOptions: [.resetTracking, .removeExistingAnchors])
-                
+
                 Analytics.logEvent(AnalyticsKey.val(.tapped_disconnect_paired_session), parameters: nil)
             }
             alertController.addAction(cancelAction)
@@ -226,19 +221,19 @@ extension ViewController: InterfaceViewControllerDelegate {
             Analytics.setUserProperty(AnalyticsKey.val(.value_true), forName: AnalyticsKey.val(.user_tapped_pair))
         }
     }
-    
+
     func shouldPresentPairingChooser() -> Bool {
         if let isPaired = pairingManager?.isPairingOrPaired {
             return !isPaired
         }
         return false
     }
-    
+
     func beginGlobalSession(_ withPairing: Bool) {
         pairingManager?.beginGlobalSession(withPairing)
         mode = .PAIR
     }
-    
+
     func shouldHideTrashButton() -> Bool {
         if !strokes.isEmpty || !partnerStrokes.isEmpty {
             return false
@@ -252,9 +247,8 @@ extension ViewController: InterfaceViewControllerDelegate {
         }
         return true
     }
-    
+
     func resetTouches() {
         touchPoint = .zero
     }
-
 }

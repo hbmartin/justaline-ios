@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 import UIKit
 
 class DrawPromptView: UIView {
@@ -26,7 +25,7 @@ class DrawPromptView: UIView {
     override func draw(_ rect: CGRect) {
     }
     */
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
@@ -35,8 +34,8 @@ class DrawPromptView: UIView {
         circle.path = circlePath.cgPath
         circle.fillColor = UIColor(white: 1.0, alpha: 0.75).cgColor
 
-        let circleX = (self.frame.size.width - circleWidth)/2
-        let circleY = (self.frame.size.height - circleHeight)/2
+        let circleX = (self.frame.size.width - circleWidth) / 2
+        let circleY = (self.frame.size.height - circleHeight) / 2
         circle.frame = CGRect(x: circleX, y: circleY, width: self.frame.size.width, height: self.frame.size.height)
         self.layer.addSublayer(circle)
 
@@ -46,10 +45,10 @@ class DrawPromptView: UIView {
     private func growAnimation() {
         UIView.animate(withDuration: 0.6, delay: 0.2, options: [.curveEaseInOut], animations: {
             self.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-        }, completion: { completed in
+        }, completion: { _ in
             UIView.animate(withDuration: 0.6, delay: 0.25, options: [.curveEaseInOut], animations: {
                 self.transform = .identity
-            }, completion: { success in
+            }, completion: { _ in
                 self.growAnimation()
              })
         })

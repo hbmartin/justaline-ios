@@ -14,11 +14,10 @@
 
 import Foundation
 
-
 final class FBAnchor: FBModel {
     static func from(_ dictionary: [String: Any?]) -> FBAnchor? {
         var anchor: FBAnchor?
-        
+
         if let anchorId = dictionary[FBKey.val(.anchorId)] as? String {
             anchor = FBAnchor(anchorId: anchorId)
         } else {
@@ -26,11 +25,9 @@ final class FBAnchor: FBModel {
                 anchor = FBAnchor(anchorResolutionError: anchorError)
             }
         }
-        
+
         return anchor
     }
-    
-    
 
     var anchorId: String?
 
@@ -38,23 +35,22 @@ final class FBAnchor: FBModel {
 
     convenience init(anchorId: String) {
         self.init()
-        
+
         self.anchorId = anchorId
         self.anchorResolutionError = false
     }
 
     convenience init(anchorResolutionError: Bool) {
         self.init()
-        
+
         self.anchorResolutionError = anchorResolutionError
     }
-    
+
     func dictionaryValue()->[String: Any?] {
         var dictionary = [String: Any?]()
         dictionary[FBKey.val(.anchorId)] = anchorId
         dictionary[FBKey.val(.anchorResolutionError)] = anchorResolutionError
-        
+
         return dictionary
     }
-
 }

@@ -21,11 +21,10 @@ class AboutViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var thirdPartyButton: UIButton!
     @IBOutlet weak var termsButton: UIButton!
     @IBOutlet weak var buildLabel: UILabel!
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let closeButton = UIBarButtonItem(image: UIImage(named: "ic_close"), style: .plain, target: self, action: #selector(closeTapped))
         closeButton.accessibilityLabel = NSLocalizedString("menu_close", comment: "Close")
 
@@ -35,17 +34,17 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         formatButton(privacyButton, stringKey: "privacy_policy")
         formatButton(thirdPartyButton, stringKey: "third_party_licenses")
         formatLearnMore()
-        
+
         let versionString = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
         let buildString = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as! String
-        buildLabel.text = "\(versionString)(\(buildString))"        
+        buildLabel.text = "\(versionString)(\(buildString))"
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     @IBAction func buttonTapped(_ sender: UIButton) {
         var urlString: String?
         if sender == termsButton {
@@ -53,16 +52,16 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         } else if sender == privacyButton {
             urlString = "privacy_policy_url"
         }
-        
+
         if let urlKey = urlString {
             UIApplication.shared.open(URL(string:NSLocalizedString(urlKey, comment: ""))!, options: [:], completionHandler: nil)
         }
     }
-    
-    @objc func closeTapped(_ sender: UIButton) {
+
+    @objc func closeTapped(_: UIButton) {
         performSegue(withIdentifier: "unwindAboutSegue", sender: self)
     }
-    
+
     func formatButton(_ button: UIButton, stringKey: String) {
         let attributedString = NSAttributedString(string: NSLocalizedString(stringKey, comment: ""),
                                                   attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue,
@@ -72,33 +71,33 @@ class AboutViewController: UIViewController, UITextViewDelegate {
                                                                .underlineColor: UIColor.white])
         button.setAttributedTitle(attributedString, for: .normal)
     }
-    
+
     func formatLearnMore() {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = 6
-        
+
         let learnMoreString = NSMutableAttributedString(string: NSLocalizedString("about_text", comment: "Just a Line is an AR Experiment..."), attributes: [.paragraphStyle: paragraphStyle, .foregroundColor: UIColor.white])
         learnMoreTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         let linkRange = (learnMoreString.string as NSString).range(of:NSLocalizedString("about_text_link", comment: "g.co/justaline"))
-        
+
         learnMoreString.addAttribute(.underlineStyle,
                                      value: NSUnderlineStyle.single.rawValue,
                                      range: linkRange)
-        
+
         learnMoreString.addAttribute(.link,
                                      value: URL(string: NSLocalizedString("jal_url", comment: "https://g.co/justaline"))!,
                                      range: linkRange)
-        
+
         learnMoreTextView.attributedText = learnMoreString
         learnMoreTextView.font = UIFont.systemFont(ofSize: 14)
 //        learnMoreTextView.font = UIFont(name: "CoolSans-Medium", size: 14)
     }
-    
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+
+    func textView(_: UITextView, shouldInteractWith _: URL, in _: NSRange, interaction _: UITextItemInteraction) -> Bool {
         return true
     }
-    
+
     /*
     // MARK: - Navigation
 
@@ -108,5 +107,4 @@ class AboutViewController: UIViewController, UITextViewDelegate {
         // Pass the selected object to the new view controller.
     }
     */
-
 }

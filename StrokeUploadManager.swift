@@ -27,20 +27,21 @@ protocol StrokeUploaderDelegate {
 
 class StrokeUploadManager {
     var uploadingStrokeKeys: [String]
-    
+
     var queuedUpdates: [String: StrokeUpdate]
-    
+
     var delegate: StrokeUploaderDelegate?
-    
+
     let queue: DispatchQueue
-    
+
     init() {
         uploadingStrokeKeys = [String]()
         queuedUpdates = [String: StrokeUpdate]()
         queue = DispatchQueue(label: "uploadQueue", attributes: .concurrent)
     }
-    
+
     func queueStroke(_ stroke: Stroke, remove: Bool) {
+        print("queueStroke: \(String(describing: stroke.fbReference?.key))")
         guard let key = stroke.fbReference?.key else {
             return
         }
@@ -56,7 +57,7 @@ class StrokeUploadManager {
             }
         }
     }
-    
+
     func upload(_ update: StrokeUpdate) {
         if update.shouldRemove {
             delegate?.removeStroke(update.stroke)
@@ -68,7 +69,7 @@ class StrokeUploadManager {
                 print("StrokeUploadManager: upload: move \(strokeKey) from queue to uploading")
                 self.uploadingStrokeKeys.append(strokeKey)
                 self.queuedUpdates[strokeKey] = nil
-                self.delegate?.uploadStroke(update.stroke, completion: { (error, reference) in
+                self.delegate?.uploadStroke(update.stroke, completion: { error, _ in
                     print("StrokeUploadManager: upload: attempting to remove stroke key \(strokeKey)")
                     if let strokeIndex = self.uploadingStrokeKeys.index(of: strokeKey) {
                         print("StrokeUploadManager: upload: successfully removed stroke key at \(strokeIndex)")
@@ -87,7 +88,7 @@ class StrokeUploadManager {
             }
         }
     }
-    
+
     func resetQueue() {
         queue.async(flags: .barrier) {
             self.uploadingStrokeKeys.removeAll()

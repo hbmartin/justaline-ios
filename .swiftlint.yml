@@ -25,6 +25,7 @@ disabled_rules:
   - identifier_name
   - nslocalizedstring_key
   - override_in_extension
+  - implicit_return
 
 opt_in_rules:
   - all

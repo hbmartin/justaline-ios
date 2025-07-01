@@ -14,6 +14,7 @@
 
 import Metal
 import SceneKit
+import UIKit
 
 enum Radius: Float {
     case small = 0.006
@@ -32,18 +33,18 @@ class LineGeometry: SCNGeometry {
     /// only call one super.init. I am relying on the built-in init(sources:elements:) convenience method for drawing the geometry
     convenience init(vectors: [SCNVector3], sides: [Float], width: Float, lengths: [Float], endCapPosition: Float) {
         var indices = [Int32]()
-        
+
         // Loop through center points
         for index in vectors.indices {
             indices.append(Int32(index))
         }
-        
+
         let source = SCNGeometrySource(vertices: vectors)
         let indexData = Data(
             bytes: indices,
             count: indices.count * MemoryLayout<Int32>.size
         )
-        
+
         // Now without runtime error
         let element = SCNGeometryElement(
             data: indexData,
@@ -51,17 +52,16 @@ class LineGeometry: SCNGeometry {
             primitiveCount: indices.count - 2,
             bytesPerIndex: MemoryLayout<Int32>.size
         )
-        
-//        self.init()
+
         self.init(sources: [source], elements: [element])
         self.vectors = vectors
         self.sides = sides
         self.width = width
         self.lengths = lengths
         self.endCapPosition = endCapPosition
-        
+
         self.wantsAdaptiveSubdivision = true
-        
+
         let lineProgram = SCNProgram()
         lineProgram.vertexFunctionName = "basic_vertex"
         lineProgram.fragmentFunctionName = "basic_fragment"
@@ -75,7 +75,7 @@ class LineGeometry: SCNGeometry {
         } else {
             print("Warning: linecap image not found in bundle")
         }
-        
+
 //        let borderImage = UIImage(named: "texture")!
 //        let borderTexture = SCNMaterialProperty(contents: borderImage)
 //        self.setValue(borderTexture, forKey: "borderTexture")
@@ -83,7 +83,7 @@ class LineGeometry: SCNGeometry {
 //        let color = UIColor.white.cgColor
 //        self.setValue(resolution, forKey:"resolution")
 //        self.setValue(color, forKey: "color")
-        
+
 //        lineProgram.handleBinding(ofBufferNamed: "myUniforms", frequency: .perShadable, handler: { (bufferStream, renderedNode, geometry, renderer) in
 //            var resolution = float2(Float(UIScreen.main.bounds.size.width), Float(UIScreen.main.bounds.size.height))
 //            var color = float4(1,1,1,1)
@@ -91,7 +91,7 @@ class LineGeometry: SCNGeometry {
 //            bufferStream.writeBytes(&resolution, count: MemoryLayout<Float>.size*2)
 //            bufferStream.writeBytes(&color, count: MemoryLayout<Float>.size*4)
 //        })
-        
+
         program?.handleBinding(ofBufferNamed: "vertices", frequency: .perShadable) { bufferStream, renderedNode, _, _ in
             if let line = renderedNode.geometry as? Self {
                 var programVertices = line.generateVertexData()
