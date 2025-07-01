@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import ARCoreCloudAnchors
-import ARCoreGARSession
+import ARCore
 import FirebaseAnalytics
 import Foundation
 import NearbyConnections
+import RealityKit
 
 protocol PairingManagerDelegate {
     func localStrokeRemoved(_ stroke: Stroke)
     func partnerStrokeUpdated(_ stroke: Stroke, id key: String)
     func partnerStrokeRemoved(id key: String)
-    func cloudAnchorResolved(_ anchor: GARAnchor)
+    func cloudAnchorResolved(_ anchor: ARAnchor)
     func partnerJoined(isHost: Bool)
     func partnerLost()
     func createAnchor()
@@ -82,6 +82,7 @@ class PairingManager: NSObject {
         }
 
         if let dict = myDict, let key = dict["API_KEY"] as? String {
+            print("PairingManager: Setting Firebase API key: \(key)")
             firebaseKey = key
         }
 
@@ -107,11 +108,11 @@ class PairingManager: NSObject {
         if gSession == nil {
             do {
                 try gSession = GARSession(apiKey: firebaseKey, bundleIdentifier: nil)
+                print("Created GoogleAR session: \(String(describing: gSession))")
             } catch let error as NSError {
                 print("PairingManager: Couldn't start GoogleAR session: \(error)")
             }
         }
-        print("Created GoogleAR session: \(String(describing: gSession))")
     }
 
     func setGlobalRoomName(_ name: String) {
@@ -127,6 +128,7 @@ class PairingManager: NSObject {
         roomManager.delegate = self
 
         if let session = gSession {
+            print("PairingManager: gSession: \(session.description)")
             session.delegate = self
             session.delegateQueue = DispatchQueue.main
         } else {
@@ -142,6 +144,7 @@ class PairingManager: NSObject {
     }
 
     func beginPairing() {
+        print("PairingManager: beginPairing")
         configureReachability()
 
         beginDiscoveryTimeout()
@@ -262,6 +265,7 @@ class PairingManager: NSObject {
 
     /// Once host has made an initial drawing to share, and tapped done, send an ARAnchor based at drawing's node position to GARSession
     func setAnchor(_ anchor: ARAnchor) {
+        print("PairingManager: setAnchor: Attempting to Host Cloud Anchor")
         do {
             try self.garAnchor = self.gSession?.hostCloudAnchor(anchor)
             NSLog("Attempting to Host Cloud Anchor: %@ with ARAnchor: %@", String(describing: garAnchor), String(describing: anchor))
@@ -271,6 +275,7 @@ class PairingManager: NSObject {
     }
 
     func setReadyToSetAnchor() {
+        print("PairingManager: setReadyToSetAnchor: isHost: \(roomManager.isHost), partnerReadyToSetAnchor: \(partnerReadyToSetAnchor)")
         readyToSetAnchor = true
         roomManager.setReadyToSetAnchor()
 
@@ -380,6 +385,7 @@ class PairingManager: NSObject {
     }
 
     func resetGSession() {
+        print("PairingManager: resetGSession")
         gSession = nil
 
         // restart gar session so that it is available next time
@@ -587,6 +593,7 @@ extension PairingManager: RoomManagerDelegate {
     }
 
     func partnerJoined(isHost: Bool, isPairing: Bool?) {
+        print("PairingManager: partnerJoined: isHost: \(isHost)")
         delegate?.partnerJoined(isHost: isHost)
 
         #if JOIN_GLOBAL_ROOM
@@ -675,6 +682,7 @@ extension PairingManager: GARSessionDelegate {
     }
 
     func session(_: GARSession, didFailToHost anchor: GARAnchor) {
+        print("GARSession: did fail to host anchor: \(anchor.cloudState.rawValue)")
         failHostAnchor(anchor)
     }
 

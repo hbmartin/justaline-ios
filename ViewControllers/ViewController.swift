@@ -322,7 +322,6 @@ class ViewController: UIViewController {
             pairingManager?.updateStroke(stroke)
             updateGeometry(stroke)
         }
-        print("Total Points: \(stroke.points.count)")
     }
 
     func updateGeometry(_ stroke: Stroke) {

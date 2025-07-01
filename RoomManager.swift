@@ -58,7 +58,7 @@ class RoomManager: StrokeUploaderDelegate {
 
     private let ROOT_FIREBASE_ROOMS = "rooms"
 
-    var ROOT_GLOBAL_ROOM = GLOBAL_ROOM_ROOT + "global_room_0"
+    var ROOT_GLOBAL_ROOM = GLOBAL_ROOM_ROOT + "/global_room_0"
 
     private let DISPLAY_NAME_VALUE = "Just a Line"
 
@@ -411,6 +411,7 @@ class RoomManager: StrokeUploaderDelegate {
 
     /// Sets Firebase flags for participant and anchor, begins observing stroke ref for child changes
     func resolveRoom() {
+        print("RoomManager: resolveRoom: roomRef: \(String(describing: roomRef)), uid: \(String(describing: userUid))")
         guard let room = roomRef, let uid = userUid else {
             return
         }
@@ -510,16 +511,15 @@ class RoomManager: StrokeUploaderDelegate {
     ///   - uid: userUid value
     ///   - reference: path to participants in FB
     func partnerJoinedCallbacks(uid: String, reference: DatabaseReference) {
-        print("RoomManager:Partner Callbacks Reference: \(reference)")
         // Partner Added
         self.partnerAddedHandle = reference.observe(.childAdded, with: { snapshot in
-            print("RoomManager:partnerJoinedCallbacks: Partner Added Observer")
+            print("RoomManager:partnerJoinedCallbacks: Partner Added Observer: \(String(describing: snapshot))")
 
             if snapshot.key != uid {
                 if let participantDict = snapshot.value as? [String: Any?] {
                     self.partners.append(snapshot.key)
                     let participant = FBParticipant.from(participantDict)
-
+                    print("self.pairing: \(self.pairing) , participant: \(String(describing: participant))")
                     if participant?.isPairing == true && self.pairing == true {
                         // Host for global room pairing is alphabetical since we don't establish with Nearby pub/sub
                         let keyComparison = uid.compare(snapshot.key)
@@ -528,6 +528,7 @@ class RoomManager: StrokeUploaderDelegate {
                         #if JOIN_GLOBAL_ROOM
                         let state: State = (self.isHost) ? .HOST_CONNECTED : .PARTNER_CONNECTED
                         StateManager.updateState(state)
+                        print("RoomManager:partnerJoinedCallbacks: updated state to: \(state)")
                         #endif
                     }
                     self.delegate?.partnerJoined(isHost: self.isHost, isPairing: participant?.isPairing)
@@ -595,7 +596,7 @@ class RoomManager: StrokeUploaderDelegate {
         print("NOT JOINING GLOBAL ROOM")
         anchorUpdateRef.removeValue()
         #else
-        print("JOINING GLOBAL ROOM, pair: \(pairing)")
+        print("Joining Global Room, pairing: \(pairing)")
         if pairing == true {
             anchorUpdateRef.removeValue()
         }
@@ -668,7 +669,6 @@ class RoomManager: StrokeUploaderDelegate {
             print("RoomManager:observeAnchor: Anchor Observe Cancelled")
         }
 
-        print("Anchor Removed Callback Reference: \(room)")
         anchorRemovedHandle = room.observe(.childRemoved, with: { snapshot in
             if snapshot.key == FBKey.val(.anchor) {
                 print("RoomManager:observeAnchor: Anchor object removed")
@@ -678,7 +678,7 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     func setReadyToSetAnchor() {
-        print("setReadyToSetAnchor")
+        print("RoomManager: setReadyToSetAnchor")
         guard let partnersRef = participantsRef, let uid = userUid else {
             return
         }
@@ -722,11 +722,11 @@ class RoomManager: StrokeUploaderDelegate {
     }
 
     func anchorFailedToResolve() {
+        print("RoomManager: anchorFailedToResolve: \(String(describing: self.roomRef))")
+
         guard let room = roomRef else {
             return
         }
-
-        print("RoomManager: anchorFailedToResolve")
 
         if !isRetrying {
             // For global rooms, only send failure to Firebase if it is a hosting failure

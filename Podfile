@@ -12,20 +12,19 @@ def pods_all_targets
   pod 'Reachability', '~> 3.2'
 
   # Firebase - Moderate update for better compatibility
-  pod 'Firebase', '~> 10.5'
-  pod 'FirebaseAuth', '~> 10.5'
-  pod 'FirebaseCrashlytics', '~> 10.5'  # Replaces deprecated FirebaseCrash
-  pod 'FirebaseAnalytics', '~> 10.5'
-  pod 'FirebaseFirestore', '~> 10.5'
-  pod 'FirebaseDatabase', '~> 10.5'
+  pod 'Firebase', '~> 11.15.0'
+  pod 'FirebaseAuth', '~> 11.15.0'
+  pod 'FirebaseCrashlytics', '~> 11.15.0'  # Replaces deprecated FirebaseCrash
+  pod 'FirebaseAnalytics', '~> 11.15.0'
+  pod 'FirebaseFirestore', '~> 11.15.0'
+  pod 'FirebaseDatabase', '~> 11.15.0'
 
   # Google AR & Nearby - Latest compatible versions
-  pod 'ARCore', '1.44.0'
-  pod 'ARCore/CloudAnchors', '1.44.0'
+  pod 'ARCore', '1.49.0'
+  pod 'ARCore/CloudAnchors', '1.49.0'
   # Note: NearbyConnections will be added via Swift Package Manager
 
   # Supporting dependencies (compatible versions)
-  pod 'GTMSessionFetcher/Core', '~> 2.1'
   pod 'GoogleToolboxForMac/Logger', '~> 2.3'
   pod 'GoogleToolboxForMac/NSData+zlib', '~> 2.3'
   pod 'Protobuf', '~> 3.20'

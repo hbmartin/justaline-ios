@@ -25,6 +25,7 @@ extension ViewController: PairingManagerDelegate {
     }
 
     func createAnchor() {
+        print("createAnchor")
         if let anchor = makeAnchor(at: view.center) {
             sharedAnchor = anchor
             pairingManager?.setAnchor(anchor)
@@ -36,6 +37,7 @@ extension ViewController: PairingManagerDelegate {
     }
 
     func anchorWasReset() {
+        print("anchorWasReset")
         uiViewController?.updatePairButtonState(.unpaired)
         let alert = UIAlertController(
             title: NSLocalizedString("drawing_session_ended_title", comment: "Session Reset"),
@@ -81,6 +83,7 @@ extension ViewController: PairingManagerDelegate {
     }
 
     func partnerJoined(isHost _: Bool) {
+        print("ViewController: partnerJoined")
         uiViewController?.updatePairButtonState(.connected)
     }
 

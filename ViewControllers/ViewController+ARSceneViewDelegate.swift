@@ -32,7 +32,6 @@ extension ViewController: ARSCNViewDelegate, ARSessionDelegate {
 
     func renderer(_: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         if let stroke = getStroke(for: anchor) {
-            print("Renderer did update node transform: \(node.transform) and anchorTranform: \(anchor.transform)")
             stroke.node = node
             if stateManager?.state == .HOST_CONNECTING || stateManager?.state == .SYNCED || stateManager?.state == .FINISHED,
                strokes.contains(stroke) {
