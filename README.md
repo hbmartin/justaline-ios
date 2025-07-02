@@ -1,4 +1,4 @@
-A work in progress for 2025 - see the [modernization plan](https://github.com/hbmartin/justaline-ios/blob/master/MODERNIZATION_PLAN.md)
+[![SwiftFormat](https://github.com/hbmartin/justaline-ios-resurrected/actions/workflows/swiftformat.yml/badge.svg)](https://github.com/hbmartin/justaline-ios-resurrected/actions/workflows/swiftformat.yml) [![SwiftLint](https://github.com/hbmartin/justaline-ios-resurrected/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/hbmartin/justaline-ios-resurrected/actions/workflows/swiftlint.yml) 
 
 # Just a Line - iOS
 Just a Line is an [AR Experiment](https://experiments.withgoogle.com/ar) that lets you draw simple white lines in 3D space, on your own or together with a friend, and share your creation with a video. Draw by pressing your finger on the screen and moving the phone around the space.
